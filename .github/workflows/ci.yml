@@ -1,0 +1,141 @@
+name: CI
+
+# Minden feltöltésnél: elemzés + tesztek, majd aláírt APK.
+#  - ágra pusholva  → "Preview" előzetes kiadás (mindig a legutóbbi fordítás)
+#  - v* címkére     → végleges GitHub Release a CHANGELOG megfelelő részével
+# Részletek: docs/Döntések/ADR-006
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.6'
+
+jobs:
+  test:
+    name: Elemzés és tesztek
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  apk:
+    name: APK fordítása
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Verzió meghatározása
+        run: |
+          BUILD_NUMBER=$(git rev-list --count HEAD)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BASE=$(sed -nE 's/^version: *([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' pubspec.yaml)
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            NAME="${GITHUB_REF_NAME#v}"
+            if [ "$NAME" != "$BASE" ]; then
+              echo "::error::A címke ($GITHUB_REF_NAME) és a pubspec.yaml verziója ($BASE) eltér"
+              exit 1
+            fi
+            DISPLAY="$NAME"
+          else
+            NAME="${BASE}-dev.${BUILD_NUMBER}"
+            DISPLAY="$NAME ($SHORT_SHA, ${GITHUB_REF_NAME})"
+          fi
+          {
+            echo "BUILD_NUMBER=$BUILD_NUMBER"
+            echo "VERSION_NAME=$NAME"
+            echo "VERSION_DISPLAY=$DISPLAY"
+          } >> "$GITHUB_ENV"
+          echo "Verzió: $DISPLAY (build $BUILD_NUMBER)"
+
+      - name: Aláíró kulcs előkészítése
+        env:
+          KEYSTORE_BASE64: ${{ secrets.PULZAR_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Hiányzik a PULZAR_KEYSTORE_BASE64 secret – lásd ADR-006"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/pulzar-release.jks"
+          echo "PULZAR_KEYSTORE_PATH=$RUNNER_TEMP/pulzar-release.jks" >> "$GITHUB_ENV"
+
+      - name: APK fordítása
+        env:
+          PULZAR_KEYSTORE_PASSWORD: ${{ secrets.PULZAR_KEYSTORE_PASSWORD }}
+          PULZAR_KEY_ALIAS: ${{ secrets.PULZAR_KEY_ALIAS }}
+        run: |
+          flutter build apk --release \
+            --build-name "$VERSION_NAME" \
+            --build-number "$BUILD_NUMBER" \
+            --dart-define=APP_VERSION="$VERSION_DISPLAY"
+          mv build/app/outputs/flutter-apk/app-release.apk "pulzar-${VERSION_NAME}.apk"
+          rm -f "$PULZAR_KEYSTORE_PATH"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pulzar-${{ env.VERSION_NAME }}
+          path: pulzar-*.apk
+          retention-days: 30
+
+      - name: Preview kiadás frissítése
+        if: github.ref_type == 'branch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete preview --yes --cleanup-tag 2>/dev/null || true
+          gh release create preview pulzar-*.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Preview – ${VERSION_DISPLAY}" \
+            --notes "Fejlesztői előnézet a(z) \`${GITHUB_REF_NAME}\` ág legutóbbi állapotából (${GITHUB_SHA:0:7}). Nem stabil kiadás – kipróbálásra."
+
+      - name: Végleges kiadás
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # A CHANGELOG adott verziójának szakasza, Obsidian-linkek nélkül
+          awk -v v="$VERSION_NAME" '
+            index($0, "## [" v "]") == 1 {on=1; next}
+            on && /^## \[/ {exit}
+            on {print}
+          ' docs/CHANGELOG.md \
+            | sed -E 's/\[\[[^]|]*\|([^]]*)\]\]/\1/g; s/\[\[([^]|#]*)[^]]*\]\]/\1/g' > notes.md
+          [ -s notes.md ] || echo "Lásd docs/CHANGELOG.md" > notes.md
+          gh release create "$GITHUB_REF_NAME" pulzar-*.apk \
+            --title "Pulzar ${VERSION_NAME}" \
+            --notes-file notes.md \
+            --verify-tag

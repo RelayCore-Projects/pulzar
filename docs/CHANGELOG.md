@@ -10,6 +10,19 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.2.0] – 2026-10-08 – Projektváz és automatikus kiadás
+
+### Hozzáadva
+- Flutter projektváz: alsó navigáció (Log · Table · Charts), helyőrző nézetek, Settings, About (verzió, licenc, figyelmeztetés)
+- Első automatikus tesztek (`test/widget_test.dart`)
+- [[ADR-005 Angol nyelvű felület]]
+- Android platformfájlok (`flutter create`, Flutter 3.47.6); `minSdk 26`, alkalmazásnév: Pulzar
+- CI: elemzés, tesztek, aláírt APK minden pushnál; Preview előzetes kiadás; végleges kiadás `v*` címkére – [[ADR-006 Fordítás, aláírás és kiadás a GitHub Actionsben]]
+- [[05 Tesztelés]]: telepítési útmutató
+
+### Módosítva
+- Az alkalmazás felülete angol (`en_GB`); a dokumentáció magyar marad – [[01 Specifikáció]] 0.2.0
+
 ## [0.1.1] – 2026-10-08 – Koncepció lezárva
 
 ### Módosítva

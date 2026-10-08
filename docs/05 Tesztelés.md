@@ -16,6 +16,18 @@ frissitve: 2026-10-08
 
 Ha egy automatikus teszt elbukik, a GitHubon piros ❌ jelenik meg a commit mellett, és nem adunk ki verziót.
 
+## Telepítés a telefonra
+
+1. Telefonon nyisd meg: **github.com/RelayCore-Projects/pulzar/releases**
+   - **Preview** – a legutóbbi fejlesztői fordítás (bármelyik ágról)
+   - **Pulzar x.y.z** – végleges kiadások
+2. Az *Assets* alatt koppints a `pulzar-….apk` fájlra → letöltés
+3. Nyisd meg a letöltött fájlt → első alkalommal az Android engedélyt kér a böngészőnek az „ismeretlen alkalmazások telepítéséhez” → engedélyezd → *Telepítés*
+4. Frissítésnél ugyanígy: az új APK a régire települ, az adatok megmaradnak
+5. A telepített verziót a *Settings → About* mutatja
+
+> Ha a Google Play Protect figyelmeztet („ismeretlen fejlesztő”), az azért van, mert az app nem a Play Áruházból jön: *További részletek → Telepítés mindenképp*.
+
 ## Kézi tesztlista
 
 Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott verzióval, és töltsd ki: ✅ rendben · ❌ hiba (+ issue szám) · ➖ nem releváns.
@@ -45,3 +57,15 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 ## Tesztkörök
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
+
+### v0.2.0 – 2026-10-08 (Preview 0.2.0-dev.6)
+
+A T-xx tesztesetek funkciói még nem készültek el; ebben a verzióban a telepítést és a vázat teszteltük.
+
+| Ellenőrzés | Eredmény |
+|---|---|
+| APK letöltése és telepítése a Releases oldalról | ✅ |
+| Az app „Pulzar” néven indul | ✅ |
+| Navigáció: Log · Table · Charts | ✅ |
+| Settings → About: verzió, licenc, figyelmeztetés | ✅ |
+| Automatikus tesztek (CI) | ✅ 4/4 |

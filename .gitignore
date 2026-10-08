@@ -2,6 +2,7 @@
 *.pulzar
 *.pulzar.json
 pulzar-mentes*
+pulzar-backup*
 pulzar-export*
 exports/
 backups/
