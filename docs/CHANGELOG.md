@@ -10,6 +10,8 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.4.0] – 2026-10-08 – Mentés, táblázat, grafikon
+
 ### Hozzáadva
 - **Mentés és visszatöltés** (FR-13): minden mérés egy JSON-fájlba, a hely szabadon választható (Letöltések, Google Drive…); visszatöltés előnézettel és összefésüléssel
 - **Táblázat** (FR-06, FR-07): naptári időszakok (hét, hónap, év, összes) lapozással, összesítés (átlag, min, max), a referenciaértéket elérő értékek kiemelve

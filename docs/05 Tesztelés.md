@@ -68,6 +68,15 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
 
+### v0.4.0 – kiadás (2026-10-08)
+
+| Ellenőrzés | Eredmény | Megjegyzés |
+|---|---|---|
+| Automatikus tesztek (CI) | ✅ | 67 teszt |
+| Kézi tesztkörök | ✅ | négy kör a Preview-kon; a visszajelzések lent, mind beépítve |
+| T-27, T-28 | ⏳ | az utolsó módosítások (részletek lap, hosszú nyomás, koppintás a grafikonon) – a kiadott 0.4.0-n ellenőrizendő |
+| T-29 lefúrás | ⏸ | kimaradt, következő verzió (Ö-015) |
+
 ### v0.4.0 – visszajelzés a 0.4.0-dev.19 kézi tesztjéből (2026-10-08)
 
 | Nézet | Észrevétel | Megoldás |

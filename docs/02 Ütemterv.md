@@ -13,8 +13,8 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 | 0.2.0 | Flutter projektváz, alap navigáció, GitHub Actions: automatikus, aláírt APK minden kiadásnál | Fejlesztés | 🟢 kész |
 | 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟢 kész |
 | 0.3.1 | Javítás: a pulzus opcionális, első adatbázis-migráció (#3) | Hibajavítás | 🟢 kész |
-| 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟡 folyamatban |
-| 0.5.0 `🔄` | **PDF és CSV export**, megosztás, beállítások (FR-11, 12, 14, 15) | Fejlesztés | ⚪ tervezett |
+| 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟢 kész |
+| 0.5.0 `🔄` | **PDF és CSV export**, megosztás, beállítások (FR-11, 12, 14, 15); lefúrás a grafikonon (Ö-015) | Fejlesztés | 🟡 következő |
 | ~~0.6.0~~ | ~~PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16)~~ → beolvadt a 0.4.0-ba és a 0.5.0-ba | – | ⛔ |
 | 0.9.0 | Kiadásra jelölt: teljes kézi tesztkör valódi eszközön | Tesztelés | ⚪ tervezett |
 | 0.9.x | Hibajavítások a tesztkör alapján | Hibajavítás | ⚪ tervezett |
@@ -38,3 +38,4 @@ Ide kerül, mikor zárult le egy verzió (dátum + rövid megjegyzés). A részl
 - 2026-10-08 – 0.3.0: mérés rögzítése, szerkesztése, törlése, napi korlát, napló lista, saját ikon; kézi teszt hiba nélkül
 - 2026-10-08 – 0.3.1: a pulzus opcionális (#3), első adatbázis-migráció; T-20, T-21 sikeres
 - 2026-10-08 – Átütemezés: nagyobb verziók, a mentés előrehozva a 0.4.0-ba
+- 2026-10-08 – 0.4.0: mentés / visszatöltés, táblázat (főképernyő), naptári időszakok, napi átlagos grafikon; négy kézi tesztkör visszajelzése beépítve
