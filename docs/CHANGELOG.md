@@ -10,6 +10,8 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.3.0] – 2026-10-08 – Mérés rögzítése
+
 ### Hozzáadva
 - Mérés rögzítése: dátum, szabadon megadható időpont, szisztolé, diasztolé, pulzus, megjegyzés (FR-01)
 - Bevitel ellenőrzése: tartományok, szisztolé > diasztolé, időpont nem lehet a jövőben (FR-02)
