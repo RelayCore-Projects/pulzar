@@ -155,12 +155,45 @@ void main() {
     expect(systolicField.controller!.text, '122');
   });
 
-  testWidgets('FR-04: tap a row to edit, then delete', (tester) async {
+  testWidgets('Tap a row: details with the full note, then Edit', (tester) async {
+    await _pumpApp(tester, initial: [
+      measurement('m1', DateTime(2026, 10, 7, 7, 30),
+          note: 'a long note that does not fit into the table row at all'),
+    ]);
+
+    await tester.tap(find.byKey(const Key('table-row-m1')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('details-sheet')), findsOneWidget);
+    final note = tester.widget<SelectableText>(find.byKey(const Key('details-note')));
+    expect(note.data, 'a long note that does not fit into the table row at all');
+    expect(find.text('Edit measurement'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('details-edit')));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit measurement'), findsOneWidget);
+  });
+
+  testWidgets('Delete from the details sheet', (tester) async {
+    final store = await _pumpApp(tester, initial: [
+      measurement('m1', DateTime(2026, 10, 7, 7, 30)),
+    ]);
+
+    await tester.tap(find.byKey(const Key('table-row-m1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('details-delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('confirm-delete')));
+    await tester.pumpAndSettle();
+    expect(store.measurements, isEmpty);
+    expect(find.byKey(const Key('table-empty')), findsOneWidget);
+  });
+
+  testWidgets('FR-04: long-press a row to edit, then delete', (tester) async {
     final store = await _pumpApp(tester, initial: [
       measurement('m1', DateTime(2026, 10, 7, 7, 30), note: 'a long note'),
     ]);
 
-    await tester.tap(find.byKey(const Key('table-row-m1')));
+    await tester.longPress(find.byKey(const Key('table-row-m1')));
     await tester.pumpAndSettle();
     expect(find.text('Edit measurement'), findsOneWidget);
     // a teljes megjegyzés az űrlapon látszik
@@ -173,7 +206,7 @@ void main() {
     expect(store.measurements.single.pulse, 88);
     expect(_inRow('m1', find.text('88')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('table-row-m1')));
+    await tester.longPress(find.byKey(const Key('table-row-m1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('delete-button')));
     await tester.pumpAndSettle();
@@ -190,7 +223,7 @@ void main() {
       measurement('p1', DateTime(2026, 10, 7, 8), pulse: 66),
     ]);
 
-    await tester.tap(find.byKey(const Key('table-row-p1')));
+    await tester.longPress(find.byKey(const Key('table-row-p1')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('field-pulse')), '');
     await _tapSave(tester);

@@ -4,16 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../domain/chart_data.dart';
 
-/// A grafikon egy pontja: átlag, és ha több mérésből készült, a legkisebb / legnagyobb érték.
+/// A grafikon egy pontja: egy nap (évnél egy hét) átlaga.
 class ChartPoint {
-  const ChartPoint(this.time, this.value, {this.min, this.max});
+  const ChartPoint(this.time, this.value);
 
   final DateTime time;
   final double value;
-  final int? min;
-  final int? max;
-
-  bool get hasRange => min != null && max != null && min != max;
 }
 
 /// Egy adatsor (pl. szisztolé) a saját színével és opcionális referenciavonalával.
@@ -31,8 +27,9 @@ class ChartSeries {
   final int? reference;
 }
 
-/// FR-08: több adatsor egy ábrán, pontokkal, valós időtengellyel; a pontoknál min–max vonal;
-/// FR-10: soronként szaggatott referenciavonal. Saját rajzolás (ADR-010, ADR-011).
+/// FR-08: több adatsor egy ábrán, csak pontokkal, valós időtengellyel;
+/// FR-10: soronként szaggatott referenciavonal; koppintásra egy időpont kiemelése.
+/// Saját rajzolás (ADR-010, ADR-011).
 class BpChart extends StatelessWidget {
   const BpChart({
     super.key,
@@ -40,6 +37,9 @@ class BpChart extends StatelessWidget {
     required this.start,
     required this.end,
     required this.xLabels,
+    this.dotRadius = 4.5,
+    this.highlight,
+    this.onTapTime,
     this.height = 280,
   });
 
@@ -47,6 +47,13 @@ class BpChart extends StatelessWidget {
   final DateTime start;
   final DateTime end;
   final List<AxisLabel> xLabels;
+  final double dotRadius;
+
+  /// A kiemelt pont ideje (a sorok azonos idejű pontjait függőleges vonal köti össze).
+  final DateTime? highlight;
+
+  /// Koppintás: a koppintás helyéhez tartozó idő.
+  final ValueChanged<DateTime>? onTapTime;
   final double height;
 
   @override
@@ -55,14 +62,30 @@ class BpChart extends StatelessWidget {
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: CustomPaint(
-        painter: BpChartPainter(
-          series: series,
-          start: start,
-          end: end,
-          xLabels: xLabels,
-          gridColor: scheme.outlineVariant,
-          textColor: scheme.onSurfaceVariant,
+      child: LayoutBuilder(
+        builder: (context, constraints) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: onTapTime == null
+              ? null
+              : (d) {
+                  final t = BpChartPainter.timeAt(
+                      d.localPosition.dx, constraints.maxWidth, start, end);
+                  if (t != null) onTapTime!(t);
+                },
+          child: CustomPaint(
+            size: Size(constraints.maxWidth, height),
+            painter: BpChartPainter(
+              series: series,
+              start: start,
+              end: end,
+              xLabels: xLabels,
+              dotRadius: dotRadius,
+              highlight: highlight,
+              gridColor: scheme.outlineVariant,
+              textColor: scheme.onSurfaceVariant,
+              highlightColor: scheme.onSurface,
+            ),
+          ),
         ),
       ),
     );
@@ -77,6 +100,9 @@ class BpChartPainter extends CustomPainter {
     required this.xLabels,
     required this.gridColor,
     required this.textColor,
+    this.dotRadius = 4.5,
+    this.highlight,
+    this.highlightColor = Colors.black,
   });
 
   final List<ChartSeries> series;
@@ -85,9 +111,29 @@ class BpChartPainter extends CustomPainter {
   final List<AxisLabel> xLabels;
   final Color gridColor;
   final Color textColor;
+  final double dotRadius;
+  final DateTime? highlight;
+  final Color highlightColor;
 
   static const _left = 36.0;
   static const _right = 30.0;
+
+  /// Vízszintes képpont → idő (a rajzterület bal és jobb szélén kívül null).
+  static DateTime? timeAt(double dx, double width, DateTime start, DateTime end) {
+    final plotWidth = width - _left - _right;
+    if (plotWidth <= 0) return null;
+    final f = (dx - _left) / plotWidth;
+    if (f < -0.02 || f > 1.02) return null;
+    final span = end.difference(start).inMilliseconds;
+    return start.add(Duration(milliseconds: (span * f.clamp(0.0, 1.0)).round()));
+  }
+
+  /// Idő → vízszintes képpont (tesztekhez is).
+  static double xFor(DateTime t, double width, DateTime start, DateTime end) {
+    final plotWidth = width - _left - _right;
+    final span = end.difference(start).inMilliseconds;
+    return _left + plotWidth * (span <= 0 ? 0.5 : t.difference(start).inMilliseconds / span);
+  }
   static const _top = 10.0;
   static const _bottom = 24.0;
 
@@ -95,11 +141,7 @@ class BpChartPainter extends CustomPainter {
   (int, int) get yRange {
     final values = <num>[
       for (final s in series) ...[
-        for (final p in s.points) ...[
-          p.value,
-          if (p.min != null) p.min!,
-          if (p.max != null) p.max!,
-        ],
+        for (final p in s.points) p.value,
         if (s.reference != null) s.reference!,
       ],
     ];
@@ -177,22 +219,37 @@ class BpChartPainter extends CustomPainter {
         _text(canvas, '$ref', Offset(plot.right + 4, y(ref)), color: s.color);
       }
 
-      if (s.points.isEmpty) continue;
+    }
 
-      // napi (heti, havi) legkisebb–legnagyobb érték: vékony függőleges vonal
-      final range = Paint()
-        ..color = s.color.withValues(alpha: 0.45)
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round;
-      for (final p in s.points.where((p) => p.hasRange)) {
-        final px = x(p.time);
-        canvas.drawLine(Offset(px, y(p.min!)), Offset(px, y(p.max!)), range);
+    // kiemelés: az azonos idejű pontokat (SYS–DIA) függőleges vonal köti össze
+    final h = highlight;
+    if (h != null) {
+      final ys = [
+        for (final s in series)
+          for (final p in s.points)
+            if (p.time == h) y(p.value),
+      ];
+      if (ys.isNotEmpty) {
+        final px = x(h);
+        final paint = Paint()
+          ..color = highlightColor.withValues(alpha: 0.6)
+          ..strokeWidth = 2
+          ..strokeCap = StrokeCap.round;
+        canvas.drawLine(Offset(px, ys.reduce(math.min)), Offset(px, ys.reduce(math.max)), paint);
       }
+    }
 
-      // csak pontok, összekötés nélkül – egy kimaradt nap ne tűnjön folytonosnak (v0.4.0)
+    // csak pontok, összekötés nélkül – egy kimaradt nap ne tűnjön folytonosnak (v0.4.0)
+    for (final s in series) {
       final dot = Paint()..color = s.color;
+      final ring = Paint()
+        ..color = s.color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
       for (final p in s.points) {
-        canvas.drawCircle(Offset(x(p.time), y(p.value)), 4.5, dot);
+        final c = Offset(x(p.time), y(p.value));
+        canvas.drawCircle(c, dotRadius, dot);
+        if (p.time == h) canvas.drawCircle(c, dotRadius + 3, ring);
       }
     }
   }
@@ -203,6 +260,8 @@ class BpChartPainter extends CustomPainter {
       old.end != end ||
       old.gridColor != gridColor ||
       old.xLabels.length != xLabels.length ||
+      old.highlight != highlight ||
+      old.dotRadius != dotRadius ||
       !_sameSeries(old.series, series);
 
   static bool _sameSeries(List<ChartSeries> a, List<ChartSeries> b) {
@@ -216,10 +275,7 @@ class BpChartPainter extends CustomPainter {
         return false;
       }
       for (var k = 0; k < pa.length; k++) {
-        if (pa[k].time != pb[k].time ||
-            pa[k].value != pb[k].value ||
-            pa[k].min != pb[k].min ||
-            pa[k].max != pb[k].max) {
+        if (pa[k].time != pb[k].time || pa[k].value != pb[k].value) {
           return false;
         }
       }

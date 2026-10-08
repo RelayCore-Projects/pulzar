@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../app_info.dart';
 import '../domain/grouping.dart';
@@ -9,6 +10,7 @@ import '../platform/file_access.dart';
 import '../state/store_scope.dart';
 import '../util/format.dart';
 import '../widgets/period_selector.dart';
+import '../widgets/measurement_details.dart';
 import '../widgets/stats_card.dart';
 import 'measurement_form_screen.dart';
 
@@ -177,9 +179,13 @@ class _MeasurementRow extends StatelessWidget {
           child: Text(text, textAlign: TextAlign.end, maxLines: 1, style: style),
         );
 
-    // Koppintásra megnyílik a mérés – ott a teljes megjegyzés is látszik (v0.4.0)
+    // Érintés: részletek (teljes megjegyzéssel); hosszú nyomás: szerkesztés (v0.4.0)
     return InkWell(
-      onTap: () => openMeasurementForm(context, existing: m),
+      onTap: () => showMeasurementDetails(context, m),
+      onLongPress: () {
+        HapticFeedback.mediumImpact();
+        openMeasurementForm(context, existing: m);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(

@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import '../app_info.dart';
 import '../domain/chart_data.dart';
 import '../domain/period.dart';
+import '../models/measurement.dart';
 import '../platform/file_access.dart';
 import '../state/store_scope.dart';
+import '../util/format.dart';
 import '../widgets/bp_chart.dart';
+import '../widgets/measurement_details.dart';
 import '../widgets/period_selector.dart';
 
-/// FR-08 – FR-10: szisztolé (piros) és diasztolé (kék) egy grafikonon.
-/// Egy pont = egy nap átlaga (évnél egy hét), csak pontok – ADR-011.
-class ChartsScreen extends StatelessWidget {
+/// FR-08 – FR-10: szisztolé (piros) és diasztolé (kék) pontok egy grafikonon.
+/// Egy pont = egy nap átlaga (évnél egy hét). Koppintásra a nap / hét mérései,
+/// és átugrás a hétre / hónapra – ADR-011.
+class ChartsScreen extends StatefulWidget {
   const ChartsScreen({
     super.key,
     required this.selection,
@@ -26,42 +30,58 @@ class ChartsScreen extends StatelessWidget {
   static Color diastolicColor(Brightness b) =>
       b == Brightness.dark ? Colors.blue.shade300 : Colors.blue.shade700;
 
-  static String _bucketText(Bucket b) => switch (b) {
-        Bucket.day => 'daily',
-        Bucket.week => 'weekly',
-        Bucket.month => 'monthly',
-      };
+  @override
+  State<ChartsScreen> createState() => _ChartsScreenState();
+}
 
-  static String _unitText(Bucket b) => switch (b) {
-        Bucket.day => 'day',
-        Bucket.week => 'week',
-        Bucket.month => 'month',
-      };
+class _ChartsScreenState extends State<ChartsScreen> {
+  /// A kiválasztott nap (évnél hét) kezdete.
+  DateTime? _selected;
+
+  void _change(PeriodSelection s) {
+    setState(() => _selected = null);
+    widget.onChanged(s);
+  }
 
   @override
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
     final today = AppServices.of(context).now();
     // Az „All” itt nem választható: ha a Table-ön az volt, az aktuális év látszik
-    final effective = selection.kind == PeriodKind.all
+    final effective = widget.selection.kind == PeriodKind.all
         ? PeriodSelection(PeriodKind.year, today)
-        : selection;
+        : widget.selection;
     final period = Period.of(effective, earliest: store.earliest, today: today);
     final items =
         store.measurements.where((m) => period.contains(m.measuredAt)).toList();
     final bucket = bucketFor(period.kind);
     final aggregates = aggregate(items, bucket);
+    final selected = aggregates.where((a) => a.start == _selected).firstOrNull;
     final theme = Theme.of(context);
-    final sysColor = systolicColor(theme.brightness);
-    final diaColor = diastolicColor(theme.brightness);
+    final sysColor = ChartsScreen.systolicColor(theme.brightness);
+    final diaColor = ChartsScreen.diastolicColor(theme.brightness);
+    final dotRadius = switch (period.kind) {
+      PeriodKind.week => 5.0,
+      PeriodKind.month => 3.5,
+      _ => 2.5,
+    };
+
+    void onTapTime(DateTime t) {
+      final start = bucketStart(t, bucket);
+      final hit = aggregates.any((a) => a.start == start);
+      setState(() => _selected = hit && _selected != start ? start : null);
+    }
 
     Widget legend(Color color, String text, {bool dashed = false}) => Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 18,
-              height: dashed ? 2 : 3,
-              color: dashed ? color.withValues(alpha: 0.7) : color,
+              width: dashed ? 18 : 10,
+              height: dashed ? 2 : 10,
+              decoration: BoxDecoration(
+                color: dashed ? color.withValues(alpha: 0.7) : color,
+                shape: dashed ? BoxShape.rectangle : BoxShape.circle,
+              ),
             ),
             const SizedBox(width: 6),
             Text(text, style: theme.textTheme.bodySmall),
@@ -73,7 +93,7 @@ class ChartsScreen extends StatelessWidget {
       period: period,
       today: today,
       earliest: store.earliest,
-      onChanged: onChanged,
+      onChanged: _change,
       child: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
@@ -81,7 +101,7 @@ class ChartsScreen extends StatelessWidget {
             period: period,
             today: today,
             earliest: store.earliest,
-            onChanged: onChanged,
+            onChanged: _change,
             kinds: const [PeriodKind.week, PeriodKind.month, PeriodKind.year],
           ),
           if (items.isEmpty)
@@ -92,7 +112,7 @@ class ChartsScreen extends StatelessWidget {
                 child: Text('No measurements in this period.'),
               ),
             )
-          else
+          else ...[
             Card(
               margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
               child: Padding(
@@ -103,7 +123,8 @@ class ChartsScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 8),
                       child: Text(
-                          'Blood pressure (mmHg) – ${_bucketText(bucket)} average',
+                          'Blood pressure (mmHg) – '
+                          '${bucket == Bucket.week ? 'weekly' : 'daily'} average',
                           style: theme.textTheme.titleSmall),
                     ),
                     BpChart(
@@ -111,6 +132,9 @@ class ChartsScreen extends StatelessWidget {
                       start: period.from,
                       end: period.endExclusive,
                       xLabels: axisLabels(period),
+                      dotRadius: dotRadius,
+                      highlight: selected?.center,
+                      onTapTime: onTapTime,
                       series: [
                         ChartSeries(
                           label: 'Systolic',
@@ -118,8 +142,7 @@ class ChartsScreen extends StatelessWidget {
                           reference: AppInfo.defaultRefSystolic,
                           points: [
                             for (final a in aggregates)
-                              ChartPoint(a.center, a.systolic.average,
-                                  min: a.systolic.min, max: a.systolic.max),
+                              ChartPoint(a.center, a.systolic.average),
                           ],
                         ),
                         ChartSeries(
@@ -128,8 +151,7 @@ class ChartsScreen extends StatelessWidget {
                           reference: AppInfo.defaultRefDiastolic,
                           points: [
                             for (final a in aggregates)
-                              ChartPoint(a.center, a.diastolic.average,
-                                  min: a.diastolic.min, max: a.diastolic.max),
+                              ChartPoint(a.center, a.diastolic.average),
                           ],
                         ),
                       ],
@@ -153,8 +175,9 @@ class ChartsScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                       child: Text(
-                        'Each point is the average of one ${_unitText(bucket)}; '
-                        'the faint vertical line shows its lowest and highest value.',
+                        'Each point is the average of one '
+                        '${bucket == Bucket.week ? 'week' : 'day'}. '
+                        'Tap the chart to see the measurements.',
                         key: const Key('chart-caption'),
                         style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant),
@@ -164,7 +187,119 @@ class ChartsScreen extends StatelessWidget {
                 ),
               ),
             ),
+            if (selected != null)
+              _SelectionCard(
+                aggregate: selected,
+                bucket: bucket,
+                kind: period.kind,
+                measurements: items
+                    .where((m) =>
+                        !m.measuredAt.isBefore(selected.start) &&
+                        m.measuredAt.isBefore(selected.end))
+                    .toList()
+                  ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt)),
+                onShow: (kind) => _change(PeriodSelection(kind, selected.start)),
+                onClose: () => setState(() => _selected = null),
+              ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+/// A kiválasztott nap (hét) mérései, és átugrás a hétre / hónapra.
+class _SelectionCard extends StatelessWidget {
+  const _SelectionCard({
+    required this.aggregate,
+    required this.bucket,
+    required this.kind,
+    required this.measurements,
+    required this.onShow,
+    required this.onClose,
+  });
+
+  final Aggregate aggregate;
+  final Bucket bucket;
+  final PeriodKind kind;
+  final List<Measurement> measurements;
+  final ValueChanged<PeriodKind> onShow;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final title = bucket == Bucket.week
+        ? formatDayRange(aggregate.start,
+            aggregate.end.subtract(const Duration(days: 1)))
+        : formatDayHeader(aggregate.start);
+    return Card(
+      key: const Key('chart-selection'),
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(title,
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(color: theme.colorScheme.primary)),
+                ),
+                IconButton(
+                  tooltip: 'Close',
+                  icon: const Icon(Icons.close),
+                  onPressed: onClose,
+                ),
+              ],
+            ),
+            Text(
+              'Average ${aggregate.systolic.average.round()} / '
+              '${aggregate.diastolic.average.round()} mmHg · '
+              '${aggregate.count} ${aggregate.count == 1 ? 'measurement' : 'measurements'}',
+              key: const Key('selection-average'),
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 4),
+            for (final m in measurements)
+              ListTile(
+                key: Key('selection-${m.id}'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                leading: Text(
+                  bucket == Bucket.week
+                      ? '${weekdayShort(m.measuredAt)} ${formatTime(m.measuredAt)}'
+                      : formatTime(m.measuredAt),
+                  style: theme.textTheme.bodyMedium,
+                ),
+                title: Text('${m.systolic} / ${m.diastolic}'
+                    '${m.pulse == null ? '' : '   ${m.pulse} bpm'}'),
+                subtitle: m.note == null
+                    ? null
+                    : Text(m.note!, maxLines: 1, overflow: TextOverflow.ellipsis),
+                onTap: () => showMeasurementDetails(context, m),
+              ),
+            Wrap(
+              spacing: 8,
+              children: [
+                if (kind == PeriodKind.month || kind == PeriodKind.year)
+                  OutlinedButton(
+                    key: const Key('show-week'),
+                    onPressed: () => onShow(PeriodKind.week),
+                    child: const Text('Show week'),
+                  ),
+                if (kind == PeriodKind.year)
+                  OutlinedButton(
+                    key: const Key('show-month'),
+                    onPressed: () => onShow(PeriodKind.month),
+                    child: const Text('Show month'),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
