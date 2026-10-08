@@ -18,7 +18,7 @@ A v0.4.0-hoz fájlmentés / -megnyitás (FR-13) és grafikon (FR-08 – FR-10) k
 
 ## Döntés
 - **Fájlkezelés:** az Android **Storage Access Framework** saját csatornán (`MainActivity.kt` + `lib/platform/file_access.dart`). A felhasználó a rendszer fájlválasztójában dönti el, hová ment (Letöltések, Google Drive…), és honnan tölt vissza. Nem kell tárhely-engedély.
-- **Grafikon:** saját `CustomPainter` (`lib/widgets/bp_chart.dart`): vonal + pontok, valós időtengely, rács, szaggatott referenciavonal.
+- **Grafikon:** saját `CustomPainter` (`lib/widgets/bp_chart.dart`): több adatsor egy ábrán (szisztolé piros, diasztolé kék), vonal + pontok, valós időtengely, rács, soronként szaggatott referenciavonal.
 - A fájlkezelés egy cserélhető felületen (`FileAccess`) keresztül érhető el, így a tesztek valódi fájlrendszer nélkül futnak.
 
 ## Következmények

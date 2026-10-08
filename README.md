@@ -8,7 +8,7 @@ Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyi
 
 - Kézi bevitel: dátum, időpont, szisztolé, diasztolé, pulzus, megjegyzés – naponta legfeljebb 3 mérés
 - Táblázatos nézet választható időszakra, átlaggal, minimummal, maximummal – orvosnak megmutatható formában
-- Külön grafikon a szisztolé és a diasztolé értékekről
+- Grafikon: a szisztolé (piros) és a diasztolé (kék) egy ábrán, referenciavonalakkal
 - Export: PDF (táblázat és/vagy grafikon), CSV (Excelhez), teljes mentés és visszatöltés
 - Minden adat csak a telefonon tárolódik, internetkapcsolat nélkül
 

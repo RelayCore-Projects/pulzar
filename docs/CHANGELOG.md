@@ -12,13 +12,14 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ### Hozzáadva
 - **Mentés és visszatöltés** (FR-13): minden mérés egy JSON-fájlba, a hely szabadon választható (Letöltések, Google Drive…); visszatöltés előnézettel és összefésüléssel
-- **Táblázat** (FR-06, FR-07): időszak-választó (7 / 30 / 90 nap, egyéni), összesítés (átlag, min, max), a referenciaértéket elérő értékek kiemelve
-- **Grafikonok** (FR-08 – FR-10): szisztolé és diasztolé külön, valós időtengellyel, szaggatott referenciavonallal (135 / 85)
+- **Táblázat** (FR-06, FR-07): időszak-választó (7 / 30 / 90 nap, összes), összesítés (átlag, min, max), a referenciaértéket elérő értékek kiemelve
+- **Grafikon** (FR-08, FR-10): szisztolé és diasztolé egy ábrán, valós időtengellyel, szaggatott referenciavonalakkal (135 / 85)
 - [[ADR-009 Gyorsabb CI]], [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]]
 - Új automatikus tesztek: időszak, összesítés, mentés / visszatöltés, táblázat, grafikon, SQLite visszatöltés
 
 ### Módosítva
 - CI: tesztek és APK-fordítás párhuzamosan, Gradle-gyorsítótár, csak 64 bites ARM APK (kisebb, gyorsabb)
+- A kézi teszt alapján: a táblázat napi fejlécsorokkal, egyben görgethető (fekvő módban is); „Custom” helyett „All” időszak; a szisztolé (piros) és a diasztolé (kék) egy grafikonon
 
 ## [0.3.1] – 2026-10-08 – Opcionális pulzus
 

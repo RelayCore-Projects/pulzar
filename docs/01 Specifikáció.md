@@ -16,6 +16,7 @@ frissitve: 2026-10-08
 | 0.2.0 | 2026-10-08 | Az alkalmazás felülete **angol**; FR-01, 02, 04, 06, 11, 12, 13, 16, NFR-03, képernyővázlatok igazítva | Új igény a fejlesztés közben, lásd [[ADR-005 Angol nyelvű felület]] |
 | 0.3.1 | 2026-10-08 | A **pulzus opcionális**: FR-01, FR-02, FR-07, FR-12, adatmodell módosítva | Tesztelés közben talált követelmény-hiba: korábbi mérésekhez nincs mindig pulzus feljegyezve – GitHub #3 |
 | 0.4.0 | 2026-10-08 | FR-06 (sorrend, kiemelés), FR-13 (törölt sorok, napi korlát), FR-14 (mentés helye) pontosítva | A megvalósítás során tisztázott részletek; [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]] |
+| 0.4.0 | 2026-10-08 | FR-06: „Custom” helyett „All”; napi fejléces táblázat; az egész nézet görgethető. FR-08/09: a szisztolé (piros) és a diasztolé (kék) **egy** grafikonon | Visszajelzés a 0.4.0-dev.19 kézi tesztjéből: a dátum oszlop nem fért ki, fekvő módban az összesítő kitakarta a táblázatot, az egyéni időszakra nincs szükség, a két görbe egy ábrán jobban összevethető |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -29,7 +30,7 @@ frissitve: 2026-10-08
 
 Egyetlen felhasználó a saját vérnyomásértékeit **kézzel** rögzíti a telefonján, és ezeket
 - **számszerűen** (táblázatban) meg tudja mutatni az orvosnak,
-- **grafikusan** – külön a szisztolé és külön a diasztolé értékekről – meg tudja jeleníteni,
+- **grafikusan** – a szisztolé és a diasztolé értékeket ~~külön~~ egy ábrán, jól megkülönböztethető színnel `🔄 v0.4.0` – meg tudja jeleníteni,
 - **exportálni** tudja (PDF, CSV, teljes mentés).
 
 Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali** alkalmazás, amely ugyanazokat az adatokat tudja kezelni (v2, lásd [[02 Ütemterv]]).
@@ -114,7 +115,9 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mérések időrendben: `07:30   128 / 82   72`. Érintéssel megnyílik a szerkesztés.
 
 **FR-06 – Táblázatos nézet (orvosnak)**
-- Időszak-választó: „7 days”, „30 days”, „90 days”, „Custom” (dátumtól–dátumig) `🔄 v0.2.0`
+- Időszak-választó: „7 days”, „30 days”, „90 days”, ~~„Custom” (dátumtól–dátumig)~~ `❌ v0.4.0` **„All”** – az összes mérés `🆕 v0.4.0`
+- A táblázat **naponként egy fejlécsort** kap (pl. „Thursday, 8 October 2026”), alatta a nap mérései: Time · SYS · DIA · PUL · Note – így a dátum nem foglal oszlopot, keskeny kijelzőn is kifér `🆕 v0.4.0`
+- Az időszak-választó, az összesítő és a táblázat **együtt görgethető**, fekvő tájolásban is `🆕 v0.4.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
 - A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`
@@ -124,14 +127,14 @@ A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mér�
 **FR-07 – Összesítés**
 A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**. A pulzus összesítése csak a pulzussal rögzített mérésekből készül; ha egy sincs, „–” jelenik meg. `🔄 v0.3.1`
 
-**FR-08 – Szisztolé grafikon**
-Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban.
+**FR-08 – Vérnyomás grafikon** `🔄 v0.4.0`
+Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban. A **szisztolé piros**, a **diasztolé kék** vonal **egy közös ábrán**, jelmagyarázattal. `🆕 v0.4.0`
 
 **FR-09 – Diasztolé grafikon**
-Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.
+~~Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.~~ `❌ v0.4.0` – beolvadt az FR-08-ba (közös ábra).
 
 **FR-10 – Referenciavonal**
-Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaértéknél. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
+Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaértéknél, a sor színével `🔄 v0.4.0`. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
 
 ### 4.3 Export
 
@@ -141,7 +144,7 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 - Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
 - Összesítő blokk (FR-07)
 - Táblázat: minden mérés dátummal és időponttal
-- Grafikon: SYS és DIA külön diagramon, referenciavonallal
+- Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`
 - Lábléc: oldalszám, „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló
 
@@ -245,17 +248,17 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 └───────────────────────────┘
 
 ┌─ Table ───────────────────┐   ┌─ Charts ─────────────────┐
-│ [7d][30d][90d][Custom]    │   │ [7d][30d][90d][Custom]   │
-│ 32 measurements           │   │ Systolic (mmHg)          │
-│       avg   min   max     │   │ 140┤      •              │
+│ [7 d][30 d][90 d][All]    │   │ [7 d][30 d][90 d][All]   │
+│ 32 measurements           │   │ Blood pressure (mmHg)    │
+│       avg   min   max     │   │ 140┤      •  (piros)     │
 │ SYS   129   118   141     │   │ 135┤- - - - - - - - - -  │
 │ DIA    83    76    90     │   │ 130┤ •─•   •─•  •        │
 │ PUL    73    64    88     │   │ 120┤      ─         ─•   │
-│───────────────────────────│   │ Diastolic (mmHg)         │
-│ Date    Time  SYS DIA PUL │   │  90┤   •                 │
-│ 08/10   07:30 128  82  72 │   │  85┤- - - - - - - - - -  │
-│ 08/10   13:10 131  85  75 │   │  80┤ •─•  ─•─•  •─•      │
-│               [Export ▾]  │   │               [Export ▾] │
+│───────────────────────────│   │  90┤   •     (kék)       │
+│ Time  SYS DIA PUL  Note   │   │  85┤- - - - - - - - - -  │
+│ Thursday, 8 October 2026  │   │  80┤ •─•  ─•─•  •─•      │
+│ 07:30 128  82  72         │   │ ━ Systolic ━ Diastolic   │
+│ 13:10 131  85  75         │   │               [Export ▾] │
 └───────────────────────────┘   └──────────────────────────┘
 ```
 

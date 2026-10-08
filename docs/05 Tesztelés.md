@@ -43,8 +43,8 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-07 | FR-04 | Mérés szerkesztése, pulzus 72 → 80 | A módosítás mindenhol látszik |
 | T-08 | FR-04 | Mérés törlése | Megerősítést kér; utána eltűnik |
 | T-09 | FR-06, FR-07 | Táblázat, 30 nap | Csak az időszak mérései; átlag/min/max helyes |
-| T-10 | FR-06 | Egyéni időszak | Csak a tartomány mérései |
-| T-11 | FR-08, FR-09 | Grafikon, 30 nap | Két külön diagram, helyes értékek és időpontok |
+| T-10 | FR-06 `🔄 v0.4.0` | ~~Egyéni időszak~~ → **All** | Minden mérés látszik, a legkorábbitól |
+| T-11 | FR-08 `🔄 v0.4.0` | Grafikon, 30 nap | Egy ábra: piros szisztolé, kék diasztolé, helyes értékek és időpontok |
 | T-12 | FR-10 (v0.5.0-tól) | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
 | T-13 | FR-11 | PDF, „mindkettő”, 30 nap | Fejléc, összesítés, táblázat, két grafikon, oldalszám |
 | T-14 | FR-12 | CSV export, megnyitás Excelben | Ékezetek és oszlopok helyesek |
@@ -56,12 +56,21 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a naplóban nincs „bpm” |
 | T-21 | NFR-06 `🆕 v0.3.1` | Meglévő mérésekkel az új verzió telepítése a régire | Minden korábbi mérés megvan, változatlan értékekkel |
 | T-22 | FR-13 `🆕 v0.4.0` | Visszatöltés egy nem Pulzar-fájlból (pl. egy fénykép) | Hibaüzenet, semmi nem változik |
-| T-23 | FR-06 `🆕 v0.4.0` | Table → Custom → két dátum kiválasztása → Change → másik tartomány | A táblázat és a grafikon is az új tartományt mutatja |
+| T-23 | FR-06 `🆕 v0.4.0` | Table fekvő tájolásban, sok méréssel | Az egész nézet görgethető, a dátum nem lóg ki |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
+
+### v0.4.0 – visszajelzés a 0.4.0-dev.19 kézi tesztjéből (2026-10-08)
+
+| Nézet | Észrevétel | Megoldás |
+|---|---|---|
+| Table | A dátum nem fér ki a telefon képernyőjére | Napi fejlécsor, a dátum oszlop megszűnt |
+| Table | Fekvő módban az összesítő elfoglalja a képernyőt, nem görgethető | Az egész nézet egyben görgethető |
+| Table, Charts | A „Custom” időszakra nincs szükség | „All” – minden mérés |
+| Charts | A szisztolé és a diasztolé legyen egy ábrán; szisztolé piros, diasztolé kék | Közös grafikon, piros / kék, jelmagyarázattal |
 
 ### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
 
