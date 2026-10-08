@@ -17,6 +17,7 @@ frissitve: 2026-10-08
 | 0.3.1 | 2026-10-08 | A **pulzus opcionális**: FR-01, FR-02, FR-07, FR-12, adatmodell módosítva | Tesztelés közben talált követelmény-hiba: korábbi mérésekhez nincs mindig pulzus feljegyezve – GitHub #3 |
 | 0.4.0 | 2026-10-08 | FR-06 (sorrend, kiemelés), FR-13 (törölt sorok, napi korlát), FR-14 (mentés helye) pontosítva | A megvalósítás során tisztázott részletek; [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]] |
 | 0.4.0 | 2026-10-08 | FR-06: „Custom” helyett „All”; napi fejléces táblázat; az egész nézet görgethető. FR-08/09: a szisztolé (piros) és a diasztolé (kék) **egy** grafikonon | Visszajelzés a 0.4.0-dev.19 kézi tesztjéből: a dátum oszlop nem fért ki, fekvő módban az összesítő kitakarta a táblázatot, az egyéni időszakra nincs szükség, a két görbe egy ábrán jobban összevethető |
+| 0.4.0 | 2026-10-08 | FR-06: **naptári időszakok** (Week · Month · Year · All) lapozással; FR-08: egy pont = **napi átlag** min–max vonallal (Year: heti, All: havi) | Visszajelzés: a gördülő 7 nap helyett teljes hetek kellenek, egymás után lapozva; napi 3 mérésnél a pontok összezsúfolódtak – [[ADR-011 Naptári időszakok és átlagolt grafikon]] |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -115,20 +116,31 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mérések időrendben: `07:30   128 / 82   72`. Érintéssel megnyílik a szerkesztés.
 
 **FR-06 – Táblázatos nézet (orvosnak)**
-- Időszak-választó: „7 days”, „30 days”, „90 days”, ~~„Custom” (dátumtól–dátumig)~~ `❌ v0.4.0` **„All”** – az összes mérés `🆕 v0.4.0`
+- Időszak-választó: ~~„7 days”, „30 days”, „90 days”~~, ~~„Custom” (dátumtól–dátumig)~~ `❌ v0.4.0` → **naptári időszakok** `🆕 v0.4.0`:
+  - **Week** – hétfőtől vasárnapig
+  - **Month** – a hónap 1-jétől az utolsó napjáig
+  - **Year** – január 1-jétől december 31-ig
+  - **All** – a legkorábbi méréstől máig
+- Lapozás ‹ › gombokkal és **húzással** (jobbra: előző, balra: következő időszak); a jövőbe és a legkorábbi mérés elé nem lehet lapozni `🆕 v0.4.0`
 - A táblázat **naponként egy fejlécsort** kap (pl. „Thursday, 8 October 2026”), alatta a nap mérései: Time · SYS · DIA · PUL · Note – így a dátum nem foglal oszlopot, keskeny kijelzőn is kifér `🆕 v0.4.0`
 - Az időszak-választó, az összesítő és a táblázat **együtt görgethető**, fekvő tájolásban is `🆕 v0.4.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
 - A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`
 - Sorrend: időrendben, a legkorábbi felül; az egy naphoz tartozó sorok közös háttérsávban `🆕 v0.4.0`
-- Alapértelmezett időszak: 30 nap; a Table és a Charts nézet ugyanazt az időszakot használja `🆕 v0.4.0`
+- Alapértelmezett időszak: az aktuális hét; a Table és a Charts nézet ugyanazt az időszakot használja `🆕 v0.4.0`
 
 **FR-07 – Összesítés**
 A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**. A pulzus összesítése csak a pulzussal rögzített mérésekből készül; ha egy sincs, „–” jelenik meg. `🔄 v0.3.1`
 
 **FR-08 – Vérnyomás grafikon** `🔄 v0.4.0`
 Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban. A **szisztolé piros**, a **diasztolé kék** vonal **egy közös ábrán**, jelmagyarázattal. `🆕 v0.4.0`
+- **Egy pont = egy időegység átlaga**, a pontnál halvány függőleges vonal a legkisebb és legnagyobb értékkel (ha több mérés volt) `🆕 v0.4.0`:
+  - Week, Month → napi átlag
+  - Year → heti átlag
+  - All → havi átlag
+- Mérés nélküli napon nincs pont; a vonal a szomszédos pontokat köti össze
+- Az egyes mérések pontos értékei a táblázatban (FR-06) láthatók
 
 **FR-09 – Diasztolé grafikon**
 ~~Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.~~ `❌ v0.4.0` – beolvadt az FR-08-ba (közös ábra).
@@ -248,7 +260,8 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 └───────────────────────────┘
 
 ┌─ Table ───────────────────┐   ┌─ Charts ─────────────────┐
-│ [7 d][30 d][90 d][All]    │   │ [7 d][30 d][90 d][All]   │
+│ [Week][Month][Year][All]  │   │ [Week][Month][Year][All] │
+│ ‹    5 – 11 October 2026 › │   │ ‹   5 – 11 October 2026 › │
 │ 32 measurements           │   │ Blood pressure (mmHg)    │
 │       avg   min   max     │   │ 140┤      •  (piros)     │
 │ SYS   129   118   141     │   │ 135┤- - - - - - - - - -  │

@@ -12,14 +12,15 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ### Hozzáadva
 - **Mentés és visszatöltés** (FR-13): minden mérés egy JSON-fájlba, a hely szabadon választható (Letöltések, Google Drive…); visszatöltés előnézettel és összefésüléssel
-- **Táblázat** (FR-06, FR-07): időszak-választó (7 / 30 / 90 nap, összes), összesítés (átlag, min, max), a referenciaértéket elérő értékek kiemelve
-- **Grafikon** (FR-08, FR-10): szisztolé és diasztolé egy ábrán, valós időtengellyel, szaggatott referenciavonalakkal (135 / 85)
-- [[ADR-009 Gyorsabb CI]], [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]]
+- **Táblázat** (FR-06, FR-07): naptári időszakok (hét, hónap, év, összes) lapozással, összesítés (átlag, min, max), a referenciaértéket elérő értékek kiemelve
+- **Grafikon** (FR-08, FR-10): szisztolé (piros) és diasztolé (kék) egy ábrán; egy pont = napi átlag min–max vonallal (évnél heti, összesnél havi); szaggatott referenciavonalak (135 / 85)
+- [[ADR-009 Gyorsabb CI]], [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]], [[ADR-011 Naptári időszakok és átlagolt grafikon]]
 - Új automatikus tesztek: időszak, összesítés, mentés / visszatöltés, táblázat, grafikon, SQLite visszatöltés
 
 ### Módosítva
 - CI: tesztek és APK-fordítás párhuzamosan, Gradle-gyorsítótár, csak 64 bites ARM APK (kisebb, gyorsabb)
 - A kézi teszt alapján: a táblázat napi fejlécsorokkal, egyben görgethető (fekvő módban is); „Custom” helyett „All” időszak; a szisztolé (piros) és a diasztolé (kék) egy grafikonon
+- A második visszajelzés alapján: naptári hetek / hónapok / évek lapozással (‹ › és húzás); a grafikonon napi átlagok
 
 ## [0.3.1] – 2026-10-08 – Opcionális pulzus
 

@@ -38,6 +38,7 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
    - [[ADR-008 Alkalmazásikon]]
    - [[ADR-009 Gyorsabb CI]]
    - [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]]
+   - [[ADR-011 Naptári időszakok és átlagolt grafikon]]
 
 ## Privát jegyzetek
 

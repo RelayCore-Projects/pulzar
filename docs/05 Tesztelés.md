@@ -42,9 +42,9 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-06 | FR-03 | Ugyanarra a napra 4. mérés | Figyelmeztetés a napi korlátról |
 | T-07 | FR-04 | Mérés szerkesztése, pulzus 72 → 80 | A módosítás mindenhol látszik |
 | T-08 | FR-04 | Mérés törlése | Megerősítést kér; utána eltűnik |
-| T-09 | FR-06, FR-07 | Táblázat, 30 nap | Csak az időszak mérései; átlag/min/max helyes |
+| T-09 | FR-06, FR-07 `🔄 v0.4.0` | Table, Week, majd Month | Csak a hét (hétfő–vasárnap) / a hónap mérései; átlag/min/max helyes |
 | T-10 | FR-06 `🔄 v0.4.0` | ~~Egyéni időszak~~ → **All** | Minden mérés látszik, a legkorábbitól |
-| T-11 | FR-08 `🔄 v0.4.0` | Grafikon, 30 nap | Egy ábra: piros szisztolé, kék diasztolé, helyes értékek és időpontok |
+| T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék; a napon egy pont (átlag) és egy min–max vonal |
 | T-12 | FR-10 (v0.5.0-tól) | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
 | T-13 | FR-11 | PDF, „mindkettő”, 30 nap | Fejléc, összesítés, táblázat, két grafikon, oldalszám |
 | T-14 | FR-12 | CSV export, megnyitás Excelben | Ékezetek és oszlopok helyesek |
@@ -57,6 +57,8 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-21 | NFR-06 `🆕 v0.3.1` | Meglévő mérésekkel az új verzió telepítése a régire | Minden korábbi mérés megvan, változatlan értékekkel |
 | T-22 | FR-13 `🆕 v0.4.0` | Visszatöltés egy nem Pulzar-fájlból (pl. egy fénykép) | Hibaüzenet, semmi nem változik |
 | T-23 | FR-06 `🆕 v0.4.0` | Table fekvő tájolásban, sok méréssel | Az egész nézet görgethető, a dátum nem lóg ki |
+| T-25 | FR-06 `🆕 v0.4.0` | Charts-on és Table-ön húzás jobbra / balra, ‹ › gombok | Előző / következő hét (hónap, év); a jövőbe nem lapoz |
+| T-26 | FR-08 `🆕 v0.4.0` | Charts, Year és All | Heti, illetve havi átlagok; olvasható feliratok |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
@@ -71,6 +73,8 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | Table | Fekvő módban az összesítő elfoglalja a képernyőt, nem görgethető | Az egész nézet egyben görgethető |
 | Table, Charts | A „Custom” időszakra nincs szükség | „All” – minden mérés |
 | Charts | A szisztolé és a diasztolé legyen egy ábrán; szisztolé piros, diasztolé kék | Közös grafikon, piros / kék, jelmagyarázattal |
+| Charts | 7 nap helyett teljes hetek, és lapozás húzással az előző / következő hétre; Week / Month / Year / All | Naptári időszakok, ‹ › és húzás (Table-ön is) |
+| Charts | Napi 3 mérésnél a pontok összezsúfolódnak; hetente 7 pont legyen | Egy pont = napi átlag + min–max vonal ([[ADR-011 Naptári időszakok és átlagolt grafikon]]) |
 
 ### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
 
