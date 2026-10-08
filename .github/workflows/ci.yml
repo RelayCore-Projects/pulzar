@@ -1,9 +1,10 @@
 name: CI
 
-# Minden feltöltésnél: elemzés + tesztek, majd aláírt APK.
+# Minden feltöltésnél: elemzés + tesztek és az aláírt APK fordítása PÁRHUZAMOSAN,
+# majd – csak ha mindkettő sikeres – közzététel:
 #  - ágra pusholva  → "Preview" előzetes kiadás (mindig a legutóbbi fordítás)
 #  - v* címkére     → végleges GitHub Release a CHANGELOG megfelelő részével
-# Részletek: docs/Döntések/ADR-006
+# Részletek: docs/Döntések/ADR-006, ADR-009
 on:
   push:
     branches: ['**']
@@ -36,14 +37,17 @@ jobs:
       # A tárolási tesztekhez (sqflite_common_ffi) a gépen SQLite kell
       - run: sudo apt-get install -y libsqlite3-dev
       - run: flutter pub get
-      - run: flutter analyze
+      # Hibák és figyelmeztetések megállítják a folyamatot, a stílusjavaslatok (info) csak megjelennek
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
 
   apk:
     name: APK fordítása
-    needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    outputs:
+      version_name: ${{ steps.version.outputs.name }}
+      version_display: ${{ steps.version.outputs.display }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,6 +57,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
 
       - uses: subosito/flutter-action@v2
         with:
@@ -61,6 +66,7 @@ jobs:
           cache: true
 
       - name: Verzió meghatározása
+        id: version
         run: |
           BUILD_NUMBER=$(git rev-list --count HEAD)
           SHORT_SHA=$(git rev-parse --short HEAD)
@@ -81,6 +87,8 @@ jobs:
             echo "VERSION_NAME=$NAME"
             echo "VERSION_DISPLAY=$DISPLAY"
           } >> "$GITHUB_ENV"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "display=$DISPLAY" >> "$GITHUB_OUTPUT"
           echo "Verzió: $DISPLAY (build $BUILD_NUMBER)"
 
       - name: Aláíró kulcs előkészítése
@@ -94,12 +102,14 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/pulzar-release.jks"
           echo "PULZAR_KEYSTORE_PATH=$RUNNER_TEMP/pulzar-release.jks" >> "$GITHUB_ENV"
 
+      # Csak 64 bites ARM (minden mai telefon) – gyorsabb fordítás, ~harmad akkora APK (ADR-009)
       - name: APK fordítása
         env:
           PULZAR_KEYSTORE_PASSWORD: ${{ secrets.PULZAR_KEYSTORE_PASSWORD }}
           PULZAR_KEY_ALIAS: ${{ secrets.PULZAR_KEY_ALIAS }}
         run: |
           flutter build apk --release \
+            --target-platform android-arm64 \
             --build-name "$VERSION_NAME" \
             --build-number "$BUILD_NUMBER" \
             --dart-define=APP_VERSION="$VERSION_DISPLAY"
@@ -108,14 +118,28 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pulzar-${{ env.VERSION_NAME }}
+          name: apk
           path: pulzar-*.apk
           retention-days: 30
 
+  publish:
+    name: Közzététel
+    needs: [test, apk]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION_NAME: ${{ needs.apk.outputs.version_name }}
+      VERSION_DISPLAY: ${{ needs.apk.outputs.version_display }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+
       - name: Preview kiadás frissítése
         if: github.ref_type == 'branch'
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete preview --yes --cleanup-tag 2>/dev/null || true
           gh release create preview pulzar-*.apk \
@@ -126,8 +150,6 @@ jobs:
 
       - name: Végleges kiadás
         if: github.ref_type == 'tag'
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           # A CHANGELOG adott verziójának szakasza, Obsidian-linkek nélkül
           awk -v v="$VERSION_NAME" '
