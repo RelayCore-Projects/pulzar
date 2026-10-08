@@ -85,7 +85,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
     if (existing != null) {
       _systolic.text = '${existing.systolic}';
       _diastolic.text = '${existing.diastolic}';
-      _pulse.text = '${existing.pulse}';
+      _pulse.text = existing.pulse?.toString() ?? '';
       _note.text = existing.note ?? '';
     }
   }
@@ -133,7 +133,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
     final store = StoreScope.read(context);
     final systolic = int.parse(_systolic.text.trim());
     final diastolic = int.parse(_diastolic.text.trim());
-    final pulse = int.parse(_pulse.text.trim());
+    final pulse = int.tryParse(_pulse.text.trim());
     final existing = widget.existing;
 
     setState(() => _saving = true);
@@ -300,10 +300,10 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
             _NumberField(
               fieldKey: const Key('field-pulse'),
               controller: _pulse,
-              label: 'Pulse',
+              label: 'Pulse (optional)',
               unit: 'bpm',
-              validator: (v) =>
-                  MeasurementRules.validateNumber(v, MeasurementRules.pulse),
+              validator: (v) => MeasurementRules.validateOptionalNumber(
+                  v, MeasurementRules.pulse),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -395,7 +395,7 @@ class DailyLimitDialog extends StatelessWidget {
               title: Text(
                 '${formatTime(m.measuredAt)}   ${m.systolic} / ${m.diastolic}',
               ),
-              subtitle: Text('${m.pulse} bpm'),
+              subtitle: m.pulse == null ? null : Text('${m.pulse} bpm'),
               onTap: () => Navigator.of(context).pop(m),
             ),
         ],

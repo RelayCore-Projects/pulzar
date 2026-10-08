@@ -82,6 +82,34 @@ void main() {
     expect(find.textContaining('Today'), findsOneWidget);
   });
 
+  testWidgets('FR-01: pulse can be left empty (#3)', (tester) async {
+    final store = await _pumpApp(tester);
+
+    await tester.tap(find.byKey(const Key('add-button')));
+    await tester.pumpAndSettle();
+    expect(find.text('Pulse (optional)'), findsOneWidget);
+    await _fillForm(tester, sys: '128', dia: '82', pulse: '');
+    await _tapSave(tester);
+
+    expect(store.measurements.single.pulse, isNull);
+    expect(find.text('128 / 82 mmHg'), findsOneWidget);
+    expect(find.textContaining('bpm'), findsNothing);
+  });
+
+  testWidgets('FR-04: pulse can be removed when editing (#3)', (tester) async {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final at = DateTime(yesterday.year, yesterday.month, yesterday.day, 8);
+    final store =
+        await _pumpApp(tester, initial: [measurement('p1', at, pulse: 66)]);
+
+    await tester.tap(find.byKey(const Key('measurement-p1')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('field-pulse')), '');
+    await _tapSave(tester);
+
+    expect(store.measurements.single.pulse, isNull);
+  });
+
   testWidgets('FR-02: diastolic must be lower than systolic', (tester) async {
     final store = await _pumpApp(tester);
 

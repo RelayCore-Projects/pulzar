@@ -1,6 +1,6 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.2.0
+dokumentum_verzio: 0.3.1
 statusz: jóváhagyva
 frissitve: 2026-10-08
 ---
@@ -14,6 +14,7 @@ frissitve: 2026-10-08
 | 0.1.0 | 2026-10-08 | Első változat (koncepció) | Kiinduló igények, lásd [[#1. Cél]] |
 | 0.1.1 | 2026-10-08 | Nyitott kérdések lezárva: FR-03, FR-10, FR-11, NFR-08 pontosítva; pulzus grafikon nem kerül a v1.0-ba | K-01…K-05 döntései, lásd [[#9. Nyitott kérdések]] |
 | 0.2.0 | 2026-10-08 | Az alkalmazás felülete **angol**; FR-01, 02, 04, 06, 11, 12, 13, 16, NFR-03, képernyővázlatok igazítva | Új igény a fejlesztés közben, lásd [[ADR-005 Angol nyelvű felület]] |
+| 0.3.1 | 2026-10-08 | A **pulzus opcionális**: FR-01, FR-02, FR-07, FR-12, adatmodell módosítva | Tesztelés közben talált követelmény-hiba: korábbi mérésekhez nincs mindig pulzus feljegyezve – GitHub #3 |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -82,7 +83,7 @@ A felhasználó új mérést vehet fel a következő mezőkkel:
 | Időpont | igen | aktuális idő | ÓÓ:PP (24 órás), **szabadon megadható** |
 | Szisztolé | igen | – | egész szám, Hgmm |
 | Diasztolé | igen | – | egész szám, Hgmm |
-| Pulzus | igen | – | egész szám, /perc |
+| Pulzus | ~~igen~~ **nem** `🔄 v0.3.1` | – | egész szám, /perc; üresen hagyható |
 | Megjegyzés | nem | üres | szöveg, max. 200 karakter (pl. „gyógyszer után”, „bal kar”) |
 
 A számmezőknél numerikus billentyűzet jelenik meg, és a mentés egy érintéssel elérhető.
@@ -94,7 +95,7 @@ Mentés csak érvényes adattal lehetséges; hiba esetén a mező alatt angol ny
 |---|---|
 | Szisztolé tartomány | 50 – 300 Hgmm |
 | Diasztolé tartomány | 30 – 200 Hgmm |
-| Pulzus tartomány | 30 – 250 /perc |
+| Pulzus tartomány | 30 – 250 /perc – csak ha meg van adva `🔄 v0.3.1` |
 | Logikai szabály | szisztolé > diasztolé |
 | Időpont | nem lehet a jövőben |
 
@@ -118,7 +119,7 @@ A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mér�
 - A referenciaérték feletti értékek kiemelve (félkövér), lásd FR-10
 
 **FR-07 – Összesítés**
-A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**.
+A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**. A pulzus összesítése csak a pulzussal rögzített mérésekből készül; ha egy sincs, „–” jelenik meg. `🔄 v0.3.1`
 
 **FR-08 – Szisztolé grafikon**
 Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban.
@@ -146,6 +147,7 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 - Kódolás: UTF-8 BOM-mal, elválasztó: pontosvessző (`;`) – így a magyar Excel helyesen nyitja meg
 - Fejléc: `Date;Time;Systolic (mmHg);Diastolic (mmHg);Pulse (bpm);Note` `🔄 v0.2.0`
 - Dátum: `2026-10-08` (ISO 8601, minden Excel egyértelműen értelmezi), idő: `07:30` `🔄 v0.2.0`
+- Hiányzó pulzus: üres cella `🔄 v0.3.1`
 
 **FR-13 – Teljes mentés és visszatöltés**
 - Mentés: az összes adat egyetlen JSON-fájlba (`pulzar-backup-2026-10-08.json`) `🔄 v0.2.0`
@@ -189,7 +191,7 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 | `measured_at` | dátum-idő (helyi idő) | A mérés időpontja |
 | `systolic` | egész | Hgmm |
 | `diastolic` | egész | Hgmm |
-| `pulse` | egész | /perc |
+| `pulse` | egész, **opcionális** `🔄 v0.3.1` | /perc |
 | `note` | szöveg, opcionális | max. 200 karakter |
 | `created_at` | dátum-idő (UTC) | Létrehozás |
 | `updated_at` | dátum-idő (UTC) | Utolsó módosítás – összefésülésnél ez dönt |

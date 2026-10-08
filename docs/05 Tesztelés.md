@@ -53,26 +53,12 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-17 | FR-14 | PDF megosztása e-mailben | A csatolmány megnyitható |
 | T-18 | NFR-01 | Repülőgép üzemmódban minden funkció | Minden működik |
 | T-19 | NFR-05 | Rendszer betűméret: legnagyobb; sötét téma | Olvasható, semmi nem lóg ki |
+| T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a naplóban nincs „bpm” |
+| T-21 | NFR-06 `🆕 v0.3.1` | Meglévő mérésekkel az új verzió telepítése a régire | Minden korábbi mérés megvan, változatlan értékekkel |
 
 ## Tesztkörök
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
-
-### v0.3.0 – 2026-10-08 (Preview 0.3.0-dev.9)
-
-| ID | Eredmény | Megjegyzés |
-|---|---|---|
-| T-01 | ✅ | |
-| T-02 | ✅ | |
-| T-03 | ✅ | |
-| T-04 | ✅ | |
-| T-05 | ✅ | |
-| T-06 | ✅ | |
-| T-07 | ✅ | |
-| T-08 | ✅ | |
-| T-09 … T-19 | ➖ | még nem készült el |
-| Saját ikon | ⏳ | a 0.3.0-dev.10-től; a végleges 0.3.0 telepítésekor ellenőrizendő |
-| Automatikus tesztek (CI) | ✅ | 27 teszt |
 
 ### v0.2.0 – 2026-10-08 (Preview 0.2.0-dev.6)
 

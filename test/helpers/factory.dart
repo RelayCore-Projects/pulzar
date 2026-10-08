@@ -6,7 +6,7 @@ Measurement measurement(
   DateTime at, {
   int systolic = 120,
   int diastolic = 80,
-  int pulse = 70,
+  int? pulse = 70,
   String? note,
 }) {
   final stamp = DateTime.utc(2026, 1, 1);

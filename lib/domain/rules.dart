@@ -30,6 +30,12 @@ class MeasurementRules {
     return null;
   }
 
+  /// Üres érték megengedett (pl. pulzus, v0.3.1); ha van, a tartománynak meg kell felelnie.
+  static String? validateOptionalNumber(String? raw, Range range) {
+    if ((raw?.trim() ?? '').isEmpty) return null;
+    return validateNumber(raw, range);
+  }
+
   static String? validateDiastolicAgainstSystolic({
     required int? systolic,
     required int? diastolic,

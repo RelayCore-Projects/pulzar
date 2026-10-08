@@ -33,9 +33,10 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
+      # A tárolási tesztekhez (sqflite_common_ffi) a gépen SQLite kell
+      - run: sudo apt-get install -y libsqlite3-dev
       - run: flutter pub get
-      # Hibák és figyelmeztetések megállítják a folyamatot, a stílusjavaslatok (info) csak megjelennek
-      - run: flutter analyze --no-fatal-infos
+      - run: flutter analyze
       - run: flutter test
 
   apk:
