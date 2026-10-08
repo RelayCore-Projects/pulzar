@@ -27,9 +27,11 @@ A 0.4.0-dev kézi tesztje után két igény merült fel:
 |---|---|
 | Week, Month | nap |
 | Year | hét |
-| All | hónap |
+| ~~All~~ | ~~hónap~~ – a grafikonon nem választható (v0.4.0, második visszajelzés) |
 
 - A táblázat és az összesítő **változatlanul az egyes méréseket** mutatja.
+- **Csak pontok**, összekötő vonal nélkül (második visszajelzés): mérés nélküli napoknál az összekötés folytonosságot sugallna.
+- A táblázatban az „All” megmarad; a grafikon ilyenkor az aktuális évet mutatja.
 
 ## Következmények
 - Az „aktuális idő” cserélhető lett (`AppServices.clock`), így a naptári határok rögzített dátummal tesztelhetők.

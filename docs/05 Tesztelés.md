@@ -34,7 +34,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 
 | ID | Követelmény | Lépések | Elvárt eredmény |
 |---|---|---|---|
-| T-01 | FR-01 | Új mérés: 128 / 82 / 72, mai nap, aktuális idő → Mentés | Megjelenik a naplóban a mai napnál |
+| T-01 | FR-01 | Új mérés: 128 / 82 / 72, mai nap, aktuális idő → Mentés | Megjelenik a táblázatban a mai napnál `🔄 v0.4.0` |
 | T-02 | FR-01 | Új mérés, időpontot átállítod 06:15-re | A mérés 06:15-tel jelenik meg, helyes sorrendben |
 | T-03 | FR-02 | Szisztolé 80, diasztolé 90 | Hibaüzenet: a szisztolé legyen nagyobb |
 | T-04 | FR-02 | Szisztolé 400 | Hibaüzenet a tartományról |
@@ -53,12 +53,13 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-17 | FR-14 | PDF megosztása e-mailben | A csatolmány megnyitható |
 | T-18 | NFR-01 | Repülőgép üzemmódban minden funkció | Minden működik |
 | T-19 | NFR-05 | Rendszer betűméret: legnagyobb; sötét téma | Olvasható, semmi nem lóg ki |
-| T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a naplóban nincs „bpm” |
+| T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a táblázatban a pulzus helyén „–” `🔄 v0.4.0` |
 | T-21 | NFR-06 `🆕 v0.3.1` | Meglévő mérésekkel az új verzió telepítése a régire | Minden korábbi mérés megvan, változatlan értékekkel |
 | T-22 | FR-13 `🆕 v0.4.0` | Visszatöltés egy nem Pulzar-fájlból (pl. egy fénykép) | Hibaüzenet, semmi nem változik |
 | T-23 | FR-06 `🆕 v0.4.0` | Table fekvő tájolásban, sok méréssel | Az egész nézet görgethető, a dátum nem lóg ki |
 | T-25 | FR-06 `🆕 v0.4.0` | Charts-on és Table-ön húzás jobbra / balra, ‹ › gombok | Előző / következő hét (hónap, év); a jövőbe nem lapoz |
-| T-26 | FR-08 `🆕 v0.4.0` | Charts, Year és All | Heti, illetve havi átlagok; olvasható feliratok |
+| T-26 | FR-08 `🆕 v0.4.0` | Charts, Month és Year; a Table-ön „All”, majd Charts | Napi, illetve heti átlagok pontokkal; „All” helyett az aktuális év |
+| T-27 | FR-06 `🆕 v0.4.0` | Table: + gomb; sorra koppintás; hosszú megjegyzés | Új mérés felvehető; a sor megnyílik szerkesztésre; a megjegyzés egy sorban, teljes szöveg az űrlapon |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
@@ -75,6 +76,10 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | Charts | A szisztolé és a diasztolé legyen egy ábrán; szisztolé piros, diasztolé kék | Közös grafikon, piros / kék, jelmagyarázattal |
 | Charts | 7 nap helyett teljes hetek, és lapozás húzással az előző / következő hétre; Week / Month / Year / All | Naptári időszakok, ‹ › és húzás (Table-ön is) |
 | Charts | Napi 3 mérésnél a pontok összezsúfolódnak; hetente 7 pont legyen | Egy pont = napi átlag + min–max vonal ([[ADR-011 Naptári időszakok és átlagolt grafikon]]) |
+| Table | A táblázat mellett a Log fül fölösleges; a táblázatból lehessen rögzíteni | Log megszűnt; Table a főképernyő, jobb alul + gomb |
+| Table | A 200 karakteres megjegyzés nem fér el | Egysoros, levágott megjegyzés ikonnal; koppintásra a teljes mérés |
+| Charts | Az „All” nem ábrázolható jól | A Charts-on csak Week / Month / Year |
+| Charts | Mérés nélküli napoknál az összekötő vonal zavaró | Csak pontok |
 
 ### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
 
