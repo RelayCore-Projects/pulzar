@@ -32,6 +32,7 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
    - [[ADR-002 Helyi adattárolás]]
    - [[ADR-003 Nyilvános repó és MIT licenc]]
    - [[ADR-004 Repó- és vault-szerkezet]]
+   - [[ADR-005 Angol nyelvű felület]]
 
 ## Privát jegyzetek
 

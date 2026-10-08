@@ -14,6 +14,8 @@ Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyi
 
 Részletesen: [docs/01 Specifikáció.md](docs/01%20Specifikáció.md) · Ütemterv: [docs/02 Ütemterv.md](docs/02%20Ütemterv.md) · Változások: [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
+Az alkalmazás felülete **angol**, a projekt dokumentációja magyar.
+
 ## Technológia
 
 [Flutter](https://flutter.dev) (Dart) – egy kódbázis Androidra, később Windows asztali alkalmazásra is.

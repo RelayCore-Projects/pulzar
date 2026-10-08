@@ -10,6 +10,14 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+### Hozzáadva
+- Flutter projektváz: alsó navigáció (Log · Table · Charts), helyőrző nézetek, Settings, About (verzió, licenc, figyelmeztetés)
+- Első automatikus tesztek (`test/widget_test.dart`)
+- [[ADR-005 Angol nyelvű felület]]
+
+### Módosítva
+- Az alkalmazás felülete angol (`en_GB`); a dokumentáció magyar marad – [[01 Specifikáció]] 0.2.0
+
 ## [0.1.1] – 2026-10-08 – Koncepció lezárva
 
 ### Módosítva

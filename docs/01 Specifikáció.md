@@ -1,6 +1,6 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.1.1
+dokumentum_verzio: 0.2.0
 statusz: jóváhagyva
 frissitve: 2026-10-08
 ---
@@ -13,6 +13,7 @@ frissitve: 2026-10-08
 |---|---|---|---|
 | 0.1.0 | 2026-10-08 | Első változat (koncepció) | Kiinduló igények, lásd [[#1. Cél]] |
 | 0.1.1 | 2026-10-08 | Nyitott kérdések lezárva: FR-03, FR-10, FR-11, NFR-08 pontosítva; pulzus grafikon nem kerül a v1.0-ba | K-01…K-05 döntései, lásd [[#9. Nyitott kérdések]] |
+| 0.2.0 | 2026-10-08 | Az alkalmazás felülete **angol**; FR-01, 02, 04, 06, 11, 12, 13, 16, NFR-03, képernyővázlatok igazítva | Új igény a fejlesztés közben, lásd [[ADR-005 Angol nyelvű felület]] |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -53,14 +54,18 @@ Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali
 
 ## 3. Fogalmak
 
-| Fogalom | Jelentés |
-|---|---|
-| Szisztolé (SYS) | Felső érték, Hgmm |
-| Diasztolé (DIA) | Alsó érték, Hgmm |
-| Pulzus (PUL) | Szívverés / perc |
-| Hgmm | Higanymilliméter, a vérnyomás mértékegysége |
-| Mérés | Egy időponthoz tartozó SYS + DIA + PUL (+ megjegyzés) |
-| Időszak | A megjelenítéshez / exporthoz választott dátumtartomány |
+| Fogalom | Az appban (angol) | Jelentés |
+|---|---|---|
+| Szisztolé (SYS) | Systolic | Felső érték, Hgmm (mmHg) |
+| Diasztolé (DIA) | Diastolic | Alsó érték, Hgmm (mmHg) |
+| Pulzus (PUL) | Pulse | Szívverés / perc (bpm) |
+| Hgmm | mmHg | Higanymilliméter, a vérnyomás mértékegysége |
+| Mérés | Measurement | Egy időponthoz tartozó SYS + DIA + PUL (+ megjegyzés) |
+| Napló | Log | A mérések listája |
+| Időszak | Period | A megjelenítéshez / exporthoz választott dátumtartomány |
+
+> [!note] Nyelv `🔄 v0.2.0`
+> A dokumentáció magyar, **az alkalmazás felülete angol** ([[ADR-005 Angol nyelvű felület]]). Az angol feliratokat a követelmények idézőjelben adják meg.
 
 ---
 
@@ -73,7 +78,7 @@ A felhasználó új mérést vehet fel a következő mezőkkel:
 
 | Mező | Kötelező | Alapérték | Formátum |
 |---|---|---|---|
-| Dátum | igen | mai nap | ÉÉÉÉ.HH.NN. |
+| Dátum | igen | mai nap | NN/HH/ÉÉÉÉ (brit angol formátum) `🔄 v0.2.0` |
 | Időpont | igen | aktuális idő | ÓÓ:PP (24 órás), **szabadon megadható** |
 | Szisztolé | igen | – | egész szám, Hgmm |
 | Diasztolé | igen | – | egész szám, Hgmm |
@@ -83,7 +88,7 @@ A felhasználó új mérést vehet fel a következő mezőkkel:
 A számmezőknél numerikus billentyűzet jelenik meg, és a mentés egy érintéssel elérhető.
 
 **FR-02 – Ellenőrzés (validáció)**
-Mentés csak érvényes adattal lehetséges; hiba esetén a mező alatt magyar nyelvű üzenet jelenik meg.
+Mentés csak érvényes adattal lehetséges; hiba esetén a mező alatt angol nyelvű üzenet jelenik meg. `🔄 v0.2.0`
 
 | Szabály | Érték |
 |---|---|
@@ -99,7 +104,7 @@ Mentés csak érvényes adattal lehetséges; hiba esetén a mező alatt magyar n
 Egy naptári napra legfeljebb **3 mérés** rögzíthető. A negyedik mentési kísérletnél az app jelzi, hogy aznapra elérte a korlátot, és felajánlja egy meglévő mérés szerkesztését. A korlát **kemény**: negyedik mérés nem menthető. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-02]])*
 
 **FR-04 – Szerkesztés és törlés**
-Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősítést kér („Biztosan törlöd a 2026.10.08. 07:30 mérést?”).
+Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősítést kér („Delete the measurement from 08/10/2026 07:30?”). `🔄 v0.2.0`
 
 ### 4.2 Megjelenítés
 
@@ -107,7 +112,7 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mérések időrendben: `07:30   128 / 82   72`. Érintéssel megnyílik a szerkesztés.
 
 **FR-06 – Táblázatos nézet (orvosnak)**
-- Időszak-választó: *utolsó 7 nap*, *30 nap*, *90 nap*, *egyéni (dátumtól–dátumig)*
+- Időszak-választó: „7 days”, „30 days”, „90 days”, „Custom” (dátumtól–dátumig) `🔄 v0.2.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
 - A referenciaérték feletti értékek kiemelve (félkövér), lásd FR-10
@@ -129,21 +134,21 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 **FR-11 – PDF export**
 - Időszak: mint FR-06
 - Tartalom választható: **táblázat**, **grafikon**, vagy **mindkettő**
-- Fejléc: „Vérnyomásnapló”, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
+- Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
 - Összesítő blokk (FR-07)
 - Táblázat: minden mérés dátummal és időponttal
 - Grafikon: SYS és DIA külön diagramon, referenciavonallal
-- Lábléc: oldalszám, „Pulzar vX.Y.Z – nem orvostechnikai eszköz”
+- Lábléc: oldalszám, „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló
 
 **FR-12 – CSV export**
 - Időszak: mint FR-06
 - Kódolás: UTF-8 BOM-mal, elválasztó: pontosvessző (`;`) – így a magyar Excel helyesen nyitja meg
-- Fejléc: `Dátum;Idő;Szisztolé (Hgmm);Diasztolé (Hgmm);Pulzus (/perc);Megjegyzés`
-- Dátum: `2026.10.08`, idő: `07:30`
+- Fejléc: `Date;Time;Systolic (mmHg);Diastolic (mmHg);Pulse (bpm);Note` `🔄 v0.2.0`
+- Dátum: `2026-10-08` (ISO 8601, minden Excel egyértelműen értelmezi), idő: `07:30` `🔄 v0.2.0`
 
 **FR-13 – Teljes mentés és visszatöltés**
-- Mentés: az összes adat egyetlen JSON-fájlba (`pulzar-mentes-2026-10-08.json`)
+- Mentés: az összes adat egyetlen JSON-fájlba (`pulzar-backup-2026-10-08.json`) `🔄 v0.2.0`
 - Visszatöltés: a fájl kiválasztása után az app megmutatja, hány mérést talált, és hány új; jóváhagyás után **összefésül** (azonos azonosítójú mérésből a később módosított marad, duplikáció nincs)
 - Ez szolgál telefoncserére, adatvesztés elleni védelemre, és a v2 asztali alkalmazás első adatátviteli módjára is
 
@@ -156,7 +161,7 @@ Minden export után: *Megosztás* (Android megosztási menü: e-mail, Viber, Dri
 Név a PDF-en (opcionális) · referenciaértékek (SYS, DIA, be/ki) · mentés / visszatöltés · téma (rendszer / világos / sötét).
 
 **FR-16 – Névjegy**
-Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„A Pulzar nem orvostechnikai eszköz, nem ad diagnózist. Az értékek értelmezése az orvos feladata.”*
+Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is not a medical device and does not provide a diagnosis. Interpreting the values is up to your doctor.”* `🔄 v0.2.0`
 
 ---
 
@@ -166,7 +171,8 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„A Pulzar 
 |---|---|
 | NFR-01 | **Offline működés.** A kiadott app nem kér internet-engedélyt; adat nem hagyja el a telefont, csak ha a felhasználó exportálja. |
 | NFR-02 | **Helyi tárolás** SQLite adatbázisban ([[ADR-002 Helyi adattárolás]]). |
-| NFR-03 | **Magyar felület**, magyar dátum- és időformátum (ÉÉÉÉ.HH.NN., 24 órás). |
+| NFR-03 | ~~**Magyar felület**, magyar dátum- és időformátum (ÉÉÉÉ.HH.NN., 24 órás).~~ `❌ v0.2.0` |
+| NFR-03a | **Angol felület**, brit angol területi beállítás (`en_GB`): NN/HH/ÉÉÉÉ dátum, 24 órás idő, hétfővel kezdődő hét; exportban ISO 8601 dátum. A szövegek egy helyen legyenek, hogy később más nyelv (pl. magyar) is hozzáadható legyen. `🆕 v0.2.0` |
 | NFR-04 | **Teljesítmény:** 10 évnyi adat (~11 000 mérés) mellett is gördülékeny lista, táblázat és grafikon; PDF 1 évre < 5 mp. |
 | NFR-05 | **Olvashatóság:** követi a rendszer betűméretét; világos és sötét téma. |
 | NFR-06 | **Adatbiztonság:** törlés csak megerősítéssel; adatbázis-séma változásnál automatikus, adatvesztés nélküli migráció. |
@@ -214,37 +220,37 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„A Pulzar 
 ## 7. Képernyők (vázlat)
 
 ```
-┌─ Napló ───────────────────┐   ┌─ Új mérés ───────────────┐
-│ Pulzar               ⚙    │   │ ← Új mérés        Mentés │
+┌─ Log ─────────────────────┐   ┌─ New measurement ────────┐
+│ Log                  ⚙    │   │ ←                   Save │
 │                           │   │                          │
-│ 2026.10.08. csütörtök     │   │ Dátum   [2026.10.08. ▾]  │
-│  07:30   128 / 82   72    │   │ Idő     [07:30 ▾]        │
+│ Thursday, 8 October 2026  │   │ Date   [08/10/2026 ▾]    │
+│  07:30   128 / 82   72    │   │ Time   [07:30 ▾]         │
 │  13:10   131 / 85   75    │   │                          │
-│                           │   │ Szisztolé   [ 128 ] Hgmm │
-│ 2026.10.07. szerda        │   │ Diasztolé   [  82 ] Hgmm │
-│  07:20   125 / 80   70    │   │ Pulzus      [  72 ] /perc│
+│                           │   │ Systolic   [ 128 ] mmHg  │
+│ Wednesday, 7 October 2026 │   │ Diastolic  [  82 ] mmHg  │
+│  07:20   125 / 80   70    │   │ Pulse      [  72 ] bpm   │
 │  19:45   133 / 84   78    │   │                          │
-│                     (＋)  │   │ Megjegyzés [           ] │
+│                     (＋)  │   │ Note       [           ] │
 ├───────────────────────────┤   └──────────────────────────┘
-│ Napló │ Táblázat │ Grafikon│
+│   Log  │  Table  │ Charts │
 └───────────────────────────┘
 
-┌─ Táblázat ────────────────┐   ┌─ Grafikon ───────────────┐
-│ [7 nap][30 nap][90][Egyéni]│   │ [7 nap][30 nap][90][Egyéni]│
-│ 32 mérés                  │   │ Szisztolé (Hgmm)         │
-│      átlag  min  max      │   │ 140┤      •              │
-│ SYS   129   118  141      │   │ 135┤- - - - - - - - - -  │
-│ DIA    83    76   90      │   │ 130┤ •─•   •─•  •        │
-│ PUL    73    64   88      │   │ 120┤      ─         ─•   │
-│───────────────────────────│   │ Diasztolé (Hgmm)         │
-│ Dátum      Idő  SYS DIA PUL│   │  90┤   •                 │
-│ 10.08.   07:30  128  82  72│   │  85┤- - - - - - - - - -  │
-│ 10.08.   13:10  131  85  75│   │  80┤ •─•  ─•─•  •─•      │
+┌─ Table ───────────────────┐   ┌─ Charts ─────────────────┐
+│ [7d][30d][90d][Custom]    │   │ [7d][30d][90d][Custom]   │
+│ 32 measurements           │   │ Systolic (mmHg)          │
+│       avg   min   max     │   │ 140┤      •              │
+│ SYS   129   118   141     │   │ 135┤- - - - - - - - - -  │
+│ DIA    83    76    90     │   │ 130┤ •─•   •─•  •        │
+│ PUL    73    64    88     │   │ 120┤      ─         ─•   │
+│───────────────────────────│   │ Diastolic (mmHg)         │
+│ Date    Time  SYS DIA PUL │   │  90┤   •                 │
+│ 08/10   07:30 128  82  72 │   │  85┤- - - - - - - - - -  │
+│ 08/10   13:10 131  85  75 │   │  80┤ •─•  ─•─•  •─•      │
 │               [Export ▾]  │   │               [Export ▾] │
 └───────────────────────────┘   └──────────────────────────┘
 ```
 
-Navigáció: alsó sáv – **Napló**, **Táblázat**, **Grafikon**; jobb fent **Beállítások**. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV).
+Navigáció: alsó sáv – **Log**, **Table**, **Charts**; jobb fent **Settings** `🔄 v0.2.0`. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV).
 
 ## 8. Tervezett technológia
 
@@ -258,7 +264,7 @@ Részletek és indoklás: [[ADR-001 Flutter]], [[ADR-002 Helyi adattárolás]]. 
 | PDF | `pdf` + `printing` |
 | Megosztás | `share_plus` |
 | Fájlválasztás (visszatöltés) | `file_picker` |
-| Lokalizáció | `intl`, magyar |
+| Lokalizáció | `flutter_localizations`, `en_GB` (később `intl` / ARB-fájlok, ha több nyelv lesz) `🔄 v0.2.0` |
 | Automatikus fordítás | GitHub Actions → aláírt APK a GitHub Release-ben |
 
 ## 9. Nyitott kérdések
