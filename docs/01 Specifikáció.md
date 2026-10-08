@@ -1,6 +1,6 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.3.1
+dokumentum_verzio: 0.4.0
 statusz: jóváhagyva
 frissitve: 2026-10-08
 ---
@@ -15,6 +15,7 @@ frissitve: 2026-10-08
 | 0.1.1 | 2026-10-08 | Nyitott kérdések lezárva: FR-03, FR-10, FR-11, NFR-08 pontosítva; pulzus grafikon nem kerül a v1.0-ba | K-01…K-05 döntései, lásd [[#9. Nyitott kérdések]] |
 | 0.2.0 | 2026-10-08 | Az alkalmazás felülete **angol**; FR-01, 02, 04, 06, 11, 12, 13, 16, NFR-03, képernyővázlatok igazítva | Új igény a fejlesztés közben, lásd [[ADR-005 Angol nyelvű felület]] |
 | 0.3.1 | 2026-10-08 | A **pulzus opcionális**: FR-01, FR-02, FR-07, FR-12, adatmodell módosítva | Tesztelés közben talált követelmény-hiba: korábbi mérésekhez nincs mindig pulzus feljegyezve – GitHub #3 |
+| 0.4.0 | 2026-10-08 | FR-06 (sorrend, kiemelés), FR-13 (törölt sorok, napi korlát), FR-14 (mentés helye) pontosítva | A megvalósítás során tisztázott részletek; [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]] |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -116,7 +117,9 @@ A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mér�
 - Időszak-választó: „7 days”, „30 days”, „90 days”, „Custom” (dátumtól–dátumig) `🔄 v0.2.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
-- A referenciaérték feletti értékek kiemelve (félkövér), lásd FR-10
+- A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`
+- Sorrend: időrendben, a legkorábbi felül; az egy naphoz tartozó sorok közös háttérsávban `🆕 v0.4.0`
+- Alapértelmezett időszak: 30 nap; a Table és a Charts nézet ugyanazt az időszakot használja `🆕 v0.4.0`
 
 **FR-07 – Összesítés**
 A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**. A pulzus összesítése csak a pulzussal rögzített mérésekből készül; ha egy sincs, „–” jelenik meg. `🔄 v0.3.1`
@@ -153,9 +156,13 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 - Mentés: az összes adat egyetlen JSON-fájlba (`pulzar-backup-2026-10-08.json`) `🔄 v0.2.0`
 - Visszatöltés: a fájl kiválasztása után az app megmutatja, hány mérést talált, és hány új; jóváhagyás után **összefésül** (azonos azonosítójú mérésből a később módosított marad, duplikáció nincs)
 - Ez szolgál telefoncserére, adatvesztés elleni védelemre, és a v2 asztali alkalmazás első adatátviteli módjára is
+- A mentés a logikailag törölt méréseket is tartalmazza, így egy törlés is átvihető másik eszközre; visszatöltéskor a telefonról semmi nem törlődik, kivéve ha a mentésben egy mérés **később** lett törölve `🆕 v0.4.0`
+- Visszatöltéskor a napi 3 mérés korlátja (FR-03) nem érvényes – ez adat-visszaállítás `🆕 v0.4.0`
+- Hibás vagy nem Pulzar-fájl esetén hibaüzenet, adat nem változik `🆕 v0.4.0`
 
 **FR-14 – Megosztás**
 Minden export után: *Megosztás* (Android megosztási menü: e-mail, Viber, Drive stb.) vagy *Mentés a Letöltések mappába*.
+A teljes mentés (FR-13) a rendszer fájlválasztójával menthető bármilyen helyre – Letöltések, Google Drive stb. `🔄 v0.4.0`
 
 ### 4.4 Egyéb
 

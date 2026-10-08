@@ -45,7 +45,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-09 | FR-06, FR-07 | Táblázat, 30 nap | Csak az időszak mérései; átlag/min/max helyes |
 | T-10 | FR-06 | Egyéni időszak | Csak a tartomány mérései |
 | T-11 | FR-08, FR-09 | Grafikon, 30 nap | Két külön diagram, helyes értékek és időpontok |
-| T-12 | FR-10 | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
+| T-12 | FR-10 (v0.5.0-tól) | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
 | T-13 | FR-11 | PDF, „mindkettő”, 30 nap | Fejléc, összesítés, táblázat, két grafikon, oldalszám |
 | T-14 | FR-12 | CSV export, megnyitás Excelben | Ékezetek és oszlopok helyesek |
 | T-15 | FR-13 | Mentés → app törlése → újratelepítés → visszatöltés | Minden mérés visszajön, duplikáció nincs |
@@ -55,6 +55,9 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-19 | NFR-05 | Rendszer betűméret: legnagyobb; sötét téma | Olvasható, semmi nem lóg ki |
 | T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a naplóban nincs „bpm” |
 | T-21 | NFR-06 `🆕 v0.3.1` | Meglévő mérésekkel az új verzió telepítése a régire | Minden korábbi mérés megvan, változatlan értékekkel |
+| T-22 | FR-13 `🆕 v0.4.0` | Visszatöltés egy nem Pulzar-fájlból (pl. egy fénykép) | Hibaüzenet, semmi nem változik |
+| T-23 | FR-06 `🆕 v0.4.0` | Table → Custom → két dátum kiválasztása → Change → másik tartomány | A táblázat és a grafikon is az új tartományt mutatja |
+| T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
 

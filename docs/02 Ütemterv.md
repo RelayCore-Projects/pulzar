@@ -13,7 +13,7 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 | 0.2.0 | Flutter projektváz, alap navigáció, GitHub Actions: automatikus, aláírt APK minden kiadásnál | Fejlesztés | 🟢 kész |
 | 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟢 kész |
 | 0.3.1 | Javítás: a pulzus opcionális, első adatbázis-migráció (#3) | Hibajavítás | 🟢 kész |
-| 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟡 következő |
+| 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟡 folyamatban |
 | 0.5.0 `🔄` | **PDF és CSV export**, megosztás, beállítások (FR-11, 12, 14, 15) | Fejlesztés | ⚪ tervezett |
 | ~~0.6.0~~ | ~~PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16)~~ → beolvadt a 0.4.0-ba és a 0.5.0-ba | – | ⛔ |
 | 0.9.0 | Kiadásra jelölt: teljes kézi tesztkör valódi eszközön | Tesztelés | ⚪ tervezett |
