@@ -21,6 +21,7 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 - CI: tesztek és APK-fordítás párhuzamosan, Gradle-gyorsítótár, csak 64 bites ARM APK (kisebb, gyorsabb)
 - A kézi teszt alapján: a táblázat napi fejlécsorokkal, egyben görgethető (fekvő módban is); „Custom” helyett „All” időszak; a szisztolé (piros) és a diasztolé (kék) egy grafikonon
 - A második visszajelzés alapján: naptári hetek / hónapok / évek lapozással (‹ › és húzás); a grafikonon napi átlagok
+- Az automatikus teszt által talált hiba: lefúrás (*Show month* / *Show week*) után a grafikon kigördült a képből – most a nézet a grafikon tetejére ugrik
 - A negyedik visszajelzés alapján: a táblázatban érintésre részletek lap, hosszú nyomásra szerkesztés; a grafikonon a min–max vonal megszűnt, koppintásra kiemelés és a mérések listája, *Show week* / *Show month*, kisebb pontok az évben
 - A harmadik visszajelzés alapján: a **Log fül megszűnt**, a **Table a főképernyő** (+ gomb jobb alul, sorra koppintva szerkesztés, megjegyzés egy sorban ikonnal); a grafikonon **csak pontok**, és nincs „All”
 

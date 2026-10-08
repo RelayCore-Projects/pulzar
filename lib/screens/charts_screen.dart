@@ -38,8 +38,19 @@ class _ChartsScreenState extends State<ChartsScreen> {
   /// A kiválasztott nap (évnél hét) kezdete.
   DateTime? _selected;
 
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  /// Új időszak: a kijelölés törlődik, és a nézet a grafikon tetejére ugrik
+  /// (lefúrás után is látszik a grafikon).
   void _change(PeriodSelection s) {
     setState(() => _selected = null);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
     widget.onChanged(s);
   }
 
@@ -95,6 +106,7 @@ class _ChartsScreenState extends State<ChartsScreen> {
       earliest: store.earliest,
       onChanged: _change,
       child: ListView(
+        controller: _scroll,
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           PeriodSelector(
