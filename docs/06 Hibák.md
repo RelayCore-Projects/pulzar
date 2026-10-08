@@ -38,4 +38,4 @@ A v1.0 kiadás feltétele: nincs nyitott 🔴 vagy 🟠 hiba.
 
 | Dátum | Leírás | Súlyosság | Issue |
 |---|---|---|---|
-| 2026-10-08 | A pulzus kötelező volt, de korábbi mérésekhez nincs mindig feljegyezve → legyen opcionális (követelmény-hiba) | 🟡 közepes | #3 – javítva: v0.3.1 |
+| 2026-10-08 | A pulzus kötelező volt, de korábbi mérésekhez nincs mindig feljegyezve → legyen opcionális (követelmény-hiba) | 🟡 közepes | #3 – javítva: v0.3.1 ✅ |

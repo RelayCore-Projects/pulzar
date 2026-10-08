@@ -10,12 +10,15 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.3.1] – 2026-10-08 – Opcionális pulzus
+
 ### Javítva
 - A pulzus opcionális lett: üresen hagyható új mérésnél és szerkesztéskor is; a naplóban ilyenkor nem jelenik meg (#3)
 
 ### Módosítva
 - Adatbázis-séma 2-es verzió: a `pulse` oszlop opcionális. A meglévő mérések frissítéskor automatikusan, adatvesztés nélkül átkerülnek (első migráció, NFR-06)
 - CI: SQLite a tesztgépen, hogy az adatbázis-migráció automatikusan tesztelhető legyen
+- [[02 Ütemterv]]: átütemezés – nagyobb verziók, a mentés előrehozva a 0.4.0-ba
 
 ## [0.3.0] – 2026-10-08 – Mérés rögzítése
 

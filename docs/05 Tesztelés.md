@@ -60,6 +60,15 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
 
+### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
+
+| ID | Eredmény | Megjegyzés |
+|---|---|---|
+| T-20 | ✅ | mentés pulzus nélkül, pulzus törlése szerkesztéskor |
+| T-21 | ✅ | frissítés a 0.3.0-ra telepítve; minden korábbi mérés megmaradt |
+| Saját ikon | ⏳ | a telepített appon megerősítendő |
+| Automatikus tesztek (CI) | ✅ | 34 teszt, köztük az adatbázis-migráció |
+
 ### v0.2.0 – 2026-10-08 (Preview 0.2.0-dev.6)
 
 A T-xx tesztesetek funkciói még nem készültek el; ebben a verzióban a telepítést és a vázat teszteltük.
