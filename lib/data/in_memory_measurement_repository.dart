@@ -27,6 +27,20 @@ class InMemoryMeasurementRepository implements MeasurementRepository {
   }
 
   @override
+  Future<List<Measurement>> loadAllIncludingDeleted() async =>
+      _rows.values.toList();
+
+  @override
+  Future<void> applyRestore({
+    required List<Measurement> inserts,
+    required List<Measurement> updates,
+  }) async {
+    for (final m in [...inserts, ...updates]) {
+      _rows[m.id] = m;
+    }
+  }
+
+  @override
   Future<void> update(Measurement measurement) async {
     if (!_rows.containsKey(measurement.id)) {
       throw StateError('Unknown id: ${measurement.id}');

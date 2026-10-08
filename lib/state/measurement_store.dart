@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../data/measurement_repository.dart';
+import '../domain/backup.dart';
 import '../domain/rules.dart';
 import '../models/measurement.dart';
 import '../util/format.dart';
@@ -100,6 +101,23 @@ class MeasurementStore extends ChangeNotifier {
     await _repository.update(deleted);
     _items.removeAt(index);
     notifyListeners();
+  }
+
+  /// Minden sor, a törölteket is beleértve – a mentéshez (FR-13).
+  Future<List<Measurement>> allIncludingDeleted() =>
+      _repository.loadAllIncludingDeleted();
+
+  /// Visszatöltés előnézete: mi változna.
+  Future<MergePlan> planRestore(List<Measurement> incoming) async =>
+      planMerge(await _repository.loadAllIncludingDeleted(), incoming);
+
+  /// FR-13: összefésülés. A napi korlátot itt nem ellenőrizzük – ez adat-visszaállítás.
+  Future<void> applyRestore(MergePlan plan) async {
+    await _repository.applyRestore(
+      inserts: plan.toInsert,
+      updates: plan.toUpdate,
+    );
+    await load();
   }
 
   int _indexOf(String id) {

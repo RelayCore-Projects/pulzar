@@ -92,4 +92,24 @@ void main() {
     expect(loaded.map((m) => m.pulse), [null, 70]); // legfrissebb elöl
     await repo.close();
   });
+
+  test('FR-13: restore runs in one transaction and keeps deleted rows',
+      () async {
+    final path = p.join(dir.path, 'restore.db');
+    final repo = await SqliteMeasurementRepository.open(path: path);
+    await repo.insert(measurement('a', DateTime(2026, 10, 8, 7), pulse: 70));
+    await repo.applyRestore(
+      inserts: [
+        measurement('b', DateTime(2026, 10, 8, 8), pulse: null),
+        measurement('c', DateTime(2026, 10, 8, 9))
+            .copyWith(deletedAt: DateTime.utc(2026, 10, 9)),
+      ],
+      updates: [measurement('a', DateTime(2026, 10, 8, 7), pulse: 75)],
+    );
+    expect((await repo.loadAll()).map((m) => m.id), ['b', 'a']);
+    final all = await repo.loadAllIncludingDeleted();
+    expect(all.map((m) => m.id).toSet(), {'a', 'b', 'c'});
+    expect(all.firstWhere((m) => m.id == 'a').pulse, 75);
+    await repo.close();
+  });
 }

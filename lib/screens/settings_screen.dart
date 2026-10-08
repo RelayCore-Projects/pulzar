@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_info.dart';
+import 'backup_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -30,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
           const ListTile(
             leading: Icon(Icons.badge_outlined),
             title: Text('Name on PDF'),
-            subtitle: Text('Coming in v0.6.0'),
+            subtitle: Text('Coming in v0.5.0'),
             enabled: false,
           ),
           const ListTile(
@@ -42,11 +43,14 @@ class SettingsScreen extends StatelessWidget {
             ),
             enabled: false,
           ),
-          const ListTile(
-            leading: Icon(Icons.save_alt),
-            title: Text('Backup and restore'),
-            subtitle: Text('Coming in v0.6.0'),
-            enabled: false,
+          ListTile(
+            key: const Key('backup-tile'),
+            leading: const Icon(Icons.save_alt),
+            title: const Text('Backup and restore'),
+            subtitle: const Text('Save all measurements to a file, or restore them'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const BackupScreen()),
+            ),
           ),
           const Divider(),
           ListTile(
