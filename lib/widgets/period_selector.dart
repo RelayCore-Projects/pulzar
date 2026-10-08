@@ -10,12 +10,23 @@ class PeriodSelector extends StatelessWidget {
     required this.today,
     required this.earliest,
     required this.onChanged,
+    this.kinds = PeriodKind.values,
   });
 
   final Period period;
   final DateTime today;
   final DateTime? earliest;
   final ValueChanged<PeriodSelection> onChanged;
+
+  /// A választható időszakok (a Charts-on nincs „All”).
+  final List<PeriodKind> kinds;
+
+  static const _labels = {
+    PeriodKind.week: 'Week',
+    PeriodKind.month: 'Month',
+    PeriodKind.year: 'Year',
+    PeriodKind.all: 'All',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +41,9 @@ class PeriodSelector extends StatelessWidget {
           SegmentedButton<PeriodKind>(
             key: const Key('period-selector'),
             showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: PeriodKind.week, label: Text('Week')),
-              ButtonSegment(value: PeriodKind.month, label: Text('Month')),
-              ButtonSegment(value: PeriodKind.year, label: Text('Year')),
-              ButtonSegment(value: PeriodKind.all, label: Text('All')),
+            segments: [
+              for (final k in kinds)
+                ButtonSegment(value: k, label: Text(_labels[k]!)),
             ],
             selected: {period.kind},
             onSelectionChanged: (s) => onChanged(PeriodSelection(s.first, today)),

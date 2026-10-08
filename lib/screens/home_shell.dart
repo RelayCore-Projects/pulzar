@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import '../domain/period.dart';
 import '../platform/file_access.dart';
 import 'charts_screen.dart';
-import 'log_screen.dart';
 import 'measurement_form_screen.dart';
 import 'settings_screen.dart';
 import 'table_screen.dart';
 
-/// Főképernyő alsó navigációval: Log · Table · Charts
+/// Főképernyő alsó navigációval: Table · Charts (v0.4.0: a Log fül beolvadt a Table-be)
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -24,7 +23,7 @@ class _HomeShellState extends State<HomeShell> {
 
   void _select(PeriodSelection s) => setState(() => _selection = s);
 
-  static const _titles = ['Log', 'Table', 'Charts'];
+  static const _titles = ['Table', 'Charts'];
 
   void _openSettings() {
     Navigator.of(context).push(
@@ -37,8 +36,7 @@ class _HomeShellState extends State<HomeShell> {
     final selection =
         _selection ?? PeriodSelection(PeriodKind.week, AppServices.of(context).now());
     final Widget body = switch (_index) {
-      0 => const LogScreen(),
-      1 => TableScreen(selection: selection, onChanged: _select),
+      0 => TableScreen(selection: selection, onChanged: _select),
       _ => ChartsScreen(selection: selection, onChanged: _select),
     };
 
@@ -68,11 +66,6 @@ class _HomeShellState extends State<HomeShell> {
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.list_alt_outlined),
-            selectedIcon: Icon(Icons.list_alt),
-            label: 'Log',
-          ),
           NavigationDestination(
             icon: Icon(Icons.table_chart_outlined),
             selectedIcon: Icon(Icons.table_chart),

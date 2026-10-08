@@ -10,6 +10,7 @@ import '../state/store_scope.dart';
 import '../util/format.dart';
 import '../widgets/period_selector.dart';
 import '../widgets/stats_card.dart';
+import 'measurement_form_screen.dart';
 
 /// FR-06 / FR-07: táblázat az orvosnak – időrendben, napokra bontva, összesítéssel.
 /// Az egész nézet egyben görgethető, így fekvő módban is használható (v0.4.0).
@@ -121,12 +122,11 @@ class _DayHeader extends StatelessWidget {
 }
 
 class _Row extends StatelessWidget {
-  const _Row({required this.flex, required this.cells, this.style, this.styles});
+  const _Row({required this.flex, required this.cells, this.style});
 
   final List<int> flex;
   final List<String> cells;
   final TextStyle? style;
-  final List<TextStyle?>? styles;
 
   @override
   Widget build(BuildContext context) {
@@ -141,10 +141,10 @@ class _Row extends StatelessWidget {
                 padding: EdgeInsets.only(left: i == cells.length - 1 ? 16 : 0),
                 child: Text(
                   cells[i],
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: i >= 1 && i <= 3 ? TextAlign.end : TextAlign.start,
-                  style: styles?[i] ?? style,
+                  style: style,
                 ),
               ),
             ),
@@ -170,22 +170,57 @@ class _MeasurementRow extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: theme.colorScheme.error,
     );
-    return _Row(
-      flex: flex,
-      cells: [
-        formatTime(m.measuredAt),
-        '${m.systolic}',
-        '${m.diastolic}',
-        m.pulse?.toString() ?? '–',
-        m.note ?? '',
-      ],
-      styles: [
-        base,
-        m.systolic >= AppInfo.defaultRefSystolic ? high : base,
-        m.diastolic >= AppInfo.defaultRefDiastolic ? high : base,
-        base,
-        theme.textTheme.bodySmall,
-      ],
+    final note = m.note;
+
+    Widget number(String text, int i, TextStyle? style) => Expanded(
+          flex: flex[i],
+          child: Text(text, textAlign: TextAlign.end, maxLines: 1, style: style),
+        );
+
+    // Koppintásra megnyílik a mérés – ott a teljes megjegyzés is látszik (v0.4.0)
+    return InkWell(
+      onTap: () => openMeasurementForm(context, existing: m),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            Expanded(
+              flex: flex[0],
+              child: Text(formatTime(m.measuredAt), maxLines: 1, style: base),
+            ),
+            number('${m.systolic}', 1,
+                m.systolic >= AppInfo.defaultRefSystolic ? high : base),
+            number('${m.diastolic}', 2,
+                m.diastolic >= AppInfo.defaultRefDiastolic ? high : base),
+            number(m.pulse?.toString() ?? '–', 3, base),
+            Expanded(
+              flex: flex[4],
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: note == null
+                    ? const SizedBox.shrink()
+                    : Row(
+                        children: [
+                          Icon(Icons.sticky_note_2_outlined,
+                              key: const Key('note-icon'),
+                              size: 16,
+                              color: theme.colorScheme.onSurfaceVariant),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              note,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

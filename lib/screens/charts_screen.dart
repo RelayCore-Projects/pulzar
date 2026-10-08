@@ -9,7 +9,7 @@ import '../widgets/bp_chart.dart';
 import '../widgets/period_selector.dart';
 
 /// FR-08 – FR-10: szisztolé (piros) és diasztolé (kék) egy grafikonon.
-/// Egy pont = egy nap átlaga (évnél hét, „All”-nál hónap) – ADR-011.
+/// Egy pont = egy nap átlaga (évnél egy hét), csak pontok – ADR-011.
 class ChartsScreen extends StatelessWidget {
   const ChartsScreen({
     super.key,
@@ -42,7 +42,11 @@ class ChartsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
     final today = AppServices.of(context).now();
-    final period = Period.of(selection, earliest: store.earliest, today: today);
+    // Az „All” itt nem választható: ha a Table-ön az volt, az aktuális év látszik
+    final effective = selection.kind == PeriodKind.all
+        ? PeriodSelection(PeriodKind.year, today)
+        : selection;
+    final period = Period.of(effective, earliest: store.earliest, today: today);
     final items =
         store.measurements.where((m) => period.contains(m.measuredAt)).toList();
     final bucket = bucketFor(period.kind);
@@ -78,6 +82,7 @@ class ChartsScreen extends StatelessWidget {
             today: today,
             earliest: store.earliest,
             onChanged: onChanged,
+            kinds: const [PeriodKind.week, PeriodKind.month, PeriodKind.year],
           ),
           if (items.isEmpty)
             const Padding(

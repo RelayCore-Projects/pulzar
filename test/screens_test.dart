@@ -149,6 +149,20 @@ void main() {
     expect(find.textContaining('average of one day'), findsOneWidget);
   });
 
+  testWidgets('Charts offer no “All”; it falls back to the current year',
+      (tester) async {
+    await _pump(tester, initial: sample());
+    await tester.tap(find.text('All')); // a Table-ön
+    await tester.pumpAndSettle();
+    expect(find.text('All measurements'), findsOneWidget);
+
+    await tester.tap(_nav('Charts'));
+    await tester.pumpAndSettle();
+    expect(find.text('All'), findsNothing);
+    expect(find.text('2026'), findsOneWidget);
+    expect(find.textContaining('average of one week'), findsOneWidget);
+  });
+
   testWidgets('FR-06: swipe right shows the previous week', (tester) async {
     await _pump(tester, initial: sample());
     await tester.tap(_nav('Charts'));

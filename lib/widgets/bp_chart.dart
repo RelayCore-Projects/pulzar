@@ -31,7 +31,7 @@ class ChartSeries {
   final int? reference;
 }
 
-/// FR-08: több vonal egy ábrán, valós időtengellyel; a pontoknál min–max vonal;
+/// FR-08: több adatsor egy ábrán, pontokkal, valós időtengellyel; a pontoknál min–max vonal;
 /// FR-10: soronként szaggatott referenciavonal. Saját rajzolás (ADR-010, ADR-011).
 class BpChart extends StatelessWidget {
   const BpChart({
@@ -189,21 +189,10 @@ class BpChartPainter extends CustomPainter {
         canvas.drawLine(Offset(px, y(p.min!)), Offset(px, y(p.max!)), range);
       }
 
-      // átlagok összekötve
-      final line = Paint()
-        ..color = s.color
-        ..strokeWidth = 2
-        ..style = PaintingStyle.stroke
-        ..strokeJoin = StrokeJoin.round;
-      final path = Path()
-        ..moveTo(x(s.points.first.time), y(s.points.first.value));
-      for (final p in s.points.skip(1)) {
-        path.lineTo(x(p.time), y(p.value));
-      }
-      canvas.drawPath(path, line);
+      // csak pontok, összekötés nélkül – egy kimaradt nap ne tűnjön folytonosnak (v0.4.0)
       final dot = Paint()..color = s.color;
       for (final p in s.points) {
-        canvas.drawCircle(Offset(x(p.time), y(p.value)), 3.5, dot);
+        canvas.drawCircle(Offset(x(p.time), y(p.value)), 4.5, dot);
       }
     }
   }
