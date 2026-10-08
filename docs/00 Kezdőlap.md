@@ -1,7 +1,7 @@
 ---
 tipus: kezdolap
 projekt: Pulzar
-aktualis_verzio: 0.3.0
+aktualis_verzio: 0.3.1
 fazis: Fejlesztés
 frissitve: 2026-10-08
 ---
@@ -14,9 +14,9 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
 
 | | |
 |---|---|
-| Aktuális verzió | **0.3.0 – Mérés rögzítése** |
+| Aktuális verzió | **0.3.1 – Opcionális pulzus** |
 | Fázis | Koncepció → *Fejlesztés* → Tesztelés → Hibajavítás → Kiadás |
-| Következő lépés | v0.4.0 – táblázatos nézet, időszak-választó, összesítés (FR-06, FR-07) |
+| Következő lépés | v0.4.0 – mentés / visszatöltés, táblázat, grafikonok |
 
 ## Dokumentumok
 

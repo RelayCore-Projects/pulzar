@@ -40,6 +40,15 @@ void main() {
           isNotNull);
     });
 
+    test('pulse is optional, but checked when given (#3)', () {
+      const r = MeasurementRules.pulse;
+      expect(MeasurementRules.validateOptionalNumber('', r), isNull);
+      expect(MeasurementRules.validateOptionalNumber(null, r), isNull);
+      expect(MeasurementRules.validateOptionalNumber('72', r), isNull);
+      expect(MeasurementRules.validateOptionalNumber('20', r),
+          'Must be between 30 and 250');
+    });
+
     test('systolic must be greater than diastolic', () {
       expect(
         MeasurementRules.validateDiastolicAgainstSystolic(
@@ -132,9 +141,15 @@ void main() {
     expect(copy.deletedAt, original.deletedAt);
   });
 
+  test('round trip without pulse (#3)', () {
+    final m = measurement('x', DateTime(2026, 10, 8, 7), pulse: null);
+    expect(Measurement.fromMap(m.toMap()).pulse, isNull);
+  });
+
   test('copyWith can clear the note', () {
     final m = measurement('x', DateTime(2026, 10, 8), note: 'n');
     expect(m.copyWith(note: null).note, isNull);
     expect(m.copyWith(pulse: 90).note, 'n');
+    expect(m.copyWith(pulse: null).pulse, isNull);
   });
 }

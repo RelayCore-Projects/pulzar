@@ -97,6 +97,15 @@ void main() {
     expect(s.measurements.map((m) => m.id), ['a']);
   });
 
+  test('a measurement can be saved without pulse (#3)', () async {
+    final m = await store.add(
+        measuredAt: DateTime(2026, 10, 8, 7),
+        systolic: 120,
+        diastolic: 80);
+    expect(m.pulse, isNull);
+    expect(repo.rows[m.id]!.pulse, isNull);
+  });
+
   test('note is trimmed, empty note becomes null', () async {
     final a = await store.add(
         measuredAt: DateTime(2026, 10, 8, 7),

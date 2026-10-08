@@ -56,7 +56,7 @@ class MeasurementStore extends ChangeNotifier {
     required DateTime measuredAt,
     required int systolic,
     required int diastolic,
-    required int pulse,
+    int? pulse,
     String? note,
   }) async {
     _checkDailyLimit(measuredAt);

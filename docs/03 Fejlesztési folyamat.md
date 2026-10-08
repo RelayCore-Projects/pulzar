@@ -104,3 +104,11 @@ A repó nyilvános, ezért a `docs/` mappába csak **semleges, bárkire érvény
 | Aláíró kulcsok, jelszavak, tokenek | GitHub Secrets, illetve biztonságos helyi mentés |
 
 Commit előtt GitHub Desktopban mindig nézd át a *Changes* listát: ha olyan fájl szerepel benne, ami nem oda való, ne commitold.
+
+## Közös munka ugyanabban a mappában
+
+*Felvéve 2026-10-08, egy ágváltáskor történt ütközés után.*
+
+- Claude a munkáját **mindig commitolva** adja át a saját ágán; a te feladatod a *Push* / *Publish branch*.
+- Ágat váltani csak akkor érdemes, ha a GitHub Desktop *Changes* listája **üres**. Ha nem üres, és a Desktop felajánlja, hogy „vigye magával” a változásokat (*Bring my changes*), válaszd inkább a **Leave my changes on …** lehetőséget, vagy szólj.
+- Ha mégis ütközés van: ne oldd fel kézzel – a változások visszanyerhetők, szólj.

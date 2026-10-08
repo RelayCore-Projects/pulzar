@@ -24,5 +24,7 @@ datum: 2026-10-08
 - UUID és dátumformázás saját, kis függvényekkel – külső csomag nélkül.
 
 ## Következmények
-- Sémaváltozásnál a `schemaVersion` nő, és `onUpgrade` migrációt kell írni (NFR-06).
-- Az SQLite rétegnek egyelőre nincs automatikus tesztje; a kézi teszt (T-01…T-08) fedi. Később: integrációs teszt valódi eszközön / emulátoron.
+- Sémaváltozásnál a `schemaVersion` nő, és `onUpgrade` migrációt kell írni (NFR-06). A migráció tranzakcióban fut: hiba esetén semmi nem változik.
+- **Sématörténet:** 1 – v0.3.0 · 2 – v0.3.1: `pulse` opcionális (#3), tábla-újraépítéssel
+- Minden migrációhoz automatikus teszt tartozik (`test/sqlite_migration_test.dart`), ami a régi sémából indul.
+- Az SQLite réteget a CI-ban `sqflite_common_ffi` teszteli (v0.3.1-től); a valódi eszközt a kézi teszt (T-01…T-08, T-21) fedi.

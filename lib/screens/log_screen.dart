@@ -112,6 +112,7 @@ class _MeasurementTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final note = m.note;
+    final pulse = m.pulse;
     return ListTile(
       key: Key('measurement-${m.id}'),
       leading: Text(formatTime(m.measuredAt), style: theme.textTheme.titleMedium),
@@ -122,7 +123,9 @@ class _MeasurementTile extends StatelessWidget {
       subtitle: note == null
           ? null
           : Text(note, maxLines: 2, overflow: TextOverflow.ellipsis),
-      trailing: Text('${m.pulse} bpm', style: theme.textTheme.bodyLarge),
+      trailing: pulse == null
+          ? null
+          : Text('$pulse bpm', style: theme.textTheme.bodyLarge),
       onTap: () => openMeasurementForm(context, existing: m),
     );
   }

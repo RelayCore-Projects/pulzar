@@ -3,7 +3,7 @@ description: "Pulzar – a simple offline blood pressure log."
 publish_to: 'none'
 
 # FŐ.AL.JAVÍTÁS+buildszám – a kiadott APK verzióját a CI a git-címkéből állítja be
-version: 0.3.0+3
+version: 0.3.1+4
 
 environment:
   sdk: ^3.5.0
@@ -20,6 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
+  sqflite_common_ffi: ^2.3.0
 
 flutter:
   uses-material-design: true
