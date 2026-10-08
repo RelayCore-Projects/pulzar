@@ -14,7 +14,7 @@ Hosszabb ötlethez külön jegyzet: `Ctrl+P` → *Templates: Insert template* �
 | ID | Dátum | Ötlet | Állapot | Verzió / megjegyzés |
 |---|---|---|---|---|
 | Ö-001 | 2026-10-08 | Windows asztali alkalmazás, összekötve a telefonos appal | 💭 | v2.x; első lépés a mentésfájl (FR-13) |
-| Ö-002 | 2026-10-08 | Pulzus grafikon | 💭 | lásd K-05 a [[01 Specifikáció]]-ban |
+| Ö-002 | 2026-10-08 | Pulzus grafikon | 💭 | K-05 döntés: a v1.0-ba nem kerül (2026-10-08) |
 | Ö-003 | 2026-10-08 | Emlékeztető értesítés a mérésre (pl. reggel, este) | 💭 | |
 | Ö-004 | 2026-10-08 | Mérés körülményei: kar (bal/jobb), testhelyzet, gyógyszer bevétele előtt/után | 💭 | most a megjegyzés mezőben írható |
 | Ö-005 | 2026-10-08 | Emlékeztető a rendszeres mentésre (pl. havonta) | 💭 | |

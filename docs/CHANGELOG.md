@@ -10,6 +10,16 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.1.1] – 2026-10-08 – Koncepció lezárva
+
+### Módosítva
+- [[01 Specifikáció]] 0.1.1: a nyitott kérdések (K-01…K-05) lezárva
+  - FR-03: a napi 3 mérés kemény korlát
+  - FR-10: referenciavonal alapból 135/85 Hgmm, bekapcsolva
+  - FR-11: név a PDF-en csak akkor, ha a beállításokban meg van adva
+  - NFR-08: minSdk 26 (Android 8.0), tesztelés Android 14+ eszközön
+  - Pulzus grafikon nem kerül a v1.0-ba (Ö-002 marad ötlet)
+
 ## [0.1.0] – 2026-10-08 – Koncepció
 
 ### Hozzáadva

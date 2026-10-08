@@ -1,7 +1,7 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.1.0
-statusz: jóváhagyásra vár
+dokumentum_verzio: 0.1.1
+statusz: jóváhagyva
 frissitve: 2026-10-08
 ---
 
@@ -12,6 +12,7 @@ frissitve: 2026-10-08
 | Verzió | Dátum | Változás | Indok / forrás |
 |---|---|---|---|
 | 0.1.0 | 2026-10-08 | Első változat (koncepció) | Kiinduló igények, lásd [[#1. Cél]] |
+| 0.1.1 | 2026-10-08 | Nyitott kérdések lezárva: FR-03, FR-10, FR-11, NFR-08 pontosítva; pulzus grafikon nem kerül a v1.0-ba | K-01…K-05 döntései, lásd [[#9. Nyitott kérdések]] |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -95,7 +96,7 @@ Mentés csak érvényes adattal lehetséges; hiba esetén a mező alatt magyar n
 > A tartományok csak az elgépelés kiszűrésére szolgálnak, nem orvosi határértékek.
 
 **FR-03 – Napi korlát**
-Egy naptári napra legfeljebb **3 mérés** rögzíthető. A negyedik mentési kísérletnél az app jelzi, hogy aznapra elérte a korlátot, és felajánlja egy meglévő mérés szerkesztését. *(Nyitott kérdés: [[#9. Nyitott kérdések|K-02]])*
+Egy naptári napra legfeljebb **3 mérés** rögzíthető. A negyedik mentési kísérletnél az app jelzi, hogy aznapra elérte a korlátot, és felajánlja egy meglévő mérés szerkesztését. A korlát **kemény**: negyedik mérés nem menthető. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-02]])*
 
 **FR-04 – Szerkesztés és törlés**
 Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősítést kér („Biztosan törlöd a 2026.10.08. 07:30 mérést?”).
@@ -121,14 +122,14 @@ Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), 
 Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.
 
 **FR-10 – Referenciavonal**
-Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaértéknél. Alapérték: **SYS 135, DIA 85 Hgmm** *(nyitott kérdés: [[#9. Nyitott kérdések|K-03]])*. Beállításokban módosítható vagy kikapcsolható.
+Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaértéknél. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
 
 ### 4.3 Export
 
 **FR-11 – PDF export**
 - Időszak: mint FR-06
 - Tartalom választható: **táblázat**, **grafikon**, vagy **mindkettő**
-- Fejléc: „Vérnyomásnapló”, név (ha be van állítva, [[#9. Nyitott kérdések|K-04]]), időszak, készítés dátuma
+- Fejléc: „Vérnyomásnapló”, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
 - Összesítő blokk (FR-07)
 - Táblázat: minden mérés dátummal és időponttal
 - Grafikon: SYS és DIA külön diagramon, referenciavonallal
@@ -170,7 +171,7 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„A Pulzar 
 | NFR-05 | **Olvashatóság:** követi a rendszer betűméretét; világos és sötét téma. |
 | NFR-06 | **Adatbiztonság:** törlés csak megerősítéssel; adatbázis-séma változásnál automatikus, adatvesztés nélküli migráció. |
 | NFR-07 | **Szinkronra felkészített adatmodell** (egyedi azonosító, időbélyegek, logikai törlés) – a v2 asztali összekötéshez. |
-| NFR-08 | **Támogatott Android-verzió:** nyitott, [[#9. Nyitott kérdések\|K-01]]. |
+| NFR-08 | **Támogatott Android-verzió:** minimum Android 8.0 (minSdk 26), cél: a legfrissebb stabil Android (targetSdk). Elsődleges tesztelés Android 14+ eszközön. `🔄 v0.1.1` |
 
 ## 6. Adatmodell
 
@@ -264,11 +265,11 @@ Részletek és indoklás: [[ADR-001 Flutter]], [[ADR-002 Helyi adattárolás]]. 
 
 | ID | Kérdés | Javaslat | Döntés |
 |---|---|---|---|
-| K-01 | Mi legyen a legrégebbi támogatott Android-verzió (minSdk)? | A céleszköz verziója alapján, de legalább Android 8.0 | *nyitott* |
-| K-02 | A napi 3 mérés kemény korlát legyen, vagy csak figyelmeztetés? | Kemény korlát (az eredeti igény szerint) | *nyitott* |
-| K-03 | Referenciaérték a grafikonon | 135/85 Hgmm (az európai irányelv otthoni mérésre vonatkozó küszöbe) – a felhasználó a beállításokban átírhatja, pl. a kezelőorvos javaslata szerint | *nyitott* |
-| K-04 | Szerepeljen név a PDF-en? | Opcionális mező a beállításokban | *nyitott* |
-| K-05 | Kell pulzus grafikon is? | v1.0-ban nem, ötletként felvéve | *nyitott* |
+| K-01 | Mi legyen a legrégebbi támogatott Android-verzió (minSdk)? | A céleszköz verziója alapján, de legalább Android 8.0 | ✅ minSdk 26 (Android 8.0); tesztelés Android 14+ eszközön |
+| K-02 | A napi 3 mérés kemény korlát legyen, vagy csak figyelmeztetés? | Kemény korlát (az eredeti igény szerint) | ✅ kemény korlát |
+| K-03 | Referenciaérték a grafikonon | 135/85 Hgmm (az európai irányelv otthoni mérésre vonatkozó küszöbe) – a felhasználó a beállításokban átírhatja, pl. a kezelőorvos javaslata szerint | ✅ 135/85, alapból bekapcsolva |
+| K-04 | Szerepeljen név a PDF-en? | Opcionális mező a beállításokban | ✅ opcionális mező; csak kitöltve jelenik meg |
+| K-05 | Kell pulzus grafikon is? | v1.0-ban nem, ötletként felvéve | ✅ v1.0-ban nem; ötlet: Ö-002 |
 
 ## 10. Elfogadási feltételek (v1.0)
 

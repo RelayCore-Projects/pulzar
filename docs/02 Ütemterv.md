@@ -9,8 +9,8 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 
 | Verzió | Tartalom | Fázis | Állapot |
 |---|---|---|---|
-| **0.1.0** | Koncepció: specifikáció, döntések, projektdokumentáció | Koncepció | 🟡 folyamatban – jóváhagyásra vár |
-| 0.2.0 | Flutter projektváz, alap navigáció, GitHub Actions: automatikus, aláírt APK minden kiadásnál | Fejlesztés | ⚪ tervezett |
+| **0.1.x** | Koncepció: specifikáció, döntések, projektdokumentáció | Koncepció | 🟢 kész (0.1.1) |
+| 0.2.0 | Flutter projektváz, alap navigáció, GitHub Actions: automatikus, aláírt APK minden kiadásnál | Fejlesztés | 🟡 következő |
 | 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | ⚪ tervezett |
 | 0.4.0 | Táblázatos nézet, időszak-választó, összesítés (FR-06, FR-07) | Fejlesztés | ⚪ tervezett |
 | 0.5.0 | Szisztolé és diasztolé grafikon, referenciavonal (FR-08…10) | Fejlesztés | ⚪ tervezett |
@@ -29,3 +29,4 @@ A 0.2.0-tól minden verzióhoz telepíthető APK készül; a kézi teszt és a v
 Ide kerül, mikor zárult le egy verzió (dátum + rövid megjegyzés). A részletes tartalom a [[CHANGELOG]]-ban.
 
 - 2026-10-08 – Projekt indítása, repó és vault létrehozva
+- 2026-10-08 – 0.1.1: nyitott kérdések lezárva, koncepció jóváhagyva
