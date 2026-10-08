@@ -13,6 +13,28 @@ const _months = [
 
 String _two(int n) => n.toString().padLeft(2, '0');
 
+/// Mon, Tue, …
+String weekdayShort(DateTime d) => _weekdays[d.weekday - 1].substring(0, 3);
+
+/// Jan, Feb, …
+String monthShort(DateTime d) => _months[d.month - 1].substring(0, 3);
+
+/// October 2026
+String formatMonthYear(DateTime d) => '${_months[d.month - 1]} ${d.year}';
+
+/// 5 – 11 October 2026 · 28 September – 4 October 2026 · 29 December 2025 – 4 January 2026
+String formatDayRange(DateTime from, DateTime to) {
+  if (from.year != to.year) {
+    return '${from.day} ${_months[from.month - 1]} ${from.year} – '
+        '${to.day} ${_months[to.month - 1]} ${to.year}';
+  }
+  if (from.month != to.month) {
+    return '${from.day} ${_months[from.month - 1]} – '
+        '${to.day} ${_months[to.month - 1]} ${to.year}';
+  }
+  return '${from.day} – ${to.day} ${_months[to.month - 1]} ${to.year}';
+}
+
 /// 08/10/2026
 String formatDate(DateTime d) => '${_two(d.day)}/${_two(d.month)}/${d.year}';
 

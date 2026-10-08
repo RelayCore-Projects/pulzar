@@ -39,16 +39,26 @@ class ChannelFileAccess implements FileAccess {
   Future<Uint8List?> openFile() => _channel.invokeMethod<Uint8List>('openFile');
 }
 
-/// Az app szolgáltatásai (most: fájlkezelés) – a tesztek ezt cserélik le.
+/// Az app szolgáltatásai (fájlkezelés, óra) – a tesztek ezeket cserélik le.
 class AppServices extends InheritedWidget {
-  const AppServices({super.key, required this.fileAccess, required super.child});
+  const AppServices({
+    super.key,
+    required this.fileAccess,
+    this.clock = DateTime.now,
+    required super.child,
+  });
 
   final FileAccess fileAccess;
+
+  /// Az „aktuális” idő – a tesztekben rögzített dátum (pl. egy adott csütörtök).
+  final DateTime Function() clock;
+
+  DateTime now() => clock();
 
   static AppServices of(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AppServices>()!;
 
   @override
   bool updateShouldNotify(AppServices oldWidget) =>
-      fileAccess != oldWidget.fileAccess;
+      fileAccess != oldWidget.fileAccess || clock != oldWidget.clock;
 }

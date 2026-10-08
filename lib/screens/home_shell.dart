@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/period.dart';
+import '../platform/file_access.dart';
 import 'charts_screen.dart';
 import 'log_screen.dart';
 import 'measurement_form_screen.dart';
@@ -18,10 +19,10 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
-  /// A Table és a Charts közös időszaka (alapból 30 nap).
-  PeriodPreset _preset = PeriodPreset.days30;
+  /// A Table és a Charts közös időszaka (alapból az aktuális hét).
+  PeriodSelection? _selection;
 
-  void _setPreset(PeriodPreset p) => setState(() => _preset = p);
+  void _select(PeriodSelection s) => setState(() => _selection = s);
 
   static const _titles = ['Log', 'Table', 'Charts'];
 
@@ -33,10 +34,12 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final selection =
+        _selection ?? PeriodSelection(PeriodKind.week, AppServices.of(context).now());
     final Widget body = switch (_index) {
       0 => const LogScreen(),
-      1 => TableScreen(preset: _preset, onPresetChanged: _setPreset),
-      _ => ChartsScreen(preset: _preset, onPresetChanged: _setPreset),
+      1 => TableScreen(selection: selection, onChanged: _select),
+      _ => ChartsScreen(selection: selection, onChanged: _select),
     };
 
     return Scaffold(

@@ -5,6 +5,7 @@ import '../domain/grouping.dart';
 import '../domain/period.dart';
 import '../domain/stats.dart';
 import '../models/measurement.dart';
+import '../platform/file_access.dart';
 import '../state/store_scope.dart';
 import '../util/format.dart';
 import '../widgets/period_selector.dart';
@@ -15,19 +16,21 @@ import '../widgets/stats_card.dart';
 class TableScreen extends StatelessWidget {
   const TableScreen({
     super.key,
-    required this.preset,
-    required this.onPresetChanged,
+    required this.selection,
+    required this.onChanged,
   });
 
-  final PeriodPreset preset;
-  final ValueChanged<PeriodPreset> onPresetChanged;
+  final PeriodSelection selection;
+  final ValueChanged<PeriodSelection> onChanged;
 
   static const _flex = [2, 2, 2, 2, 5];
 
   @override
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
-    final period = Period.of(preset, DateTime.now(), earliest: store.earliest);
+    final today = AppServices.of(context).now();
+    final period =
+        Period.of(selection, earliest: store.earliest, today: today);
     final items =
         store.measurements.where((m) => period.contains(m.measuredAt)).toList();
     final theme = Theme.of(context);
@@ -39,11 +42,22 @@ class TableScreen extends StatelessWidget {
       rows.addAll(group.measurements);
     }
 
-    return CustomScrollView(
+    return PeriodSwipe(
+      key: const Key('period-swipe'),
+      period: period,
+      today: today,
+      earliest: store.earliest,
+      onChanged: onChanged,
+      child: CustomScrollView(
       key: const Key('table-scroll'),
       slivers: [
         SliverToBoxAdapter(
-          child: PeriodSelector(period: period, onChanged: onPresetChanged),
+          child: PeriodSelector(
+            period: period,
+            today: today,
+            earliest: store.earliest,
+            onChanged: onChanged,
+          ),
         ),
         SliverToBoxAdapter(child: StatsCard(stats: PeriodStats.of(items))),
         if (items.isEmpty)
@@ -79,6 +93,7 @@ class TableScreen extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ],
+      ),
     );
   }
 }

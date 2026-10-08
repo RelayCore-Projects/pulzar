@@ -11,10 +11,12 @@ class PulzarApp extends StatelessWidget {
     super.key,
     required this.store,
     this.fileAccess = const ChannelFileAccess(),
+    this.clock = DateTime.now,
   });
 
   final MeasurementStore store;
   final FileAccess fileAccess;
+  final DateTime Function() clock;
 
   static const _seed = Color(0xFF8E2B3C);
 
@@ -22,6 +24,7 @@ class PulzarApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppServices(
       fileAccess: fileAccess,
+      clock: clock,
       child: StoreScope(
         store: store,
         child: MaterialApp(

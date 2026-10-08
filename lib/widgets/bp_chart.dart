@@ -2,13 +2,18 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../util/format.dart';
+import '../domain/chart_data.dart';
 
+/// A grafikon egy pontja: átlag, és ha több mérésből készült, a legkisebb / legnagyobb érték.
 class ChartPoint {
-  const ChartPoint(this.time, this.value);
+  const ChartPoint(this.time, this.value, {this.min, this.max});
 
   final DateTime time;
-  final int value;
+  final double value;
+  final int? min;
+  final int? max;
+
+  bool get hasRange => min != null && max != null && min != max;
 }
 
 /// Egy adatsor (pl. szisztolé) a saját színével és opcionális referenciavonalával.
@@ -26,20 +31,22 @@ class ChartSeries {
   final int? reference;
 }
 
-/// FR-08 / FR-09: egy grafikon több vonallal, valós időtengellyel;
-/// FR-10: soronként szaggatott referenciavonal. Saját rajzolás (ADR-010).
+/// FR-08: több vonal egy ábrán, valós időtengellyel; a pontoknál min–max vonal;
+/// FR-10: soronként szaggatott referenciavonal. Saját rajzolás (ADR-010, ADR-011).
 class BpChart extends StatelessWidget {
   const BpChart({
     super.key,
     required this.series,
     required this.start,
     required this.end,
+    required this.xLabels,
     this.height = 280,
   });
 
   final List<ChartSeries> series;
   final DateTime start;
   final DateTime end;
+  final List<AxisLabel> xLabels;
   final double height;
 
   @override
@@ -53,6 +60,7 @@ class BpChart extends StatelessWidget {
           series: series,
           start: start,
           end: end,
+          xLabels: xLabels,
           gridColor: scheme.outlineVariant,
           textColor: scheme.onSurfaceVariant,
         ),
@@ -66,6 +74,7 @@ class BpChartPainter extends CustomPainter {
     required this.series,
     required this.start,
     required this.end,
+    required this.xLabels,
     required this.gridColor,
     required this.textColor,
   });
@@ -73,6 +82,7 @@ class BpChartPainter extends CustomPainter {
   final List<ChartSeries> series;
   final DateTime start;
   final DateTime end;
+  final List<AxisLabel> xLabels;
   final Color gridColor;
   final Color textColor;
 
@@ -81,11 +91,15 @@ class BpChartPainter extends CustomPainter {
   static const _top = 10.0;
   static const _bottom = 24.0;
 
-  /// A függőleges tengely határai: minden adat és referencia körül, 10-esre kerekítve.
+  /// A függőleges tengely határai: minden érték, tartomány és referencia körül, 10-esre kerekítve.
   (int, int) get yRange {
-    final values = [
+    final values = <num>[
       for (final s in series) ...[
-        for (final p in s.points) p.value,
+        for (final p in s.points) ...[
+          p.value,
+          if (p.min != null) p.min!,
+          if (p.max != null) p.max!,
+        ],
         if (s.reference != null) s.reference!,
       ],
     ];
@@ -98,17 +112,19 @@ class BpChartPainter extends CustomPainter {
   }
 
   void _text(Canvas canvas, String s, Offset at,
-      {TextAlign align = TextAlign.left, Color? color}) {
+      {TextAlign align = TextAlign.left, Color? color, double? minX, double? maxX}) {
     final tp = TextPainter(
       text: TextSpan(
           text: s, style: TextStyle(color: color ?? textColor, fontSize: 11)),
       textDirection: TextDirection.ltr,
     )..layout();
-    final dx = switch (align) {
+    var dx = switch (align) {
       TextAlign.right => at.dx - tp.width,
       TextAlign.center => at.dx - tp.width / 2,
       _ => at.dx,
     };
+    if (minX != null && dx < minX) dx = minX;
+    if (maxX != null && dx + tp.width > maxX) dx = maxX - tp.width;
     tp.paint(canvas, Offset(dx, at.dy - tp.height / 2));
   }
 
@@ -136,21 +152,10 @@ class BpChartPainter extends CustomPainter {
       _text(canvas, '$v', Offset(plot.left - 6, y(v)), align: TextAlign.right);
     }
 
-    // időtengely feliratai (legfeljebb 5)
-    final days = (span / Duration.millisecondsPerDay).round();
-    final labels = math.max(2, math.min(5, days));
-    for (var i = 0; i < labels; i++) {
-      final t =
-          start.add(Duration(milliseconds: (span * i / (labels - 1)).round()));
-      final last = i == labels - 1;
-      final at = last ? end.subtract(const Duration(days: 1)) : t;
-      final label =
-          '${at.day.toString().padLeft(2, '0')}/${at.month.toString().padLeft(2, '0')}';
-      final align = i == 0
-          ? TextAlign.left
-          : (last ? TextAlign.right : TextAlign.center);
-      final px = i == 0 ? plot.left : (last ? plot.right : x(t));
-      _text(canvas, label, Offset(px, plot.bottom + 12), align: align);
+    // időtengely feliratai
+    for (final l in xLabels) {
+      _text(canvas, l.text, Offset(x(l.time), plot.bottom + 12),
+          align: TextAlign.center, minX: 0, maxX: size.width);
     }
 
     for (final s in series) {
@@ -172,8 +177,19 @@ class BpChartPainter extends CustomPainter {
         _text(canvas, '$ref', Offset(plot.right + 4, y(ref)), color: s.color);
       }
 
-      // adatok
       if (s.points.isEmpty) continue;
+
+      // napi (heti, havi) legkisebb–legnagyobb érték: vékony függőleges vonal
+      final range = Paint()
+        ..color = s.color.withValues(alpha: 0.45)
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round;
+      for (final p in s.points.where((p) => p.hasRange)) {
+        final px = x(p.time);
+        canvas.drawLine(Offset(px, y(p.min!)), Offset(px, y(p.max!)), range);
+      }
+
+      // átlagok összekötve
       final line = Paint()
         ..color = s.color
         ..strokeWidth = 2
@@ -197,6 +213,7 @@ class BpChartPainter extends CustomPainter {
       old.start != start ||
       old.end != end ||
       old.gridColor != gridColor ||
+      old.xLabels.length != xLabels.length ||
       !_sameSeries(old.series, series);
 
   static bool _sameSeries(List<ChartSeries> a, List<ChartSeries> b) {
@@ -210,20 +227,14 @@ class BpChartPainter extends CustomPainter {
         return false;
       }
       for (var k = 0; k < pa.length; k++) {
-        if (pa[k].time != pb[k].time || pa[k].value != pb[k].value) {
+        if (pa[k].time != pb[k].time ||
+            pa[k].value != pb[k].value ||
+            pa[k].min != pb[k].min ||
+            pa[k].max != pb[k].max) {
           return false;
         }
       }
     }
     return true;
   }
-
-  /// Rövid szöveges leírás (tesztekhez, akadálymentesítéshez).
-  String describe() => [
-        for (final s in series)
-          s.points.isEmpty
-              ? '${s.label}: no data'
-              : '${s.label}: ${s.points.length} points, '
-                  '${formatDate(s.points.first.time)} – ${formatDate(s.points.last.time)}',
-      ].join('; ');
 }

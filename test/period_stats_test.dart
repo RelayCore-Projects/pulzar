@@ -7,36 +7,66 @@ import 'helpers/factory.dart';
 void main() {
   final today = DateTime(2026, 10, 8, 15, 30);
 
-  group('FR-06 period', () {
-    test('7 days includes today and the 6 days before', () {
-      final p = Period.of(PeriodPreset.days7, today);
-      expect(p.from, DateTime(2026, 10, 2));
-      expect(p.to, DateTime(2026, 10, 8));
-      expect(p.contains(DateTime(2026, 10, 2, 0, 0)), isTrue);
-      expect(p.contains(DateTime(2026, 10, 8, 23, 59)), isTrue);
-      expect(p.contains(DateTime(2026, 10, 1, 23, 59)), isFalse);
-      expect(p.contains(DateTime(2026, 10, 9)), isFalse);
-      expect(p.range, '02/10/2026 – 08/10/2026');
-      expect(p.label, 'Last 7 days');
+  group('FR-06 calendar periods', () {
+    // 2026-10-08 csütörtök
+    test('week: Monday to Sunday', () {
+      final p = Period.containing(PeriodKind.week, today);
+      expect(p.from, DateTime(2026, 10, 5));
+      expect(p.to, DateTime(2026, 10, 11));
+      expect(p.title, '5 – 11 October 2026');
+      expect(p.contains(DateTime(2026, 10, 5, 0, 0)), isTrue);
+      expect(p.contains(DateTime(2026, 10, 11, 23, 59)), isTrue);
+      expect(p.contains(DateTime(2026, 10, 4, 23, 59)), isFalse);
+      expect(p.contains(DateTime(2026, 10, 12)), isFalse);
     });
 
-    test('30 and 90 days, across month boundaries', () {
-      expect(Period.of(PeriodPreset.days30, today).from, DateTime(2026, 9, 9));
-      expect(Period.of(PeriodPreset.days90, today).from, DateTime(2026, 7, 11));
+    test('week across months and years', () {
+      expect(Period.containing(PeriodKind.week, DateTime(2026, 10, 1)).title,
+          '28 September – 4 October 2026');
+      final newYear = Period.containing(PeriodKind.week, DateTime(2026, 1, 1));
+      expect(newYear.from, DateTime(2025, 12, 29));
+      expect(newYear.title, '29 December 2025 – 4 January 2026');
+    });
+
+    test('month and year', () {
+      final m = Period.containing(PeriodKind.month, today);
+      expect(m.from, DateTime(2026, 10, 1));
+      expect(m.to, DateTime(2026, 10, 31));
+      expect(m.title, 'October 2026');
+      final feb = Period.containing(PeriodKind.month, DateTime(2028, 2, 10));
+      expect(feb.to, DateTime(2028, 2, 29)); // szökőév
+      final y = Period.containing(PeriodKind.year, today);
+      expect(y.from, DateTime(2026, 1, 1));
+      expect(y.to, DateTime(2026, 12, 31));
+      expect(y.title, '2026');
+    });
+
+    test('previous / next: not into the future, not before the first measurement',
+        () {
+      final week = Period.containing(PeriodKind.week, today);
+      expect(week.next(today), isNull);
+      expect(week.previous(null), isNull);
+      expect(week.previous(DateTime(2026, 10, 6)), isNull);
+      final prev = week.previous(DateTime(2026, 9, 1))!;
+      expect(prev.from, DateTime(2026, 9, 28));
+      expect(prev.next(today)!.from, DateTime(2026, 10, 5));
+
+      final month = Period.containing(PeriodKind.month, today);
+      expect(month.previous(DateTime(2026, 9, 30))!.title, 'September 2026');
+      final year = Period.containing(PeriodKind.year, today);
+      expect(year.previous(DateTime(2025, 6, 1))!.title, '2025');
     });
 
     test('All: from the earliest measurement to today, contains everything',
         () {
-      final p = Period.of(PeriodPreset.all, today,
-          earliest: DateTime(2024, 3, 15, 7, 30));
+      final p = Period.containing(PeriodKind.all, today,
+          earliest: DateTime(2024, 3, 15, 7, 30), today: today);
       expect(p.from, DateTime(2024, 3, 15));
       expect(p.to, DateTime(2026, 10, 8));
-      expect(p.endExclusive, DateTime(2026, 10, 9));
       expect(p.contains(DateTime(2020, 1, 1)), isTrue);
-      expect(p.label, 'All measurements');
-      // mérés nélkül: csak a mai nap
-      final empty = Period.of(PeriodPreset.all, today);
-      expect(empty.from, DateTime(2026, 10, 8));
+      expect(p.title, 'All measurements');
+      expect(p.previous(DateTime(2000)), isNull);
+      expect(p.next(today), isNull);
     });
   });
 

@@ -45,7 +45,11 @@ Future<MeasurementStore> _pump(
   final store = MeasurementStore(InMemoryMeasurementRepository(initial));
   await store.load();
   await tester.pumpWidget(
-    PulzarApp(store: store, fileAccess: files ?? FakeFileAccess()),
+    PulzarApp(
+      store: store,
+      fileAccess: files ?? FakeFileAccess(),
+      clock: () => _today,
+    ),
   );
   await tester.pumpAndSettle();
   return store;
@@ -56,10 +60,11 @@ Finder _nav(String label) => find.descendant(
       matching: find.text(label),
     );
 
-DateTime _daysAgo(int days, int hour) {
-  final now = DateTime.now();
-  return DateTime(now.year, now.month, now.day - days, hour);
-}
+/// Rögzített „ma”: 2026. október 8., csütörtök – a hét 5-től 11-ig tart.
+final _today = DateTime(2026, 10, 8, 18);
+
+DateTime _daysAgo(int days, int hour) =>
+    DateTime(_today.year, _today.month, _today.day - days, hour);
 
 void main() {
   List<Measurement> sample() => [
@@ -75,15 +80,11 @@ void main() {
     await tester.tap(_nav('Table'));
     await tester.pumpAndSettle();
 
-    // alapértelmezés: 30 nap → mind a 4
-    expect(find.text('4 measurements'), findsOneWidget);
-    expect(find.byKey(const Key('table-row-old')), findsOneWidget);
-
-    await tester.tap(find.text('7 days'));
-    await tester.pumpAndSettle();
+    // alapértelmezés: az aktuális hét (5–11 október) → t1, t2, t3
+    expect(find.text('5 – 11 October 2026'), findsOneWidget);
     expect(find.text('3 measurements'), findsOneWidget);
     expect(find.byKey(const Key('table-row-old')), findsNothing);
-    expect(find.textContaining('Last 7 days'), findsOneWidget);
+    expect(find.byKey(const Key('table-day-2026-10-06')), findsOneWidget);
 
     // a hiányzó pulzus „–”, a referenciát elérő érték kiemelve
     final high = tester.widget<Text>(find.descendant(
@@ -96,11 +97,31 @@ void main() {
         find.descendant(
             of: find.byKey(const Key('table-row-t3')), matching: find.text('–')),
         findsOneWidget);
+
+    // a jövőbe nem lehet lapozni
+    final next =
+        tester.widget<IconButton>(find.byKey(const Key('period-next')));
+    expect(next.onPressed, isNull);
+
+    // hónap, majd az előző hónap
+    await tester.tap(find.text('Month'));
+    await tester.pumpAndSettle();
+    expect(find.text('October 2026'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('period-previous')));
+    await tester.pumpAndSettle();
+    expect(find.text('September 2026'), findsOneWidget);
+    expect(find.text('1 measurement'), findsOneWidget);
+    expect(find.byKey(const Key('table-row-old')), findsOneWidget);
   });
 
-  testWidgets('FR-08/09/10: one chart, systolic red and diastolic blue',
+  testWidgets('FR-08/09/10: one chart, red/blue, daily averages',
       (tester) async {
-    await _pump(tester, initial: sample());
+    await _pump(tester, initial: [
+      ...sample(),
+      // még két mérés csütörtökön → a napi átlag 135 / 86, tartomány 130–140
+      measurement('t1b', _daysAgo(0, 9), systolic: 135, diastolic: 86),
+      measurement('t1c', _daysAgo(0, 12), systolic: 130, diastolic: 82),
+    ]);
     await tester.tap(_nav('Charts'));
     await tester.pumpAndSettle();
 
@@ -114,14 +135,36 @@ void main() {
     final sys = painter.series[0];
     final dia = painter.series[1];
     expect(sys.label, 'Systolic');
-    expect(sys.points.map((p) => p.value), [130, 125, 120, 140]);
-    expect(dia.points.map((p) => p.value), [84, 82, 80, 90]);
+    // napi pontok: kedd, szerda, csütörtök
+    expect(sys.points.map((p) => p.value), [125, 120, 135]);
+    expect(sys.points.last.min, 130);
+    expect(sys.points.last.max, 140);
+    expect(sys.points.first.hasRange, isFalse);
+    expect(dia.points.map((p) => p.value.round()), [82, 80, 86]);
     expect(sys.reference, 135);
     expect(dia.reference, 85);
     expect(sys.color, Colors.red.shade700);
     expect(dia.color, Colors.blue.shade700);
-    final (lo, hi) = painter.yRange;
-    expect(lo <= 80 && hi >= 140, isTrue);
+    expect(painter.xLabels.map((l) => l.text).first, 'Mon 5');
+    expect(find.textContaining('average of one day'), findsOneWidget);
+  });
+
+  testWidgets('FR-06: swipe right shows the previous week', (tester) async {
+    await _pump(tester, initial: sample());
+    await tester.tap(_nav('Charts'));
+    await tester.pumpAndSettle();
+    expect(find.text('5 – 11 October 2026'), findsOneWidget);
+
+    await tester.fling(
+        find.byKey(const Key('period-swipe')), const Offset(300, 0), 1500);
+    await tester.pumpAndSettle();
+    expect(find.text('28 September – 4 October 2026'), findsOneWidget);
+    expect(find.byKey(const Key('charts-empty')), findsOneWidget);
+
+    await tester.fling(
+        find.byKey(const Key('period-swipe')), const Offset(-300, 0), 1500);
+    await tester.pumpAndSettle();
+    expect(find.text('5 – 11 October 2026'), findsOneWidget);
   });
 
   testWidgets('FR-06: “All” shows every measurement', (tester) async {
@@ -131,13 +174,14 @@ void main() {
     ]);
     await tester.tap(_nav('Table'));
     await tester.pumpAndSettle();
-    expect(find.text('4 measurements'), findsOneWidget);
+    expect(find.text('3 measurements'), findsOneWidget);
 
     await tester.tap(find.text('All'));
     await tester.pumpAndSettle();
     expect(find.text('5 measurements'), findsOneWidget);
+    expect(find.text('All measurements'), findsOneWidget);
+    // a legkorábbi nap van felül
     expect(find.byKey(const Key('table-row-ancient')), findsOneWidget);
-    expect(find.textContaining('All measurements'), findsOneWidget);
   });
 
   testWidgets('Table scrolls as a whole in landscape', (tester) async {
@@ -147,6 +191,8 @@ void main() {
     tester.view.physicalSize = const Size(2400, 1080); // fekvő
     await tester.pumpAndSettle();
     await tester.tap(_nav('Table'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All'));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('stats-count')).hitTestable(), findsOneWidget);
