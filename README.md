@@ -2,19 +2,30 @@
 
 Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyik projektje.
 
-> **Állapot:** fejlesztés alatt (v0.2.0). Telepíthető előnézet: [Releases → Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
+> **Legutóbbi kiadás:** v0.4.0 · [Letöltés (Releases)](https://github.com/RelayCore-Projects/pulzar/releases/latest) · fejlesztői előnézet: [Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
 
-## Mit tud majd
+## Mit tud
 
-- Kézi bevitel: dátum, időpont, szisztolé, diasztolé, pulzus, megjegyzés – naponta legfeljebb 3 mérés
-- Táblázatos nézet választható időszakra, átlaggal, minimummal, maximummal – orvosnak megmutatható formában
-- Külön grafikon a szisztolé és a diasztolé értékekről
-- Export: PDF (táblázat és/vagy grafikon), CSV (Excelhez), teljes mentés és visszatöltés
+- **Rögzítés**: dátum, szabadon megadható időpont, szisztolé, diasztolé, pulzus (opcionális), megjegyzés – naponta legfeljebb 3 mérés
+- **Táblázat** (főképernyő): napokra bontva, hét / hónap / év / összes időszak lapozással, átlag / minimum / maximum, a referenciaértéket (135/85) elérő értékek kiemelve; érintésre részletek, hosszú nyomásra szerkesztés
+- **Grafikon**: a szisztolé (piros) és a diasztolé (kék) napi átlaga pontokkal (évnél heti átlag), referenciavonalakkal; koppintásra a nap mérései
+- **Mentés és visszatöltés**: minden mérés egy fájlba (pl. Google Drive-ra), visszatöltés összefésüléssel
 - Minden adat csak a telefonon tárolódik, internetkapcsolat nélkül
 
-Részletesen: [docs/01 Specifikáció.md](docs/01%20Specifikáció.md) · Ütemterv: [docs/02 Ütemterv.md](docs/02%20Ütemterv.md) · Változások: [docs/CHANGELOG.md](docs/CHANGELOG.md)
+**Tervben (v0.5.0):** PDF és CSV export, beállítások (név a PDF-en, referenciaértékek), lefúrás a grafikonon. Részletek: [Ütemterv](docs/02%20Ütemterv.md)
 
 Az alkalmazás felülete **angol**, a projekt dokumentációja magyar.
+
+## Telepítés és frissítés
+
+1. Telefonon nyisd meg a [Releases](https://github.com/RelayCore-Projects/pulzar/releases/latest) oldalt, és töltsd le a `pulzar-x.y.z.apk` fájlt
+2. Nyisd meg → engedélyezd a telepítést ebből a forrásból → *Telepítés*
+3. Frissítés: az új APK-t a régire telepítsd – **ne töröld előtte az appot**, mert az adatok is törlődnek
+4. Kényelmesebb frissítés: az [Obtainium](https://github.com/ImranR98/Obtainium) appban add hozzá a repó címét, és szól az új verziókról
+
+Készíts rendszeresen mentést: *Settings → Backup and restore → Save backup…*
+
+Követelmény: Android 8.0 vagy újabb, 64 bites telefon.
 
 ## Technológia
 
@@ -24,7 +35,7 @@ Az alkalmazás felülete **angol**, a projekt dokumentációja magyar.
 
 ```
 pulzar/
-├── lib/         Az alkalmazás forráskódja (Dart)
+├── lib/         Az alkalmazás forráskódja (Dart): models, domain, data, state, screens, widgets
 ├── test/        Automatikus tesztek
 ├── android/     Android-specifikus fájlok
 ├── .github/     CI: tesztek, APK-fordítás, kiadás
@@ -36,6 +47,10 @@ pulzar/
 └── LICENSE
 ```
 
+
+## Fejlesztés
+
+Minden változás külön ágon készül; a CI ([GitHub Actions](.github/workflows/ci.yml)) minden feltöltésnél lefuttatja a teszteket, aláírt APK-t fordít és frissíti a Preview kiadást. Kiadás: Pull Request a `main`-be, majd `vX.Y.Z` címke → automatikus GitHub Release. Részletek: [Fejlesztési folyamat](docs/03%20Fejlesztési%20folyamat.md).
 
 ## Dokumentáció
 

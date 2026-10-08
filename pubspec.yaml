@@ -3,7 +3,7 @@ description: "Pulzar – a simple offline blood pressure log."
 publish_to: 'none'
 
 # FŐ.AL.JAVÍTÁS+buildszám – a kiadott APK verzióját a CI a git-címkéből állítja be
-version: 0.3.1+4
+version: 0.4.0+5
 
 environment:
   sdk: ^3.5.0

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/coming_soon.dart';
-import 'log_screen.dart';
+import '../domain/period.dart';
+import '../platform/file_access.dart';
+import 'charts_screen.dart';
 import 'measurement_form_screen.dart';
 import 'settings_screen.dart';
+import 'table_screen.dart';
 
-/// Főképernyő alsó navigációval: Log · Table · Charts
+/// Főképernyő alsó navigációval: Table · Charts (v0.4.0: a Log fül beolvadt a Table-be)
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -16,7 +18,12 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
-  static const _titles = ['Log', 'Table', 'Charts'];
+  /// A Table és a Charts közös időszaka (alapból az aktuális hét).
+  PeriodSelection? _selection;
+
+  void _select(PeriodSelection s) => setState(() => _selection = s);
+
+  static const _titles = ['Table', 'Charts'];
 
   void _openSettings() {
     Navigator.of(context).push(
@@ -26,21 +33,11 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final selection =
+        _selection ?? PeriodSelection(PeriodKind.week, AppServices.of(context).now());
     final Widget body = switch (_index) {
-      0 => const LogScreen(),
-      1 => const ComingSoon(
-          key: Key('placeholder-table'),
-          icon: Icons.table_chart,
-          description:
-              'A table for any period, with averages, minimums and maximums.',
-          version: '0.4.0',
-        ),
-      _ => const ComingSoon(
-          key: Key('placeholder-charts'),
-          icon: Icons.show_chart,
-          description: 'Separate charts for systolic and diastolic values.',
-          version: '0.5.0',
-        ),
+      0 => TableScreen(selection: selection, onChanged: _select),
+      _ => ChartsScreen(selection: selection, onChanged: _select),
     };
 
     return Scaffold(
@@ -69,11 +66,6 @@ class _HomeShellState extends State<HomeShell> {
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.list_alt_outlined),
-            selectedIcon: Icon(Icons.list_alt),
-            label: 'Log',
-          ),
           NavigationDestination(
             icon: Icon(Icons.table_chart_outlined),
             selectedIcon: Icon(Icons.table_chart),

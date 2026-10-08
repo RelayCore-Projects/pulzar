@@ -78,6 +78,30 @@ class SqliteMeasurementRepository implements MeasurementRepository {
   }
 
   @override
+  Future<List<Measurement>> loadAllIncludingDeleted() async {
+    final rows = await _db.query(_table, orderBy: 'measured_at DESC');
+    return rows.map(Measurement.fromMap).toList();
+  }
+
+  @override
+  Future<void> applyRestore({
+    required List<Measurement> inserts,
+    required List<Measurement> updates,
+  }) async {
+    await _db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final m in inserts) {
+        batch.insert(_table, m.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      for (final m in updates) {
+        batch.update(_table, m.toMap(), where: 'id = ?', whereArgs: [m.id]);
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
   Future<void> insert(Measurement measurement) async {
     await _db.insert(
       _table,

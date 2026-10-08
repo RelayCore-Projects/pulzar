@@ -1,6 +1,6 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.3.1
+dokumentum_verzio: 0.4.0
 statusz: jóváhagyva
 frissitve: 2026-10-08
 ---
@@ -15,6 +15,11 @@ frissitve: 2026-10-08
 | 0.1.1 | 2026-10-08 | Nyitott kérdések lezárva: FR-03, FR-10, FR-11, NFR-08 pontosítva; pulzus grafikon nem kerül a v1.0-ba | K-01…K-05 döntései, lásd [[#9. Nyitott kérdések]] |
 | 0.2.0 | 2026-10-08 | Az alkalmazás felülete **angol**; FR-01, 02, 04, 06, 11, 12, 13, 16, NFR-03, képernyővázlatok igazítva | Új igény a fejlesztés közben, lásd [[ADR-005 Angol nyelvű felület]] |
 | 0.3.1 | 2026-10-08 | A **pulzus opcionális**: FR-01, FR-02, FR-07, FR-12, adatmodell módosítva | Tesztelés közben talált követelmény-hiba: korábbi mérésekhez nincs mindig pulzus feljegyezve – GitHub #3 |
+| 0.4.0 | 2026-10-08 | FR-06 (sorrend, kiemelés), FR-13 (törölt sorok, napi korlát), FR-14 (mentés helye) pontosítva | A megvalósítás során tisztázott részletek; [[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]] |
+| 0.4.0 | 2026-10-08 | FR-06: „Custom” helyett „All”; napi fejléces táblázat; az egész nézet görgethető. FR-08/09: a szisztolé (piros) és a diasztolé (kék) **egy** grafikonon | Visszajelzés a 0.4.0-dev.19 kézi tesztjéből: a dátum oszlop nem fért ki, fekvő módban az összesítő kitakarta a táblázatot, az egyéni időszakra nincs szükség, a két görbe egy ábrán jobban összevethető |
+| 0.4.0 | 2026-10-08 | FR-06: **naptári időszakok** (Week · Month · Year · All) lapozással; FR-08: egy pont = **napi átlag** min–max vonallal (Year: heti, All: havi) | Visszajelzés: a gördülő 7 nap helyett teljes hetek kellenek, egymás után lapozva; napi 3 mérésnél a pontok összezsúfolódtak – [[ADR-011 Naptári időszakok és átlagolt grafikon]] |
+| 0.4.0 | 2026-10-08 | FR-05 (Napló) beolvadt az FR-06-ba: a **Table a főképernyő**, + gombbal, koppintással szerkeszthető sorokkal; FR-08: **csak pontok**, a Charts-on nincs „All” | Visszajelzés: a táblázat mellett a Log fölösleges; a hosszú megjegyzés nem fér el; a pontok összekötése mérés nélküli napoknál félrevezető; a havi átlag („All”) nem ad hasznos képet |
+| 0.4.0 | 2026-10-08 | FR-06: érintésre **részletek lap**, **hosszú nyomásra szerkesztés**; FR-08: a **min–max vonal megszűnt**, koppintásra a nap / hét **kiemelése és méréseinek listája**, átugrás (*Show week*, *Show month*) | Visszajelzés: véletlen szerkesztés elkerülése; a min–max vonal zavaró; a hónap / év pontjai mögötti mérések legyenek elérhetők; nagyítás helyett lefúrás |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -28,7 +33,7 @@ frissitve: 2026-10-08
 
 Egyetlen felhasználó a saját vérnyomásértékeit **kézzel** rögzíti a telefonján, és ezeket
 - **számszerűen** (táblázatban) meg tudja mutatni az orvosnak,
-- **grafikusan** – külön a szisztolé és külön a diasztolé értékekről – meg tudja jeleníteni,
+- **grafikusan** – a szisztolé és a diasztolé értékeket ~~külön~~ egy ábrán, jól megkülönböztethető színnel `🔄 v0.4.0` – meg tudja jeleníteni,
 - **exportálni** tudja (PDF, CSV, teljes mentés).
 
 Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali** alkalmazás, amely ugyanazokat az adatokat tudja kezelni (v2, lásd [[02 Ütemterv]]).
@@ -38,7 +43,7 @@ Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali
 ### Benne van (v1.0)
 
 - Mérés rögzítése, szerkesztése, törlése
-- Napló lista
+- ~~Napló lista~~ → táblázat (főképernyő) `🔄 v0.4.0`
 - Táblázatos nézet időszakszűréssel és összesítéssel
 - Szisztolé és diasztolé grafikon
 - PDF, CSV export; teljes mentés és visszatöltés
@@ -62,7 +67,7 @@ Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali
 | Pulzus (PUL) | Pulse | Szívverés / perc (bpm) |
 | Hgmm | mmHg | Higanymilliméter, a vérnyomás mértékegysége |
 | Mérés | Measurement | Egy időponthoz tartozó SYS + DIA + PUL (+ megjegyzés) |
-| Napló | Log | A mérések listája |
+| ~~Napló~~ | ~~Log~~ | ~~A mérések listája~~ – `❌ v0.4.0`, helyette a Table |
 | Időszak | Period | A megjelenítéshez / exporthoz választott dátumtartomány |
 
 > [!note] Nyelv `🔄 v0.2.0`
@@ -109,26 +114,48 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 
 ### 4.2 Megjelenítés
 
-**FR-05 – Napló (főképernyő)**
-A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mérések időrendben: `07:30   128 / 82   72`. Érintéssel megnyílik a szerkesztés.
+**FR-05 – Napló (főképernyő)** `❌ v0.4.0` – beolvadt az FR-06-ba; a főképernyő a táblázat.
+~~A mérések napokra csoportosítva, a legfrissebb nap felül. Naponként a mérések időrendben: `07:30   128 / 82   72`. Érintéssel megnyílik a szerkesztés.~~
 
 **FR-06 – Táblázatos nézet (orvosnak)**
-- Időszak-választó: „7 days”, „30 days”, „90 days”, „Custom” (dátumtól–dátumig) `🔄 v0.2.0`
+- Időszak-választó: ~~„7 days”, „30 days”, „90 days”~~, ~~„Custom” (dátumtól–dátumig)~~ `❌ v0.4.0` → **naptári időszakok** `🆕 v0.4.0`:
+  - **Week** – hétfőtől vasárnapig
+  - **Month** – a hónap 1-jétől az utolsó napjáig
+  - **Year** – január 1-jétől december 31-ig
+  - **All** – a legkorábbi méréstől máig
+- Lapozás ‹ › gombokkal és **húzással** (jobbra: előző, balra: következő időszak); a jövőbe és a legkorábbi mérés elé nem lehet lapozni `🆕 v0.4.0`
+- A táblázat **naponként egy fejlécsort** kap (pl. „Thursday, 8 October 2026”), alatta a nap mérései: Time · SYS · DIA · PUL · Note – így a dátum nem foglal oszlopot, keskeny kijelzőn is kifér `🆕 v0.4.0`
+- Az időszak-választó, az összesítő és a táblázat **együtt görgethető**, fekvő tájolásban is `🆕 v0.4.0`
+- **Ez a főképernyő** (az FR-05 Napló helyett): jobb alul lebegő **+** gomb új méréshez; ~~egy sorra koppintva megnyílik a mérés szerkesztésre~~ `❌ v0.4.0` → **érintésre** alulról felcsúszó **részletek lap** (dátum, idő, értékek, teljes megjegyzés, *Edit* / *Delete* gomb); **hosszú nyomásra** közvetlenül a szerkesztés (FR-04), rezgéssel `🆕 v0.4.0`
+- A megjegyzés a sorban **egy sorba levágva** jelenik meg, előtte kis ikon jelzi; a teljes szöveg a mérést megnyitva látszik. A 200 karakteres korlát marad `🆕 v0.4.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
-- A referenciaérték feletti értékek kiemelve (félkövér), lásd FR-10
+- A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`
+- Sorrend: időrendben, a legkorábbi felül; az egy naphoz tartozó sorok közös háttérsávban `🆕 v0.4.0`
+- Alapértelmezett időszak: az aktuális hét; a Table és a Charts nézet ugyanazt az időszakot használja `🆕 v0.4.0`
 
 **FR-07 – Összesítés**
 A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DIA / PUL **átlaga, minimuma, maximuma**. A pulzus összesítése csak a pulzussal rögzített mérésekből készül; ha egy sincs, „–” jelenik meg. `🔄 v0.3.1`
 
-**FR-08 – Szisztolé grafikon**
-Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban.
+**FR-08 – Vérnyomás grafikon** `🔄 v0.4.0`
+Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban. A **szisztolé piros**, a **diasztolé kék** vonal **egy közös ábrán**, jelmagyarázattal. `🆕 v0.4.0`
+- **Egy pont = egy időegység átlaga** `🆕 v0.4.0`; ~~a pontnál halvány függőleges vonal a legkisebb és legnagyobb értékkel~~ `❌ v0.4.0`:
+  - Week, Month → napi átlag
+  - Year → heti átlag
+  - All → havi átlag
+- ~~Mérés nélküli napon nincs pont; a vonal a szomszédos pontokat köti össze~~ `❌ v0.4.0`
+- **Csak pontok**, összekötő vonal nélkül – egy kimaradt nap ne tűnjön folytonosnak `🆕 v0.4.0`
+- A grafikonon csak **Week · Month · Year** választható; ha a táblázatban „All” volt kiválasztva, a grafikon az aktuális évet mutatja `🆕 v0.4.0`
+- A pontok mérete a nézethez igazodik (Week nagyobb, Year kisebb), hogy ne csússzanak össze `🆕 v0.4.0`
+- **Koppintás** a grafikonon (nem kell pontosan a pontot eltalálni, az adott nap / hét „oszlopa” érzékeny): a szisztolé és diasztolé pontot függőleges vonal köti össze, a grafikon alatt kártya mutatja az átlagot és a nap (évnél a hét) **összes mérését**; egy mérésre koppintva a részletek lap nyílik meg. Újabb koppintás ugyanoda bezárja `🆕 v0.4.0`
+- ~~**Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra~~ `⏸ halasztva` – a v0.4.0 kiadásából kimaradt, a következő verzióba kerül (Ö-015)
+- Az egyes mérések pontos értékei a táblázatban (FR-06) láthatók
 
 **FR-09 – Diasztolé grafikon**
-Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.
+~~Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.~~ `❌ v0.4.0` – beolvadt az FR-08-ba (közös ábra).
 
 **FR-10 – Referenciavonal**
-Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaértéknél. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
+Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaértéknél, a sor színével `🔄 v0.4.0`. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
 
 ### 4.3 Export
 
@@ -138,7 +165,7 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 - Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
 - Összesítő blokk (FR-07)
 - Táblázat: minden mérés dátummal és időponttal
-- Grafikon: SYS és DIA külön diagramon, referenciavonallal
+- Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`
 - Lábléc: oldalszám, „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló
 
@@ -153,9 +180,13 @@ Mindkét grafikonon szaggatott vízszintes vonal a beállított referenciaérté
 - Mentés: az összes adat egyetlen JSON-fájlba (`pulzar-backup-2026-10-08.json`) `🔄 v0.2.0`
 - Visszatöltés: a fájl kiválasztása után az app megmutatja, hány mérést talált, és hány új; jóváhagyás után **összefésül** (azonos azonosítójú mérésből a később módosított marad, duplikáció nincs)
 - Ez szolgál telefoncserére, adatvesztés elleni védelemre, és a v2 asztali alkalmazás első adatátviteli módjára is
+- A mentés a logikailag törölt méréseket is tartalmazza, így egy törlés is átvihető másik eszközre; visszatöltéskor a telefonról semmi nem törlődik, kivéve ha a mentésben egy mérés **később** lett törölve `🆕 v0.4.0`
+- Visszatöltéskor a napi 3 mérés korlátja (FR-03) nem érvényes – ez adat-visszaállítás `🆕 v0.4.0`
+- Hibás vagy nem Pulzar-fájl esetén hibaüzenet, adat nem változik `🆕 v0.4.0`
 
 **FR-14 – Megosztás**
 Minden export után: *Megosztás* (Android megosztási menü: e-mail, Viber, Drive stb.) vagy *Mentés a Letöltések mappába*.
+A teljes mentés (FR-13) a rendszer fájlválasztójával menthető bármilyen helyre – Letöltések, Google Drive stb. `🔄 v0.4.0`
 
 ### 4.4 Egyéb
 
@@ -238,21 +269,22 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 └───────────────────────────┘
 
 ┌─ Table ───────────────────┐   ┌─ Charts ─────────────────┐
-│ [7d][30d][90d][Custom]    │   │ [7d][30d][90d][Custom]   │
-│ 32 measurements           │   │ Systolic (mmHg)          │
-│       avg   min   max     │   │ 140┤      •              │
+│ [Week][Month][Year][All]  │   │ [Week][Month][Year][All] │
+│ ‹    5 – 11 October 2026 › │   │ ‹   5 – 11 October 2026 › │
+│ 32 measurements           │   │ Blood pressure (mmHg)    │
+│       avg   min   max     │   │ 140┤      •  (piros)     │
 │ SYS   129   118   141     │   │ 135┤- - - - - - - - - -  │
 │ DIA    83    76    90     │   │ 130┤ •─•   •─•  •        │
 │ PUL    73    64    88     │   │ 120┤      ─         ─•   │
-│───────────────────────────│   │ Diastolic (mmHg)         │
-│ Date    Time  SYS DIA PUL │   │  90┤   •                 │
-│ 08/10   07:30 128  82  72 │   │  85┤- - - - - - - - - -  │
-│ 08/10   13:10 131  85  75 │   │  80┤ •─•  ─•─•  •─•      │
-│               [Export ▾]  │   │               [Export ▾] │
+│───────────────────────────│   │  90┤   •     (kék)       │
+│ Time  SYS DIA PUL  Note   │   │  85┤- - - - - - - - - -  │
+│ Thursday, 8 October 2026  │   │  80┤ •─•  ─•─•  •─•      │
+│ 07:30 128  82  72         │   │ ━ Systolic ━ Diastolic   │
+│ 13:10 131  85  75         │   │               [Export ▾] │
 └───────────────────────────┘   └──────────────────────────┘
 ```
 
-Navigáció: alsó sáv – **Log**, **Table**, **Charts**; jobb fent **Settings** `🔄 v0.2.0`. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV).
+Navigáció: alsó sáv – ~~**Log**~~, **Table**, **Charts** `🔄 v0.4.0`; jobb fent **Settings** `🔄 v0.2.0`. A *Log* vázlat elavult (v0.4.0): a főképernyő a táblázat, jobb alul + gombbal. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV).
 
 ## 8. Tervezett technológia
 

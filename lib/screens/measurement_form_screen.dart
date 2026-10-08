@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 
 import '../domain/rules.dart';
 import '../models/measurement.dart';
+import '../platform/file_access.dart';
 import '../state/measurement_store.dart';
 import '../state/store_scope.dart';
 import '../util/format.dart';
+import '../widgets/measurement_details.dart';
 
 /// Az űrlap eredménye: üzenet a naplónak, vagy kérés egy másik mérés szerkesztésére (FR-03).
 class FormOutcome {
@@ -79,7 +81,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
   void initState() {
     super.initState();
     final existing = widget.existing;
-    final at = existing?.measuredAt ?? DateTime.now();
+    final at = existing?.measuredAt ?? AppServices.of(context).now();
     _date = dateOnly(at);
     _time = TimeOfDay(hour: at.hour, minute: at.minute);
     if (existing != null) {
@@ -100,7 +102,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
   }
 
   Future<void> _pickDate() async {
-    final today = dateOnly(DateTime.now());
+    final today = dateOnly(AppServices.of(context).now());
     final picked = await showDatePicker(
       context: context,
       initialDate: _date.isAfter(today) ? today : _date,
@@ -126,7 +128,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
   Future<void> _save() async {
     final formOk = _formKey.currentState!.validate();
     final dateTimeError =
-        MeasurementRules.validateNotInFuture(_measuredAt, DateTime.now());
+        MeasurementRules.validateNotInFuture(_measuredAt, AppServices.of(context).now());
     setState(() => _dateTimeError = dateTimeError);
     if (!formOk || dateTimeError != null) return;
 
@@ -181,28 +183,7 @@ class _MeasurementFormScreenState extends State<MeasurementFormScreen> {
 
   Future<void> _confirmDelete() async {
     final existing = widget.existing!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        key: const Key('delete-dialog'),
-        title: const Text('Delete measurement?'),
-        content: Text(
-          'Delete the measurement from ${formatDateTime(existing.measuredAt)}?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            key: const Key('confirm-delete'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
+    if (!await confirmDeleteMeasurement(context, existing)) return;
     if (!mounted) return;
     final store = StoreScope.read(context);
     setState(() => _saving = true);
