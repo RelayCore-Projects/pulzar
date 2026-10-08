@@ -57,3 +57,15 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 ## Tesztkörök
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
+
+### v0.2.0 – 2026-10-08 (Preview 0.2.0-dev.6)
+
+A T-xx tesztesetek funkciói még nem készültek el; ebben a verzióban a telepítést és a vázat teszteltük.
+
+| Ellenőrzés | Eredmény |
+|---|---|
+| APK letöltése és telepítése a Releases oldalról | ✅ |
+| Az app „Pulzar” néven indul | ✅ |
+| Navigáció: Log · Table · Charts | ✅ |
+| Settings → About: verzió, licenc, figyelmeztetés | ✅ |
+| Automatikus tesztek (CI) | ✅ 4/4 |

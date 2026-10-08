@@ -10,6 +10,8 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.2.0] – 2026-10-08 – Projektváz és automatikus kiadás
+
 ### Hozzáadva
 - Flutter projektváz: alsó navigáció (Log · Table · Charts), helyőrző nézetek, Settings, About (verzió, licenc, figyelmeztetés)
 - Első automatikus tesztek (`test/widget_test.dart`)
