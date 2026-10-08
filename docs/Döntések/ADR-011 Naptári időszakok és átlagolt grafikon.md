@@ -32,7 +32,7 @@ A 0.4.0-dev kézi tesztje után két igény merült fel:
 - A táblázat és az összesítő **változatlanul az egyes méréseket** mutatja.
 - **Csak pontok**, összekötő vonal nélkül (második visszajelzés): mérés nélküli napoknál az összekötés folytonosságot sugallna.
 - **A min–max vonal megszűnt** (negyedik visszajelzés): zavaró volt. Helyette koppintásra a nap / hét összes mérése egy kártyán, kiemelő vonallal a SYS és DIA pont között.
-- **Nagyítás helyett lefúrás:** *Show week* / *Show month* a kártyán. A két ujjas nagyítás ütközne a húzásos lapozással – ötletként későbbre (Ö-014).
+- **Nagyítás helyett lefúrás:** *Show week* / *Show month* a kártyán – **a v0.4.0-ból kimaradt** (a teszt hibát talált, a kiadás nem várhatott), a következő verzióban jön (Ö-015). A két ujjas nagyítás ütközne a húzásos lapozással – ötletként későbbre (Ö-014).
 - Year nézetben a heti átlag marad, kisebb pontokkal (a havi átlag helyett, a felhasználó döntése).
 - A táblázatban az „All” megmarad; a grafikon ilyenkor az aktuális évet mutatja.
 

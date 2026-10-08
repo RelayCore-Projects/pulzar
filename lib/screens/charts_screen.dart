@@ -12,8 +12,8 @@ import '../widgets/measurement_details.dart';
 import '../widgets/period_selector.dart';
 
 /// FR-08 – FR-10: szisztolé (piros) és diasztolé (kék) pontok egy grafikonon.
-/// Egy pont = egy nap átlaga (évnél egy hét). Koppintásra a nap / hét mérései,
-/// és átugrás a hétre / hónapra – ADR-011.
+/// Egy pont = egy nap átlaga (évnél egy hét). Koppintásra a nap / hét mérései – ADR-011.
+/// (A lefúrás – Show week / Show month – a következő verzióra halasztva, Ö-015.)
 class ChartsScreen extends StatefulWidget {
   const ChartsScreen({
     super.key,
@@ -210,7 +210,6 @@ class _ChartsScreenState extends State<ChartsScreen> {
                         m.measuredAt.isBefore(selected.end))
                     .toList()
                   ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt)),
-                onShow: (kind) => _change(PeriodSelection(kind, selected.start)),
                 onClose: () => setState(() => _selected = null),
               ),
           ],
@@ -220,14 +219,13 @@ class _ChartsScreenState extends State<ChartsScreen> {
   }
 }
 
-/// A kiválasztott nap (hét) mérései, és átugrás a hétre / hónapra.
+/// A kiválasztott nap (hét) mérései.
 class _SelectionCard extends StatelessWidget {
   const _SelectionCard({
     required this.aggregate,
     required this.bucket,
     required this.kind,
     required this.measurements,
-    required this.onShow,
     required this.onClose,
   });
 
@@ -235,7 +233,6 @@ class _SelectionCard extends StatelessWidget {
   final Bucket bucket;
   final PeriodKind kind;
   final List<Measurement> measurements;
-  final ValueChanged<PeriodKind> onShow;
   final VoidCallback onClose;
 
   @override
@@ -293,23 +290,6 @@ class _SelectionCard extends StatelessWidget {
                     : Text(m.note!, maxLines: 1, overflow: TextOverflow.ellipsis),
                 onTap: () => showMeasurementDetails(context, m),
               ),
-            Wrap(
-              spacing: 8,
-              children: [
-                if (kind == PeriodKind.month || kind == PeriodKind.year)
-                  OutlinedButton(
-                    key: const Key('show-week'),
-                    onPressed: () => onShow(PeriodKind.week),
-                    child: const Text('Show week'),
-                  ),
-                if (kind == PeriodKind.year)
-                  OutlinedButton(
-                    key: const Key('show-month'),
-                    onPressed: () => onShow(PeriodKind.month),
-                    child: const Text('Show month'),
-                  ),
-              ],
-            ),
           ],
         ),
       ),

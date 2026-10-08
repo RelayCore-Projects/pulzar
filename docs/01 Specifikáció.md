@@ -148,7 +148,7 @@ Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), 
 - A grafikonon csak **Week · Month · Year** választható; ha a táblázatban „All” volt kiválasztva, a grafikon az aktuális évet mutatja `🆕 v0.4.0`
 - A pontok mérete a nézethez igazodik (Week nagyobb, Year kisebb), hogy ne csússzanak össze `🆕 v0.4.0`
 - **Koppintás** a grafikonon (nem kell pontosan a pontot eltalálni, az adott nap / hét „oszlopa” érzékeny): a szisztolé és diasztolé pontot függőleges vonal köti össze, a grafikon alatt kártya mutatja az átlagot és a nap (évnél a hét) **összes mérését**; egy mérésre koppintva a részletek lap nyílik meg. Újabb koppintás ugyanoda bezárja `🆕 v0.4.0`
-- **Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra `🆕 v0.4.0`
+- ~~**Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra~~ `⏸ halasztva` – a v0.4.0 kiadásából kimaradt, a következő verzióba kerül (Ö-015)
 - Az egyes mérések pontos értékei a táblázatban (FR-06) láthatók
 
 **FR-09 – Diasztolé grafikon**

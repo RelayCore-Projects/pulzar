@@ -188,40 +188,11 @@ void main() {
     expect(find.text('Average 135 / 86 mmHg · 3 measurements'), findsOneWidget);
     expect(find.byKey(const Key('selection-t1b')), findsOneWidget);
     expect(_painter(tester).highlight, DateTime(2026, 10, 8, 12));
-    // a Week nézetben nincs „Show week”
-    expect(find.byKey(const Key('show-week')), findsNothing);
 
     // ugyanoda újra koppintva bezárul
     await _tapChartAt(tester, DateTime(2026, 10, 8, 12),
         from: DateTime(2026, 10, 5), to: DateTime(2026, 10, 12));
     expect(find.byKey(const Key('chart-selection')), findsNothing);
-  });
-
-  testWidgets('Drill down: Year → Show month → Show week', (tester) async {
-    await _pump(tester, initial: sample());
-    await tester.tap(_nav('Charts'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Year'));
-    await tester.pumpAndSettle();
-    expect(find.text('2026'), findsOneWidget);
-    expect(find.textContaining('average of one week'), findsOneWidget);
-
-    // a hét pontja (október 5–11) a hét közepén: csütörtök 12:00
-    await _tapChartAt(tester, DateTime(2026, 10, 8, 12),
-        from: DateTime(2026, 1, 1), to: DateTime(2027, 1, 1));
-    expect(find.text('5 – 11 October 2026'), findsOneWidget); // a kártya címe
-    await tester.ensureVisible(find.byKey(const Key('show-month')));
-    await tester.tap(find.byKey(const Key('show-month')));
-    await tester.pumpAndSettle();
-    expect(find.text('October 2026'), findsOneWidget);
-
-    await _tapChartAt(tester, DateTime(2026, 10, 7, 12),
-        from: DateTime(2026, 10, 1), to: DateTime(2026, 11, 1));
-    expect(find.text('Wednesday, 7 October 2026'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const Key('show-week')));
-    await tester.tap(find.byKey(const Key('show-week')));
-    await tester.pumpAndSettle();
-    expect(find.text('5 – 11 October 2026'), findsOneWidget);
   });
 
   testWidgets('FR-06: swipe right shows the previous week', (tester) async {

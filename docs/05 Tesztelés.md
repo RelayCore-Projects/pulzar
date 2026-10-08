@@ -61,7 +61,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-26 | FR-08 `🆕 v0.4.0` | Charts, Month és Year; a Table-ön „All”, majd Charts | Napi, illetve heti átlagok pontokkal; „All” helyett az aktuális év |
 | T-27 | FR-06 `🆕 v0.4.0` | Table: + gomb; sorra érintés; hosszú nyomás; hosszú megjegyzés | Új mérés felvehető; érintésre részletek lap a teljes megjegyzéssel; hosszú nyomásra szerkesztés |
 | T-28 | FR-08 `🆕 v0.4.0` | Charts: koppintás egy napra (Week, Month) és egy hétre (Year) | Kiemelő vonal, kártya az átlaggal és a mérésekkel; újabb koppintás bezárja |
-| T-29 | FR-08 `🆕 v0.4.0` | Year → koppintás → *Show month* → koppintás → *Show week* | A hónap, majd a hét jelenik meg |
+| ~~T-29~~ | FR-08 `⏸` | ~~Year → koppintás → *Show month* → koppintás → *Show week*~~ | halasztva (Ö-015) |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
@@ -86,7 +86,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | Charts | A min–max vonal nem kell | Megszűnt |
 | Charts | Egy pontra koppintva a nap mérései, a SYS és DIA pont összekötve | Kiemelés + kártya a mérésekkel |
 | Charts | Year nézetben összecsúsznak a pontok | Heti átlag kisebb pontokkal |
-| Charts | Belenagyítás | Lefúrás: *Show week* / *Show month*; csippentős nagyítás ötletként (Ö-014) |
+| Charts | Belenagyítás | Lefúrás (*Show week* / *Show month*) – a v0.4.0-ból kimaradt, a következő verzióba kerül (Ö-015); csippentős nagyítás ötletként (Ö-014) |
 
 ### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
 
