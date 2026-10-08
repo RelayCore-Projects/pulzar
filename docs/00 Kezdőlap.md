@@ -35,6 +35,7 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
    - [[ADR-005 Angol nyelvű felület]]
    - [[ADR-006 Fordítás, aláírás és kiadás a GitHub Actionsben]]
    - [[ADR-007 Adattárolás megvalósítása]]
+   - [[ADR-008 Alkalmazásikon]]
 
 ## Privát jegyzetek
 

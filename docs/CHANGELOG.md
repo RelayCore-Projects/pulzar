@@ -17,6 +17,7 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 - Szerkesztés és törlés megerősítéssel; a törlés logikai (FR-04, NFR-07)
 - Napló lista napokra csoportosítva, „Today” / „Yesterday” jelöléssel (FR-05)
 - Helyi SQLite adatbázis – [[ADR-007 Adattárolás megvalósítása]]
+- Saját alkalmazásikon: piros szív EKG-vonallal, sötét háttéren; adaptív és témázott (Android 13+) változat – [[ADR-008 Alkalmazásikon]]
 - Automatikus tesztek: validáció, formázás, csoportosítás, napi korlát, teljes rögzítés / szerkesztés / törlés folyamat
 
 ### Módosítva
