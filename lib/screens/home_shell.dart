@@ -19,9 +19,9 @@ class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
   /// A Table és a Charts közös időszaka (alapból 30 nap).
-  Period _period = Period.preset(PeriodPreset.days30, DateTime.now());
+  PeriodPreset _preset = PeriodPreset.days30;
 
-  void _setPeriod(Period p) => setState(() => _period = p);
+  void _setPreset(PeriodPreset p) => setState(() => _preset = p);
 
   static const _titles = ['Log', 'Table', 'Charts'];
 
@@ -35,8 +35,8 @@ class _HomeShellState extends State<HomeShell> {
   Widget build(BuildContext context) {
     final Widget body = switch (_index) {
       0 => const LogScreen(),
-      1 => TableScreen(period: _period, onPeriodChanged: _setPeriod),
-      _ => ChartsScreen(period: _period, onPeriodChanged: _setPeriod),
+      1 => TableScreen(preset: _preset, onPresetChanged: _setPreset),
+      _ => ChartsScreen(preset: _preset, onPresetChanged: _setPreset),
     };
 
     return Scaffold(

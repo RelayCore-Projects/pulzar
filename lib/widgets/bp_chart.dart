@@ -11,24 +11,35 @@ class ChartPoint {
   final int value;
 }
 
-/// FR-08 / FR-09: vonal + pont diagram valós időtengellyel, FR-10: szaggatott referenciavonal.
-/// Saját rajzolás, külső csomag nélkül (ADR-010).
+/// Egy adatsor (pl. szisztolé) a saját színével és opcionális referenciavonalával.
+class ChartSeries {
+  ChartSeries({
+    required this.label,
+    required this.color,
+    required List<ChartPoint> points,
+    this.reference,
+  }) : points = [...points]..sort((a, b) => a.time.compareTo(b.time));
+
+  final String label;
+  final Color color;
+  final List<ChartPoint> points;
+  final int? reference;
+}
+
+/// FR-08 / FR-09: egy grafikon több vonallal, valós időtengellyel;
+/// FR-10: soronként szaggatott referenciavonal. Saját rajzolás (ADR-010).
 class BpChart extends StatelessWidget {
   const BpChart({
     super.key,
-    required this.points,
+    required this.series,
     required this.start,
     required this.end,
-    required this.color,
-    this.reference,
-    this.height = 220,
+    this.height = 280,
   });
 
-  final List<ChartPoint> points;
+  final List<ChartSeries> series;
   final DateTime start;
   final DateTime end;
-  final Color color;
-  final int? reference;
   final double height;
 
   @override
@@ -39,14 +50,11 @@ class BpChart extends StatelessWidget {
       width: double.infinity,
       child: CustomPaint(
         painter: BpChartPainter(
-          points: points,
+          series: series,
           start: start,
           end: end,
-          lineColor: color,
-          reference: reference,
           gridColor: scheme.outlineVariant,
           textColor: scheme.onSurfaceVariant,
-          referenceColor: scheme.error,
         ),
       ),
     );
@@ -55,34 +63,32 @@ class BpChart extends StatelessWidget {
 
 class BpChartPainter extends CustomPainter {
   BpChartPainter({
-    required List<ChartPoint> points,
+    required this.series,
     required this.start,
     required this.end,
-    required this.lineColor,
-    required this.reference,
     required this.gridColor,
     required this.textColor,
-    required this.referenceColor,
-  }) : points = [...points]..sort((a, b) => a.time.compareTo(b.time));
+  });
 
-  final List<ChartPoint> points;
+  final List<ChartSeries> series;
   final DateTime start;
   final DateTime end;
-  final Color lineColor;
-  final int? reference;
   final Color gridColor;
   final Color textColor;
-  final Color referenceColor;
 
   static const _left = 36.0;
-  static const _right = 8.0;
+  static const _right = 30.0;
   static const _top = 10.0;
   static const _bottom = 24.0;
 
-  /// A függőleges tengely határai: az adatok és a referencia körül, 10-esre kerekítve.
+  /// A függőleges tengely határai: minden adat és referencia körül, 10-esre kerekítve.
   (int, int) get yRange {
-    final ref = reference;
-    final values = [for (final p in points) p.value, if (ref != null) ref];
+    final values = [
+      for (final s in series) ...[
+        for (final p in s.points) p.value,
+        if (s.reference != null) s.reference!,
+      ],
+    ];
     if (values.isEmpty) return (60, 160);
     final lo = values.reduce(math.min);
     final hi = values.reduce(math.max);
@@ -91,11 +97,12 @@ class BpChartPainter extends CustomPainter {
     return (min, max == min ? min + 10 : max);
   }
 
-  void _text(Canvas canvas, String s, Offset at, {TextAlign align = TextAlign.left, Color? color}) {
+  void _text(Canvas canvas, String s, Offset at,
+      {TextAlign align = TextAlign.left, Color? color}) {
     final tp = TextPainter(
-      text: TextSpan(text: s, style: TextStyle(color: color ?? textColor, fontSize: 11)),
+      text: TextSpan(
+          text: s, style: TextStyle(color: color ?? textColor, fontSize: 11)),
       textDirection: TextDirection.ltr,
-      textAlign: align,
     )..layout();
     final dx = switch (align) {
       TextAlign.right => at.dx - tp.width,
@@ -107,13 +114,16 @@ class BpChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final plot = Rect.fromLTRB(_left, _top, size.width - _right, size.height - _bottom);
+    final plot =
+        Rect.fromLTRB(_left, _top, size.width - _right, size.height - _bottom);
     if (plot.width <= 0 || plot.height <= 0) return;
     final (yMin, yMax) = yRange;
     final span = end.difference(start).inMilliseconds.toDouble();
 
     double x(DateTime t) =>
-        plot.left + plot.width * (span <= 0 ? 0.5 : t.difference(start).inMilliseconds / span);
+        plot.left +
+        plot.width *
+            (span <= 0 ? 0.5 : t.difference(start).inMilliseconds / span);
     double y(num v) => plot.bottom - plot.height * (v - yMin) / (yMax - yMin);
 
     // vízszintes rácsvonalak és feliratok
@@ -130,69 +140,90 @@ class BpChartPainter extends CustomPainter {
     final days = (span / Duration.millisecondsPerDay).round();
     final labels = math.max(2, math.min(5, days));
     for (var i = 0; i < labels; i++) {
-      final t = start.add(Duration(milliseconds: (span * i / (labels - 1)).round()));
-      final at = i == labels - 1 ? end.subtract(const Duration(days: 1)) : t;
-      final label = '${at.day.toString().padLeft(2, '0')}/${at.month.toString().padLeft(2, '0')}';
-      final align = i == 0 ? TextAlign.left : (i == labels - 1 ? TextAlign.right : TextAlign.center);
-      final px = i == 0 ? plot.left : (i == labels - 1 ? plot.right : x(t));
+      final t =
+          start.add(Duration(milliseconds: (span * i / (labels - 1)).round()));
+      final last = i == labels - 1;
+      final at = last ? end.subtract(const Duration(days: 1)) : t;
+      final label =
+          '${at.day.toString().padLeft(2, '0')}/${at.month.toString().padLeft(2, '0')}';
+      final align = i == 0
+          ? TextAlign.left
+          : (last ? TextAlign.right : TextAlign.center);
+      final px = i == 0 ? plot.left : (last ? plot.right : x(t));
       _text(canvas, label, Offset(px, plot.bottom + 12), align: align);
     }
 
-    // referenciavonal (szaggatott)
-    final ref = reference;
-    if (ref != null && ref >= yMin && ref <= yMax) {
-      final paint = Paint()
-        ..color = referenceColor
-        ..strokeWidth = 1.5;
-      const dash = 6.0;
-      const gap = 4.0;
-      for (var px = plot.left; px < plot.right; px += dash + gap) {
-        canvas.drawLine(
-          Offset(px, y(ref)),
-          Offset(math.min(px + dash, plot.right), y(ref)),
-          paint,
-        );
+    for (final s in series) {
+      // referenciavonal (szaggatott, a sor színével)
+      final ref = s.reference;
+      if (ref != null && ref >= yMin && ref <= yMax) {
+        final paint = Paint()
+          ..color = s.color.withValues(alpha: 0.7)
+          ..strokeWidth = 1.5;
+        const dash = 6.0;
+        const gap = 4.0;
+        for (var px = plot.left; px < plot.right; px += dash + gap) {
+          canvas.drawLine(
+            Offset(px, y(ref)),
+            Offset(math.min(px + dash, plot.right), y(ref)),
+            paint,
+          );
+        }
+        _text(canvas, '$ref', Offset(plot.right + 4, y(ref)), color: s.color);
       }
-      _text(canvas, '$ref', Offset(plot.right - 2, y(ref) - 8),
-          align: TextAlign.right, color: referenceColor);
-    }
 
-    // adatok
-    if (points.isEmpty) return;
-    final line = Paint()
-      ..color = lineColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round;
-    final path = Path()..moveTo(x(points.first.time), y(points.first.value));
-    for (final p in points.skip(1)) {
-      path.lineTo(x(p.time), y(p.value));
-    }
-    canvas.drawPath(path, line);
-    final dot = Paint()..color = lineColor;
-    for (final p in points) {
-      canvas.drawCircle(Offset(x(p.time), y(p.value)), 3.5, dot);
+      // adatok
+      if (s.points.isEmpty) continue;
+      final line = Paint()
+        ..color = s.color
+        ..strokeWidth = 2
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = StrokeJoin.round;
+      final path = Path()
+        ..moveTo(x(s.points.first.time), y(s.points.first.value));
+      for (final p in s.points.skip(1)) {
+        path.lineTo(x(p.time), y(p.value));
+      }
+      canvas.drawPath(path, line);
+      final dot = Paint()..color = s.color;
+      for (final p in s.points) {
+        canvas.drawCircle(Offset(x(p.time), y(p.value)), 3.5, dot);
+      }
     }
   }
 
   @override
   bool shouldRepaint(BpChartPainter old) =>
-      old.points.length != points.length ||
       old.start != start ||
       old.end != end ||
-      old.reference != reference ||
-      old.lineColor != lineColor ||
-      !_samePoints(old.points, points);
+      old.gridColor != gridColor ||
+      !_sameSeries(old.series, series);
 
-  static bool _samePoints(List<ChartPoint> a, List<ChartPoint> b) {
+  static bool _sameSeries(List<ChartSeries> a, List<ChartSeries> b) {
+    if (a.length != b.length) return false;
     for (var i = 0; i < a.length; i++) {
-      if (a[i].time != b[i].time || a[i].value != b[i].value) return false;
+      final pa = a[i].points;
+      final pb = b[i].points;
+      if (a[i].color != b[i].color ||
+          a[i].reference != b[i].reference ||
+          pa.length != pb.length) {
+        return false;
+      }
+      for (var k = 0; k < pa.length; k++) {
+        if (pa[k].time != pb[k].time || pa[k].value != pb[k].value) {
+          return false;
+        }
+      }
     }
     return true;
   }
 
-  /// Teszteléshez / akadálymentesítéshez: rövid szöveges leírás.
-  String describe() => points.isEmpty
-      ? 'No data'
-      : '${points.length} points, ${formatDate(points.first.time)} – ${formatDate(points.last.time)}';
+  /// Rövid szöveges leírás (tesztekhez, akadálymentesítéshez).
+  String describe() => [
+        for (final s in series)
+          s.points.isEmpty
+              ? '${s.label}: no data'
+              : '${s.label}: ${s.points.length} points, '
+                  '${formatDate(s.points.first.time)} – ${formatDate(s.points.last.time)}',
+      ].join('; ');
 }

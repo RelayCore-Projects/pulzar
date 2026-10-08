@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_info.dart';
+import '../domain/grouping.dart';
 import '../domain/period.dart';
 import '../domain/stats.dart';
 import '../models/measurement.dart';
@@ -9,73 +10,97 @@ import '../util/format.dart';
 import '../widgets/period_selector.dart';
 import '../widgets/stats_card.dart';
 
-/// FR-06 / FR-07: táblázat az orvosnak – időrendben, összesítéssel, kiemeléssel.
+/// FR-06 / FR-07: táblázat az orvosnak – időrendben, napokra bontva, összesítéssel.
+/// Az egész nézet egyben görgethető, így fekvő módban is használható (v0.4.0).
 class TableScreen extends StatelessWidget {
   const TableScreen({
     super.key,
-    required this.period,
-    required this.onPeriodChanged,
+    required this.preset,
+    required this.onPresetChanged,
   });
 
-  final Period period;
-  final ValueChanged<Period> onPeriodChanged;
+  final PeriodPreset preset;
+  final ValueChanged<PeriodPreset> onPresetChanged;
 
-  static const _flex = [3, 2, 2, 2, 2, 4];
+  static const _flex = [2, 2, 2, 2, 5];
 
   @override
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
-    final items = store.measurements.where((m) => period.contains(m.measuredAt)).toList()
-      ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt));
+    final period = Period.of(preset, DateTime.now(), earliest: store.earliest);
+    final items =
+        store.measurements.where((m) => period.contains(m.measuredAt)).toList();
     final theme = Theme.of(context);
-    // napok sorszáma a váltakozó háttérhez (egyszer számolva, nagy listán is gyors)
-    final dayIndex = <int>[];
-    for (var i = 0; i < items.length; i++) {
-      dayIndex.add(i == 0
-          ? 0
-          : dayIndex[i - 1] +
-              (isSameDay(items[i].measuredAt, items[i - 1].measuredAt) ? 0 : 1));
+
+    // napi fejléc + a nap mérései, időrendben (a legkorábbi nap felül)
+    final rows = <Object>[];
+    for (final group in groupByDay(items).reversed) {
+      rows.add(group.day);
+      rows.addAll(group.measurements);
     }
 
-    return Column(
-      children: [
-        PeriodSelector(period: period, onChanged: onPeriodChanged),
-        StatsCard(stats: PeriodStats.of(items)),
+    return CustomScrollView(
+      key: const Key('table-scroll'),
+      slivers: [
+        SliverToBoxAdapter(
+          child: PeriodSelector(period: period, onChanged: onPresetChanged),
+        ),
+        SliverToBoxAdapter(child: StatsCard(stats: PeriodStats.of(items))),
         if (items.isEmpty)
-          const Expanded(
+          const SliverFillRemaining(
+            hasScrollBody: false,
             child: Center(
               key: Key('table-empty'),
               child: Text('No measurements in this period.'),
             ),
           )
         else ...[
-          _Row(
-            flex: _flex,
-            cells: const ['Date', 'Time', 'SYS', 'DIA', 'PUL', 'Note'],
-            style: theme.textTheme.labelMedium
-                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: ListView.builder(
-              key: const Key('table-list'),
-              padding: const EdgeInsets.only(bottom: 24),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final m = items[i];
-                // napok váltakozó háttérrel, hogy egy nap mérései összetartozzanak
-                return ColoredBox(
-                  key: Key('table-row-${m.id}'),
-                  color: dayIndex[i].isOdd
-                      ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-                      : Colors.transparent,
-                  child: _MeasurementRow(m: m, flex: _flex),
-                );
-              },
+          SliverToBoxAdapter(
+            child: _Row(
+              flex: _flex,
+              cells: const ['Time', 'SYS', 'DIA', 'PUL', 'Note'],
+              style: theme.textTheme.labelMedium
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
+          const SliverToBoxAdapter(child: Divider(height: 1)),
+          SliverList.builder(
+            itemCount: rows.length,
+            itemBuilder: (context, i) {
+              final row = rows[i];
+              if (row is DateTime) return _DayHeader(day: row);
+              final m = row as Measurement;
+              return KeyedSubtree(
+                key: Key('table-row-${m.id}'),
+                child: _MeasurementRow(m: m, flex: _flex),
+              );
+            },
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ],
+    );
+  }
+}
+
+class _DayHeader extends StatelessWidget {
+  const _DayHeader({required this.day});
+
+  final DateTime day;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      key: Key('table-day-${formatIsoDate(day)}'),
+      width: double.infinity,
+      color: theme.colorScheme.surfaceContainerHighest,
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      child: Text(
+        formatDayHeader(day),
+        style: theme.textTheme.titleSmall
+            ?.copyWith(color: theme.colorScheme.primary),
+      ),
     );
   }
 }
@@ -97,12 +122,15 @@ class _Row extends StatelessWidget {
           for (var i = 0; i < cells.length; i++)
             Expanded(
               flex: flex[i],
-              child: Text(
-                cells[i],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: i >= 2 && i <= 4 ? TextAlign.end : TextAlign.start,
-                style: styles?[i] ?? style,
+              child: Padding(
+                padding: EdgeInsets.only(left: i == cells.length - 1 ? 16 : 0),
+                child: Text(
+                  cells[i],
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: i >= 1 && i <= 3 ? TextAlign.end : TextAlign.start,
+                  style: styles?[i] ?? style,
+                ),
               ),
             ),
         ],
@@ -122,7 +150,7 @@ class _MeasurementRow extends StatelessWidget {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyLarge
         ?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
-    // FR-10 / FR-06: a referenciaértéket elérő vagy meghaladó érték kiemelve
+    // FR-06 / FR-10: a referenciaértéket elérő vagy meghaladó érték kiemelve
     final high = base?.copyWith(
       fontWeight: FontWeight.bold,
       color: theme.colorScheme.error,
@@ -130,7 +158,6 @@ class _MeasurementRow extends StatelessWidget {
     return _Row(
       flex: flex,
       cells: [
-        formatDate(m.measuredAt),
         formatTime(m.measuredAt),
         '${m.systolic}',
         '${m.diastolic}',
@@ -138,7 +165,6 @@ class _MeasurementRow extends StatelessWidget {
         m.note ?? '',
       ],
       styles: [
-        base,
         base,
         m.systolic >= AppInfo.defaultRefSystolic ? high : base,
         m.diastolic >= AppInfo.defaultRefDiastolic ? high : base,

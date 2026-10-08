@@ -98,25 +98,63 @@ void main() {
         findsOneWidget);
   });
 
-  testWidgets('FR-08/09/10: two charts with the same data points',
+  testWidgets('FR-08/09/10: one chart, systolic red and diastolic blue',
       (tester) async {
     await _pump(tester, initial: sample());
     await tester.tap(_nav('Charts'));
     await tester.pumpAndSettle();
 
-    BpChartPainter painterOf(String key) => tester
+    final painter = tester
         .widget<CustomPaint>(find.descendant(
-            of: find.byKey(Key(key)), matching: find.byType(CustomPaint)))
+            of: find.byKey(const Key('chart-bp')),
+            matching: find.byType(CustomPaint)))
         .painter! as BpChartPainter;
 
-    final sys = painterOf('chart-systolic');
-    final dia = painterOf('chart-diastolic');
+    expect(painter.series, hasLength(2));
+    final sys = painter.series[0];
+    final dia = painter.series[1];
+    expect(sys.label, 'Systolic');
     expect(sys.points.map((p) => p.value), [130, 125, 120, 140]);
     expect(dia.points.map((p) => p.value), [84, 82, 80, 90]);
     expect(sys.reference, 135);
     expect(dia.reference, 85);
-    final (lo, hi) = sys.yRange;
-    expect(lo <= 120 && hi >= 140, isTrue);
+    expect(sys.color, Colors.red.shade700);
+    expect(dia.color, Colors.blue.shade700);
+    final (lo, hi) = painter.yRange;
+    expect(lo <= 80 && hi >= 140, isTrue);
+  });
+
+  testWidgets('FR-06: “All” shows every measurement', (tester) async {
+    await _pump(tester, initial: [
+      ...sample(),
+      measurement('ancient', _daysAgo(400, 8), systolic: 150, diastolic: 95),
+    ]);
+    await tester.tap(_nav('Table'));
+    await tester.pumpAndSettle();
+    expect(find.text('4 measurements'), findsOneWidget);
+
+    await tester.tap(find.text('All'));
+    await tester.pumpAndSettle();
+    expect(find.text('5 measurements'), findsOneWidget);
+    expect(find.byKey(const Key('table-row-ancient')), findsOneWidget);
+    expect(find.textContaining('All measurements'), findsOneWidget);
+  });
+
+  testWidgets('Table scrolls as a whole in landscape', (tester) async {
+    await _pump(tester, initial: [
+      for (var d = 0; d < 20; d++) measurement('m$d', _daysAgo(d, 8)),
+    ]);
+    tester.view.physicalSize = const Size(2400, 1080); // fekvő
+    await tester.pumpAndSettle();
+    await tester.tap(_nav('Table'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('stats-count')).hitTestable(), findsOneWidget);
+    await tester.drag(find.byKey(const Key('table-scroll')), const Offset(0, -400));
+    await tester.pumpAndSettle();
+    // az összesítő kigördült, a (legkorábbi napoktól kezdődő) sorok látszanak
+    expect(find.byKey(const Key('stats-count')).hitTestable(), findsNothing);
+    expect(find.byKey(const Key('table-row-m16')).hitTestable(), findsOneWidget);
   });
 
   testWidgets('FR-13: save a backup', (tester) async {

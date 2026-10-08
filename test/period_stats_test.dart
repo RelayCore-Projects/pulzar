@@ -9,7 +9,7 @@ void main() {
 
   group('FR-06 period', () {
     test('7 days includes today and the 6 days before', () {
-      final p = Period.preset(PeriodPreset.days7, today);
+      final p = Period.of(PeriodPreset.days7, today);
       expect(p.from, DateTime(2026, 10, 2));
       expect(p.to, DateTime(2026, 10, 8));
       expect(p.contains(DateTime(2026, 10, 2, 0, 0)), isTrue);
@@ -21,18 +21,22 @@ void main() {
     });
 
     test('30 and 90 days, across month boundaries', () {
-      expect(Period.preset(PeriodPreset.days30, today).from,
-          DateTime(2026, 9, 9));
-      expect(Period.preset(PeriodPreset.days90, today).from,
-          DateTime(2026, 7, 11));
+      expect(Period.of(PeriodPreset.days30, today).from, DateTime(2026, 9, 9));
+      expect(Period.of(PeriodPreset.days90, today).from, DateTime(2026, 7, 11));
     });
 
-    test('custom period is normalised to whole days and ordered', () {
-      final p = Period.custom(DateTime(2026, 10, 5, 18), DateTime(2026, 10, 1, 9));
-      expect(p.from, DateTime(2026, 10, 1));
-      expect(p.to, DateTime(2026, 10, 5));
-      expect(p.endExclusive, DateTime(2026, 10, 6));
-      expect(p.preset, PeriodPreset.custom);
+    test('All: from the earliest measurement to today, contains everything',
+        () {
+      final p = Period.of(PeriodPreset.all, today,
+          earliest: DateTime(2024, 3, 15, 7, 30));
+      expect(p.from, DateTime(2024, 3, 15));
+      expect(p.to, DateTime(2026, 10, 8));
+      expect(p.endExclusive, DateTime(2026, 10, 9));
+      expect(p.contains(DateTime(2020, 1, 1)), isTrue);
+      expect(p.label, 'All measurements');
+      // mérés nélkül: csak a mai nap
+      final empty = Period.of(PeriodPreset.all, today);
+      expect(empty.from, DateTime(2026, 10, 8));
     });
   });
 

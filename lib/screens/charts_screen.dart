@@ -6,52 +6,50 @@ import '../state/store_scope.dart';
 import '../widgets/bp_chart.dart';
 import '../widgets/period_selector.dart';
 
-/// FR-08 – FR-10: szisztolé és diasztolé külön grafikonon, azonos időtengellyel.
+/// FR-08 – FR-10: szisztolé (piros) és diasztolé (kék) egy grafikonon (v0.4.0).
 class ChartsScreen extends StatelessWidget {
   const ChartsScreen({
     super.key,
-    required this.period,
-    required this.onPeriodChanged,
+    required this.preset,
+    required this.onPresetChanged,
   });
 
-  final Period period;
-  final ValueChanged<Period> onPeriodChanged;
+  final PeriodPreset preset;
+  final ValueChanged<PeriodPreset> onPresetChanged;
+
+  /// Világos és sötét témában is jól látható piros és kék.
+  static Color systolicColor(Brightness b) =>
+      b == Brightness.dark ? Colors.red.shade300 : Colors.red.shade700;
+  static Color diastolicColor(Brightness b) =>
+      b == Brightness.dark ? Colors.blue.shade300 : Colors.blue.shade700;
 
   @override
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
+    final period = Period.of(preset, DateTime.now(), earliest: store.earliest);
     final items =
         store.measurements.where((m) => period.contains(m.measuredAt)).toList();
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final sysColor = systolicColor(theme.brightness);
+    final diaColor = diastolicColor(theme.brightness);
 
-    Widget chart(String title, Key key, List<ChartPoint> points, int ref, Color color) {
-      return Card(
-        margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 16, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: 8),
-              BpChart(
-                key: key,
-                points: points,
-                start: period.from,
-                end: period.endExclusive,
-                color: color,
-                reference: ref,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    Widget legend(Color color, String text, {bool dashed = false}) => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 18,
+              height: dashed ? 2 : 3,
+              color: dashed ? color.withValues(alpha: 0.7) : color,
+            ),
+            const SizedBox(width: 6),
+            Text(text, style: theme.textTheme.bodySmall),
+          ],
+        );
 
     return ListView(
       padding: const EdgeInsets.only(bottom: 24),
       children: [
-        PeriodSelector(period: period, onChanged: onPeriodChanged),
+        PeriodSelector(period: period, onChanged: onPresetChanged),
         if (items.isEmpty)
           const Padding(
             padding: EdgeInsets.all(48),
@@ -60,30 +58,64 @@ class ChartsScreen extends StatelessWidget {
               child: Text('No measurements in this period.'),
             ),
           )
-        else ...[
-          chart(
-            'Systolic (mmHg)',
-            const Key('chart-systolic'),
-            [for (final m in items) ChartPoint(m.measuredAt, m.systolic)],
-            AppInfo.defaultRefSystolic,
-            scheme.primary,
-          ),
-          chart(
-            'Diastolic (mmHg)',
-            const Key('chart-diastolic'),
-            [for (final m in items) ChartPoint(m.measuredAt, m.diastolic)],
-            AppInfo.defaultRefDiastolic,
-            scheme.tertiary,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text(
-              'Dashed line: reference value '
-              '(${AppInfo.defaultRefSystolic} / ${AppInfo.defaultRefDiastolic} mmHg).',
-              style: Theme.of(context).textTheme.bodySmall,
+        else
+          Card(
+            margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: 8),
+                    child: Text('Blood pressure (mmHg)',
+                        style: theme.textTheme.titleSmall),
+                  ),
+                  BpChart(
+                    key: const Key('chart-bp'),
+                    start: period.from,
+                    end: period.endExclusive,
+                    series: [
+                      ChartSeries(
+                        label: 'Systolic',
+                        color: sysColor,
+                        reference: AppInfo.defaultRefSystolic,
+                        points: [
+                          for (final m in items)
+                            ChartPoint(m.measuredAt, m.systolic),
+                        ],
+                      ),
+                      ChartSeries(
+                        label: 'Diastolic',
+                        color: diaColor,
+                        reference: AppInfo.defaultRefDiastolic,
+                        points: [
+                          for (final m in items)
+                            ChartPoint(m.measuredAt, m.diastolic),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 6,
+                      children: [
+                        legend(sysColor, 'Systolic'),
+                        legend(diaColor, 'Diastolic'),
+                        legend(theme.colorScheme.onSurfaceVariant,
+                            'Dashed: reference '
+                            '${AppInfo.defaultRefSystolic} / ${AppInfo.defaultRefDiastolic}',
+                            dashed: true),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
       ],
     );
   }

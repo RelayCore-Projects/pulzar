@@ -47,6 +47,9 @@ class MeasurementStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// A legkorábbi mérés ideje (az „All” időszakhoz), vagy null.
+  DateTime? get earliest => _items.isEmpty ? null : _items.last.measuredAt;
+
   /// Egy nap mérései időrendben.
   List<Measurement> onDay(DateTime day, {String? excludeId}) => _items
       .where((m) => isSameDay(m.measuredAt, day) && m.id != excludeId)
