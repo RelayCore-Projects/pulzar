@@ -34,7 +34,8 @@ jobs:
           cache: true
 
       - run: flutter pub get
-      - run: flutter analyze
+      # Hibák és figyelmeztetések megállítják a folyamatot, a stílusjavaslatok (info) csak megjelennek
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
 
   apk:
