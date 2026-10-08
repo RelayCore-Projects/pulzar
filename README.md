@@ -2,7 +2,7 @@
 
 Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyik projektje.
 
-> **Állapot:** koncepció (v0.1.0) – még nincs telepíthető app.
+> **Állapot:** fejlesztés alatt (v0.2.0). Telepíthető előnézet: [Releases → Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
 
 ## Mit tud majd
 
@@ -24,12 +24,16 @@ Az alkalmazás felülete **angol**, a projekt dokumentációja magyar.
 
 ```
 pulzar/
+├── lib/         Az alkalmazás forráskódja (Dart)
+├── test/        Automatikus tesztek
+├── android/     Android-specifikus fájlok
+├── .github/     CI: tesztek, APK-fordítás, kiadás
 ├── docs/        Obsidian vault – specifikáció, döntések, ötletek, tesztelés, changelog
+├── pubspec.yaml Függőségek és verziószám
 ├── README.md
 └── LICENSE
 ```
 
-A Flutter-projekt a v0.2.0 verzióban kerül a repó gyökerébe.
 
 ## Dokumentáció
 

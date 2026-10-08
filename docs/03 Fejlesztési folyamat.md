@@ -62,12 +62,19 @@ A `(#12)` a GitHub-hibajegy számára hivatkozik; a GitHub automatikusan összek
 
 ## Kiadás
 
-1. A `main` naprakész, a tesztek zöldek
+Részletek: [[ADR-006 Fordítás, aláírás és kiadás a GitHub Actionsben]]
+
+**Menet közben (minden push):** a CI lefuttatja a teszteket, és a **Preview** előzetes kiadásba feltölti a legfrissebb APK-t → telefonon kipróbálható.
+
+**Verzió kiadása:**
+1. A fejlesztési ág Pull Requesttel bekerül a `main`-be, a CI zöld
 2. [[CHANGELOG]]: az „Unreleased” rész átnevezése a verziószámra + dátum
-3. Verziószám emelése a `pubspec.yaml`-ban (0.2.0-tól)
-4. Címke (tag) létrehozása: `v0.3.0` → a GitHub Actions automatikusan lefordítja és aláírja az APK-t, és csatolja a GitHub Release-hez
-5. [[02 Ütemterv]]: állapot 🟢, mérföldkő-napló bejegyzés
-6. APK letöltése a telefonra, telepítés, kézi teszt
+3. `pubspec.yaml`: `version: 0.3.0+3` (a `+` utáni szám mindegy, a CI felülírja)
+4. Commit és push a `main`-re
+5. GitHub Desktop → *History* → jobb klikk a commitra → *Create Tag* → `v0.3.0` → *Push origin*
+6. A CI lefordítja és aláírja az APK-t, és létrehozza a GitHub Release-t a CHANGELOG szövegével. Ha a címke és a `pubspec.yaml` verziója eltér, leáll.
+7. [[02 Ütemterv]]: állapot 🟢, mérföldkő-napló bejegyzés
+8. Telepítés a telefonra, kézi teszt ([[05 Tesztelés]])
 
 ## A változások dokumentálása
 
