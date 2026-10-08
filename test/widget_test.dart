@@ -55,12 +55,12 @@ void main() {
 
     await tester.tap(_navLabel('Table'));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('placeholder-table')), findsOneWidget);
+    expect(find.byKey(const Key('table-empty')), findsOneWidget);
     expect(find.byKey(const Key('add-button')), findsNothing);
 
     await tester.tap(_navLabel('Charts'));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('placeholder-charts')), findsOneWidget);
+    expect(find.byKey(const Key('charts-empty')), findsOneWidget);
   });
 
   testWidgets('FR-01 / FR-05: a new measurement appears in the log',

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/coming_soon.dart';
+import '../domain/period.dart';
+import 'charts_screen.dart';
 import 'log_screen.dart';
 import 'measurement_form_screen.dart';
 import 'settings_screen.dart';
+import 'table_screen.dart';
 
 /// Főképernyő alsó navigációval: Log · Table · Charts
 class HomeShell extends StatefulWidget {
@@ -15,6 +17,11 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
+
+  /// A Table és a Charts közös időszaka (alapból 30 nap).
+  Period _period = Period.preset(PeriodPreset.days30, DateTime.now());
+
+  void _setPeriod(Period p) => setState(() => _period = p);
 
   static const _titles = ['Log', 'Table', 'Charts'];
 
@@ -28,19 +35,8 @@ class _HomeShellState extends State<HomeShell> {
   Widget build(BuildContext context) {
     final Widget body = switch (_index) {
       0 => const LogScreen(),
-      1 => const ComingSoon(
-          key: Key('placeholder-table'),
-          icon: Icons.table_chart,
-          description:
-              'A table for any period, with averages, minimums and maximums.',
-          version: '0.4.0',
-        ),
-      _ => const ComingSoon(
-          key: Key('placeholder-charts'),
-          icon: Icons.show_chart,
-          description: 'Separate charts for systolic and diastolic values.',
-          version: '0.5.0',
-        ),
+      1 => TableScreen(period: _period, onPeriodChanged: _setPeriod),
+      _ => ChartsScreen(period: _period, onPeriodChanged: _setPeriod),
     };
 
     return Scaffold(

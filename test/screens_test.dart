@@ -1,0 +1,176 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:pulzar/app.dart';
+import 'package:pulzar/data/in_memory_measurement_repository.dart';
+import 'package:pulzar/domain/backup.dart';
+import 'package:pulzar/models/measurement.dart';
+import 'package:pulzar/platform/file_access.dart';
+import 'package:pulzar/state/measurement_store.dart';
+import 'package:pulzar/widgets/bp_chart.dart';
+
+import 'helpers/factory.dart';
+
+class FakeFileAccess implements FileAccess {
+  String? savedName;
+  Uint8List? saved;
+  Uint8List? toOpen;
+
+  @override
+  Future<String?> saveFile({
+    required String name,
+    required Uint8List bytes,
+    required String mimeType,
+  }) async {
+    savedName = name;
+    saved = bytes;
+    return 'content://fake/$name';
+  }
+
+  @override
+  Future<Uint8List?> openFile() async => toOpen;
+}
+
+Future<MeasurementStore> _pump(
+  WidgetTester tester, {
+  List<Measurement> initial = const [],
+  FileAccess? files,
+}) async {
+  // telefonméretű képernyő (432×960 logikai pont)
+  tester.view.physicalSize = const Size(1080, 2400);
+  tester.view.devicePixelRatio = 2.5;
+  addTearDown(tester.view.reset);
+  final store = MeasurementStore(InMemoryMeasurementRepository(initial));
+  await store.load();
+  await tester.pumpWidget(
+    PulzarApp(store: store, fileAccess: files ?? FakeFileAccess()),
+  );
+  await tester.pumpAndSettle();
+  return store;
+}
+
+Finder _nav(String label) => find.descendant(
+      of: find.byKey(const Key('main-navigation')),
+      matching: find.text(label),
+    );
+
+DateTime _daysAgo(int days, int hour) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day - days, hour);
+}
+
+void main() {
+  List<Measurement> sample() => [
+        measurement('t1', _daysAgo(0, 1), systolic: 140, diastolic: 90, pulse: 80),
+        measurement('t2', _daysAgo(1, 7), systolic: 120, diastolic: 80, pulse: 60),
+        measurement('t3', _daysAgo(2, 7), systolic: 125, diastolic: 82, pulse: null),
+        measurement('old', _daysAgo(20, 7), systolic: 130, diastolic: 84, pulse: 70),
+      ];
+
+  testWidgets('FR-06/07: table shows the period, statistics and rows',
+      (tester) async {
+    await _pump(tester, initial: sample());
+    await tester.tap(_nav('Table'));
+    await tester.pumpAndSettle();
+
+    // alapértelmezés: 30 nap → mind a 4
+    expect(find.text('4 measurements'), findsOneWidget);
+    expect(find.byKey(const Key('table-row-old')), findsOneWidget);
+
+    await tester.tap(find.text('7 days'));
+    await tester.pumpAndSettle();
+    expect(find.text('3 measurements'), findsOneWidget);
+    expect(find.byKey(const Key('table-row-old')), findsNothing);
+    expect(find.textContaining('Last 7 days'), findsOneWidget);
+
+    // a hiányzó pulzus „–”, a referenciát elérő érték kiemelve
+    final high = tester.widget<Text>(find.descendant(
+        of: find.byKey(const Key('table-row-t1')), matching: find.text('140')));
+    expect(high.style?.fontWeight, FontWeight.bold);
+    final normal = tester.widget<Text>(find.descendant(
+        of: find.byKey(const Key('table-row-t2')), matching: find.text('120')));
+    expect(normal.style?.fontWeight, isNot(FontWeight.bold));
+    expect(
+        find.descendant(
+            of: find.byKey(const Key('table-row-t3')), matching: find.text('–')),
+        findsOneWidget);
+  });
+
+  testWidgets('FR-08/09/10: two charts with the same data points',
+      (tester) async {
+    await _pump(tester, initial: sample());
+    await tester.tap(_nav('Charts'));
+    await tester.pumpAndSettle();
+
+    BpChartPainter painterOf(String key) => tester
+        .widget<CustomPaint>(find.descendant(
+            of: find.byKey(Key(key)), matching: find.byType(CustomPaint)))
+        .painter! as BpChartPainter;
+
+    final sys = painterOf('chart-systolic');
+    final dia = painterOf('chart-diastolic');
+    expect(sys.points.map((p) => p.value), [130, 125, 120, 140]);
+    expect(dia.points.map((p) => p.value), [84, 82, 80, 90]);
+    expect(sys.reference, 135);
+    expect(dia.reference, 85);
+    final (lo, hi) = sys.yRange;
+    expect(lo <= 120 && hi >= 140, isTrue);
+  });
+
+  testWidgets('FR-13: save a backup', (tester) async {
+    final files = FakeFileAccess();
+    await _pump(tester, initial: sample(), files: files);
+
+    await tester.tap(find.byKey(const Key('settings-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-tile')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-save')));
+    await tester.pumpAndSettle();
+
+    expect(files.savedName, startsWith('pulzar-backup-'));
+    final restored = Backup.decode(utf8.decode(files.saved!));
+    expect(restored, hasLength(4));
+    expect(find.text('Backup saved (4 measurements).'), findsOneWidget);
+  });
+
+  testWidgets('FR-13: restore shows a preview and merges', (tester) async {
+    final files = FakeFileAccess();
+    final store = await _pump(tester, initial: [sample().first], files: files);
+    files.toOpen = Uint8List.fromList(utf8.encode(Backup.encode(sample(),
+        appVersion: 'test', exportedAt: DateTime.utc(2026, 10, 8))));
+
+    await tester.tap(find.byKey(const Key('settings-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-tile')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-restore')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('restore-preview')), findsOneWidget);
+    expect(find.textContaining('New measurements: 3'), findsOneWidget);
+    expect(find.textContaining('Already up to date: 1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('confirm-restore')));
+    await tester.pumpAndSettle();
+    expect(store.measurements, hasLength(4));
+  });
+
+  testWidgets('FR-13: a wrong file is rejected with a message', (tester) async {
+    final files = FakeFileAccess()
+      ..toOpen = Uint8List.fromList(utf8.encode('hello'));
+    final store = await _pump(tester, files: files);
+
+    await tester.tap(find.byKey(const Key('settings-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-tile')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-restore')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('restore-error')), findsOneWidget);
+    expect(store.measurements, isEmpty);
+  });
+}
