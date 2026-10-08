@@ -22,4 +22,5 @@ Hosszabb ötlethez külön jegyzet: `Ctrl+P` → *Templates: Insert template* �
 | Ö-007 | 2026-10-08 | Bluetooth vérnyomásmérő csatlakoztatása | 💭 | nagy munka, mérőtípustól függ |
 | Ö-008 | 2026-10-08 | Kezdőképernyő widget: utolsó mérés + gyors bevitel | 💭 | |
 | Ö-009 | 2026-10-08 | Magyar nyelvű felület (választható nyelv) | 💭 | a szövegek már egy helyen vannak (NFR-03a) |
-| Ö-010 | 2026-10-08 | Saját alkalmazásikon (most a Flutter alap ikonja van) | 💭 | |
+| Ö-011 | 2026-10-08 | Technikai: a `pubspec.lock` frissítése (az új csomagokat most a CI oldja fel) | 🔍 | a fejlesztői gépen nem érhető el a pub.dev |
+| Ö-010 | 2026-10-08 | Saját alkalmazásikon (most a Flutter alap ikonja van) | 🟢 | v0.3.0 – „C” változat, [[ADR-008 Alkalmazásikon]] |

@@ -11,8 +11,8 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 |---|---|---|---|
 | **0.1.x** | Koncepció: specifikáció, döntések, projektdokumentáció | Koncepció | 🟢 kész (0.1.1) |
 | 0.2.0 | Flutter projektváz, alap navigáció, GitHub Actions: automatikus, aláírt APK minden kiadásnál | Fejlesztés | 🟢 kész |
-| 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟡 következő |
-| 0.4.0 | Táblázatos nézet, időszak-választó, összesítés (FR-06, FR-07) | Fejlesztés | ⚪ tervezett |
+| 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟢 kész |
+| 0.4.0 | Táblázatos nézet, időszak-választó, összesítés (FR-06, FR-07) | Fejlesztés | 🟡 következő |
 | 0.5.0 | Szisztolé és diasztolé grafikon, referenciavonal (FR-08…10) | Fejlesztés | ⚪ tervezett |
 | 0.6.0 | PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16) | Fejlesztés | ⚪ tervezett |
 | 0.9.0 | Kiadásra jelölt: teljes kézi tesztkör valódi eszközön | Tesztelés | ⚪ tervezett |
@@ -31,3 +31,4 @@ Ide kerül, mikor zárult le egy verzió (dátum + rövid megjegyzés). A részl
 - 2026-10-08 – Projekt indítása, repó és vault létrehozva
 - 2026-10-08 – 0.1.1: nyitott kérdések lezárva, koncepció jóváhagyva
 - 2026-10-08 – 0.2.0: projektváz, angol felület, CI, aláírt APK; első telepítés valódi telefonra sikeres
+- 2026-10-08 – 0.3.0: mérés rögzítése, szerkesztése, törlése, napi korlát, napló lista, saját ikon; kézi teszt hiba nélkül

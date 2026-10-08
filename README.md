@@ -28,6 +28,8 @@ pulzar/
 ├── test/        Automatikus tesztek
 ├── android/     Android-specifikus fájlok
 ├── .github/     CI: tesztek, APK-fordítás, kiadás
+├── assets/      Arculat (ikon forrásképe)
+├── tool/        Segédszkriptek (pl. ikongenerálás)
 ├── docs/        Obsidian vault – specifikáció, döntések, ötletek, tesztelés, changelog
 ├── pubspec.yaml Függőségek és verziószám
 ├── README.md

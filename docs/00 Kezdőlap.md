@@ -1,7 +1,7 @@
 ---
 tipus: kezdolap
 projekt: Pulzar
-aktualis_verzio: 0.2.0
+aktualis_verzio: 0.3.0
 fazis: Fejlesztés
 frissitve: 2026-10-08
 ---
@@ -14,9 +14,9 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
 
 | | |
 |---|---|
-| Aktuális verzió | **0.2.0 – Projektváz és automatikus kiadás** |
+| Aktuális verzió | **0.3.0 – Mérés rögzítése** |
 | Fázis | Koncepció → *Fejlesztés* → Tesztelés → Hibajavítás → Kiadás |
-| Következő lépés | v0.3.0 – mérés rögzítése, napló lista (FR-01…05) |
+| Következő lépés | v0.4.0 – táblázatos nézet, időszak-választó, összesítés (FR-06, FR-07) |
 
 ## Dokumentumok
 
@@ -34,6 +34,8 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
    - [[ADR-004 Repó- és vault-szerkezet]]
    - [[ADR-005 Angol nyelvű felület]]
    - [[ADR-006 Fordítás, aláírás és kiadás a GitHub Actionsben]]
+   - [[ADR-007 Adattárolás megvalósítása]]
+   - [[ADR-008 Alkalmazásikon]]
 
 ## Privát jegyzetek
 

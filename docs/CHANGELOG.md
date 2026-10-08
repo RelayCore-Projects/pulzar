@@ -10,6 +10,21 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.3.0] – 2026-10-08 – Mérés rögzítése
+
+### Hozzáadva
+- Mérés rögzítése: dátum, szabadon megadható időpont, szisztolé, diasztolé, pulzus, megjegyzés (FR-01)
+- Bevitel ellenőrzése: tartományok, szisztolé > diasztolé, időpont nem lehet a jövőben (FR-02)
+- Napi 3 mérés korlát; elérésekor felajánlja a nap meglévő méréseinek szerkesztését (FR-03)
+- Szerkesztés és törlés megerősítéssel; a törlés logikai (FR-04, NFR-07)
+- Napló lista napokra csoportosítva, „Today” / „Yesterday” jelöléssel (FR-05)
+- Helyi SQLite adatbázis – [[ADR-007 Adattárolás megvalósítása]]
+- Saját alkalmazásikon: piros szív EKG-vonallal, sötét háttéren; adaptív és témázott (Android 13+) változat – [[ADR-008 Alkalmazásikon]]
+- Automatikus tesztek: validáció, formázás, csoportosítás, napi korlát, teljes rögzítés / szerkesztés / törlés folyamat
+
+### Módosítva
+- CI: a `flutter analyze` stílusjavaslatai (info) nem állítják meg a fordítást, a hibák és figyelmeztetések igen
+
 ## [0.2.0] – 2026-10-08 – Projektváz és automatikus kiadás
 
 ### Hozzáadva
