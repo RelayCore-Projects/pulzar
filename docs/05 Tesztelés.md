@@ -44,7 +44,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-08 | FR-04 | Mérés törlése | Megerősítést kér; utána eltűnik |
 | T-09 | FR-06, FR-07 `🔄 v0.4.0` | Table, Week, majd Month | Csak a hét (hétfő–vasárnap) / a hónap mérései; átlag/min/max helyes |
 | T-10 | FR-06 `🔄 v0.4.0` | ~~Egyéni időszak~~ → **All** | Minden mérés látszik, a legkorábbitól |
-| T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék; a napon egy pont (átlag) és egy min–max vonal |
+| T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék pontok; a napon egy pont (az átlag) `🔄 v0.4.0` |
 | T-12 | FR-10 (v0.5.0-tól) | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
 | T-13 | FR-11 | PDF, „mindkettő”, 30 nap | Fejléc, összesítés, táblázat, két grafikon, oldalszám |
 | T-14 | FR-12 | CSV export, megnyitás Excelben | Ékezetek és oszlopok helyesek |
@@ -59,7 +59,9 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-23 | FR-06 `🆕 v0.4.0` | Table fekvő tájolásban, sok méréssel | Az egész nézet görgethető, a dátum nem lóg ki |
 | T-25 | FR-06 `🆕 v0.4.0` | Charts-on és Table-ön húzás jobbra / balra, ‹ › gombok | Előző / következő hét (hónap, év); a jövőbe nem lapoz |
 | T-26 | FR-08 `🆕 v0.4.0` | Charts, Month és Year; a Table-ön „All”, majd Charts | Napi, illetve heti átlagok pontokkal; „All” helyett az aktuális év |
-| T-27 | FR-06 `🆕 v0.4.0` | Table: + gomb; sorra koppintás; hosszú megjegyzés | Új mérés felvehető; a sor megnyílik szerkesztésre; a megjegyzés egy sorban, teljes szöveg az űrlapon |
+| T-27 | FR-06 `🆕 v0.4.0` | Table: + gomb; sorra érintés; hosszú nyomás; hosszú megjegyzés | Új mérés felvehető; érintésre részletek lap a teljes megjegyzéssel; hosszú nyomásra szerkesztés |
+| T-28 | FR-08 `🆕 v0.4.0` | Charts: koppintás egy napra (Week, Month) és egy hétre (Year) | Kiemelő vonal, kártya az átlaggal és a mérésekkel; újabb koppintás bezárja |
+| T-29 | FR-08 `🆕 v0.4.0` | Year → koppintás → *Show month* → koppintás → *Show week* | A hónap, majd a hét jelenik meg |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
 
 ## Tesztkörök
@@ -75,11 +77,16 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | Table, Charts | A „Custom” időszakra nincs szükség | „All” – minden mérés |
 | Charts | A szisztolé és a diasztolé legyen egy ábrán; szisztolé piros, diasztolé kék | Közös grafikon, piros / kék, jelmagyarázattal |
 | Charts | 7 nap helyett teljes hetek, és lapozás húzással az előző / következő hétre; Week / Month / Year / All | Naptári időszakok, ‹ › és húzás (Table-ön is) |
-| Charts | Napi 3 mérésnél a pontok összezsúfolódnak; hetente 7 pont legyen | Egy pont = napi átlag + min–max vonal ([[ADR-011 Naptári időszakok és átlagolt grafikon]]) |
+| Charts | Napi 3 mérésnél a pontok összezsúfolódnak; hetente 7 pont legyen | Egy pont = napi átlag ([[ADR-011 Naptári időszakok és átlagolt grafikon]]) |
 | Table | A táblázat mellett a Log fül fölösleges; a táblázatból lehessen rögzíteni | Log megszűnt; Table a főképernyő, jobb alul + gomb |
 | Table | A 200 karakteres megjegyzés nem fér el | Egysoros, levágott megjegyzés ikonnal; koppintásra a teljes mérés |
 | Charts | Az „All” nem ábrázolható jól | A Charts-on csak Week / Month / Year |
 | Charts | Mérés nélküli napoknál az összekötő vonal zavaró | Csak pontok |
+| Table | Szerkesztés ne érintésre, hanem hosszú nyomásra induljon | Érintés: részletek lap; hosszú nyomás: szerkesztés |
+| Charts | A min–max vonal nem kell | Megszűnt |
+| Charts | Egy pontra koppintva a nap mérései, a SYS és DIA pont összekötve | Kiemelés + kártya a mérésekkel |
+| Charts | Year nézetben összecsúsznak a pontok | Heti átlag kisebb pontokkal |
+| Charts | Belenagyítás | Lefúrás: *Show week* / *Show month*; csippentős nagyítás ötletként (Ö-014) |
 
 ### v0.3.1 – 2026-10-08 (Preview 0.3.1-dev.13)
 

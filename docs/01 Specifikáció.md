@@ -19,6 +19,7 @@ frissitve: 2026-10-08
 | 0.4.0 | 2026-10-08 | FR-06: „Custom” helyett „All”; napi fejléces táblázat; az egész nézet görgethető. FR-08/09: a szisztolé (piros) és a diasztolé (kék) **egy** grafikonon | Visszajelzés a 0.4.0-dev.19 kézi tesztjéből: a dátum oszlop nem fért ki, fekvő módban az összesítő kitakarta a táblázatot, az egyéni időszakra nincs szükség, a két görbe egy ábrán jobban összevethető |
 | 0.4.0 | 2026-10-08 | FR-06: **naptári időszakok** (Week · Month · Year · All) lapozással; FR-08: egy pont = **napi átlag** min–max vonallal (Year: heti, All: havi) | Visszajelzés: a gördülő 7 nap helyett teljes hetek kellenek, egymás után lapozva; napi 3 mérésnél a pontok összezsúfolódtak – [[ADR-011 Naptári időszakok és átlagolt grafikon]] |
 | 0.4.0 | 2026-10-08 | FR-05 (Napló) beolvadt az FR-06-ba: a **Table a főképernyő**, + gombbal, koppintással szerkeszthető sorokkal; FR-08: **csak pontok**, a Charts-on nincs „All” | Visszajelzés: a táblázat mellett a Log fölösleges; a hosszú megjegyzés nem fér el; a pontok összekötése mérés nélküli napoknál félrevezető; a havi átlag („All”) nem ad hasznos képet |
+| 0.4.0 | 2026-10-08 | FR-06: érintésre **részletek lap**, **hosszú nyomásra szerkesztés**; FR-08: a **min–max vonal megszűnt**, koppintásra a nap / hét **kiemelése és méréseinek listája**, átugrás (*Show week*, *Show month*) | Visszajelzés: véletlen szerkesztés elkerülése; a min–max vonal zavaró; a hónap / év pontjai mögötti mérések legyenek elérhetők; nagyítás helyett lefúrás |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -125,7 +126,7 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 - Lapozás ‹ › gombokkal és **húzással** (jobbra: előző, balra: következő időszak); a jövőbe és a legkorábbi mérés elé nem lehet lapozni `🆕 v0.4.0`
 - A táblázat **naponként egy fejlécsort** kap (pl. „Thursday, 8 October 2026”), alatta a nap mérései: Time · SYS · DIA · PUL · Note – így a dátum nem foglal oszlopot, keskeny kijelzőn is kifér `🆕 v0.4.0`
 - Az időszak-választó, az összesítő és a táblázat **együtt görgethető**, fekvő tájolásban is `🆕 v0.4.0`
-- **Ez a főképernyő** (az FR-05 Napló helyett): jobb alul lebegő **+** gomb új méréshez; egy sorra koppintva megnyílik a mérés szerkesztésre (FR-04) `🆕 v0.4.0`
+- **Ez a főképernyő** (az FR-05 Napló helyett): jobb alul lebegő **+** gomb új méréshez; ~~egy sorra koppintva megnyílik a mérés szerkesztésre~~ `❌ v0.4.0` → **érintésre** alulról felcsúszó **részletek lap** (dátum, idő, értékek, teljes megjegyzés, *Edit* / *Delete* gomb); **hosszú nyomásra** közvetlenül a szerkesztés (FR-04), rezgéssel `🆕 v0.4.0`
 - A megjegyzés a sorban **egy sorba levágva** jelenik meg, előtte kis ikon jelzi; a teljes szöveg a mérést megnyitva látszik. A 200 karakteres korlát marad `🆕 v0.4.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
@@ -138,13 +139,16 @@ A táblázat fölött a kiválasztott időszakra: mérések száma, és SYS / DI
 
 **FR-08 – Vérnyomás grafikon** `🔄 v0.4.0`
 Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), függőleges tengely: Hgmm. Ugyanaz az időszak-választó, mint FR-06-ban. A **szisztolé piros**, a **diasztolé kék** vonal **egy közös ábrán**, jelmagyarázattal. `🆕 v0.4.0`
-- **Egy pont = egy időegység átlaga**, a pontnál halvány függőleges vonal a legkisebb és legnagyobb értékkel (ha több mérés volt) `🆕 v0.4.0`:
+- **Egy pont = egy időegység átlaga** `🆕 v0.4.0`; ~~a pontnál halvány függőleges vonal a legkisebb és legnagyobb értékkel~~ `❌ v0.4.0`:
   - Week, Month → napi átlag
   - Year → heti átlag
   - All → havi átlag
 - ~~Mérés nélküli napon nincs pont; a vonal a szomszédos pontokat köti össze~~ `❌ v0.4.0`
 - **Csak pontok**, összekötő vonal nélkül – egy kimaradt nap ne tűnjön folytonosnak `🆕 v0.4.0`
 - A grafikonon csak **Week · Month · Year** választható; ha a táblázatban „All” volt kiválasztva, a grafikon az aktuális évet mutatja `🆕 v0.4.0`
+- A pontok mérete a nézethez igazodik (Week nagyobb, Year kisebb), hogy ne csússzanak össze `🆕 v0.4.0`
+- **Koppintás** a grafikonon (nem kell pontosan a pontot eltalálni, az adott nap / hét „oszlopa” érzékeny): a szisztolé és diasztolé pontot függőleges vonal köti össze, a grafikon alatt kártya mutatja az átlagot és a nap (évnél a hét) **összes mérését**; egy mérésre koppintva a részletek lap nyílik meg. Újabb koppintás ugyanoda bezárja `🆕 v0.4.0`
+- **Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra `🆕 v0.4.0`
 - Az egyes mérések pontos értékei a táblázatban (FR-06) láthatók
 
 **FR-09 – Diasztolé grafikon**
