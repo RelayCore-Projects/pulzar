@@ -2,7 +2,7 @@
 
 Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyik projektje.
 
-> **Legutóbbi kiadás:** v0.4.0 · [Letöltés (Releases)](https://github.com/RelayCore-Projects/pulzar/releases/latest) · fejlesztői előnézet: [Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
+> **Legutóbbi kiadás:** v0.5.0 · [Letöltés (Releases)](https://github.com/RelayCore-Projects/pulzar/releases/latest) · fejlesztői előnézet: [Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
 
 ## Mit tud
 

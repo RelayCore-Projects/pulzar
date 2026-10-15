@@ -14,7 +14,7 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 | 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟢 kész |
 | 0.3.1 | Javítás: a pulzus opcionális, első adatbázis-migráció (#3) | Hibajavítás | 🟢 kész |
 | 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟢 kész |
-| 0.5.0 `🔄` | **PDF export szabadon választott időszakra** (FR-11), mentés + megnyitás / nyomtatás (FR-14), **beállítások: név a PDF-en, referenciaértékek** (FR-15); `pubspec.lock` (Ö-011). ~~CSV export, téma, lefúrás~~ → a v1.0 után (Ö-016, Ö-017, Ö-015) | Fejlesztés | 🟡 folyamatban |
+| 0.5.0 `🔄` | **PDF export szabadon választott időszakra** (FR-11), mentés + megnyitás / nyomtatás (FR-14), **beállítások: név a PDF-en, referenciaértékek** (FR-15); `pubspec.lock` (Ö-011). ~~CSV export, téma, lefúrás~~ → a v1.0 után (Ö-016, Ö-017, Ö-015) | Fejlesztés | 🟢 kész |
 | ~~0.6.0~~ | ~~PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16)~~ → beolvadt a 0.4.0-ba és a 0.5.0-ba | – | ⛔ |
 | ~~0.9.0~~ | ~~Kiadásra jelölt: teljes kézi tesztkör valódi eszközön~~ → a 0.5.0 után, az 1.0.0 előtt | Tesztelés | ⛔ |
 | 0.5.x | Hibajavítások a 0.5.0 tesztje alapján (ha kell) | Hibajavítás | ⚪ tervezett |
@@ -43,3 +43,4 @@ Ide kerül, mikor zárult le egy verzió (dátum + rövid megjegyzés). A részl
 - 2026-10-08 – Átütemezés: nagyobb verziók, a mentés előrehozva a 0.4.0-ba
 - 2026-10-08 – 0.4.0: mentés / visszatöltés, táblázat (főképernyő), naptári időszakok, napi átlagos grafikon; négy kézi tesztkör visszajelzése beépítve
 - 2026-10-15 – A 0.4.0 egy hete napi használatban, hiba nélkül; a v1.0 hatóköre véglegesítve (PDF, referenciaértékek, név), a 0.5.0 fejlesztése elindult
+- 2026-10-15 – 0.5.0: PDF-jelentés választott időszakra, név a PDF-en, állítható referenciaértékek; a Preview kézi tesztje alapján a kiemelés megszűnt, a PDF dátuma 2026.10.15 (Thursday)

@@ -10,7 +10,7 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
-## [0.5.0] – PDF-jelentés és beállítások
+## [0.5.0] – 2026-10-15 – PDF-jelentés és beállítások
 
 ### Hozzáadva
 - **PDF export** (FR-11): a fejléc PDF ikonjáról, **szabadon választott időszakra** (*From* – *To*, gyorsgombok: *Last 30 days*, *Last 3 months*, *All*); grafikon és / vagy táblázat; A4, nyomtatható: fejléc névvel és időszakkal, összesítő, átlagos értékek grafikonja, minden mérés időrendben, a fejléc minden oldalon, oldalszám
