@@ -97,7 +97,8 @@ class _ChartsScreenState extends State<ChartsScreen> {
               ),
             ),
             const SizedBox(width: 6),
-            Text(text, style: theme.textTheme.bodySmall),
+            // keskeny kijelzőn tördelődjön, ne lógjon ki
+            Flexible(child: Text(text, style: theme.textTheme.bodySmall)),
           ],
         );
 
@@ -181,7 +182,8 @@ class _ChartsScreenState extends State<ChartsScreen> {
                           legend(diaColor, 'Diastolic'),
                           if (settings.referenceEnabled)
                             legend(theme.colorScheme.onSurfaceVariant,
-                                'Dashed: reference ${settings.referenceText}',
+                                'Dashed: reference '
+                                '${settings.refSystolic} / ${settings.refDiastolic}',
                                 key: const Key('chart-reference-legend'),
                                 dashed: true),
                         ],
