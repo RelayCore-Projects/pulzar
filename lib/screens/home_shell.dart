@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../domain/period.dart';
 import '../platform/file_access.dart';
+import '../state/store_scope.dart';
 import 'charts_screen.dart';
+import 'export_screen.dart';
 import 'measurement_form_screen.dart';
 import 'settings_screen.dart';
 import 'table_screen.dart';
@@ -31,6 +33,19 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 
+  /// FR-11: az export alapból az éppen nézett időszakot ajánlja (a mai napig).
+  void _openExport(PeriodSelection selection) {
+    final today = AppServices.of(context).now();
+    final period = Period.of(selection,
+        earliest: StoreScope.read(context).earliest, today: today);
+    final to = period.to.isAfter(today) ? today : period.to;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ExportScreen(initialFrom: period.from, initialTo: to),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final selection =
@@ -44,6 +59,12 @@ class _HomeShellState extends State<HomeShell> {
       appBar: AppBar(
         title: Text(_titles[_index]),
         actions: [
+          IconButton(
+            key: const Key('export-button'),
+            tooltip: 'Export PDF',
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            onPressed: () => _openExport(selection),
+          ),
           IconButton(
             key: const Key('settings-button'),
             tooltip: 'Settings',

@@ -12,26 +12,7 @@ import 'package:pulzar/state/measurement_store.dart';
 import 'package:pulzar/widgets/bp_chart.dart';
 
 import 'helpers/factory.dart';
-
-class FakeFileAccess implements FileAccess {
-  String? savedName;
-  Uint8List? saved;
-  Uint8List? toOpen;
-
-  @override
-  Future<String?> saveFile({
-    required String name,
-    required Uint8List bytes,
-    required String mimeType,
-  }) async {
-    savedName = name;
-    saved = bytes;
-    return 'content://fake/$name';
-  }
-
-  @override
-  Future<Uint8List?> openFile() async => toOpen;
-}
+import 'helpers/fake_file_access.dart';
 
 Future<MeasurementStore> _pump(
   WidgetTester tester, {

@@ -3,7 +3,7 @@ description: "Pulzar – a simple offline blood pressure log."
 publish_to: 'none'
 
 # FŐ.AL.JAVÍTÁS+buildszám – a kiadott APK verzióját a CI a git-címkéből állítja be
-version: 0.4.0+5
+version: 0.5.0+6
 
 environment:
   sdk: ^3.5.0
@@ -14,6 +14,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   path: ^1.9.0
+  # PDF-jelentés (FR-11) – tiszta Dart csomag, natív kód és engedély nélkül (ADR-012)
+  pdf: ^3.11.0
   sqflite: ^2.3.0
 
 dev_dependencies:
@@ -24,3 +26,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    # a PDF betűtípusa (ő, ű, č, š is) – licenc: assets/fonts/LICENSE-DejaVu.txt
+    - assets/fonts/DejaVuSansCondensed.ttf
+    - assets/fonts/DejaVuSansCondensed-Bold.ttf

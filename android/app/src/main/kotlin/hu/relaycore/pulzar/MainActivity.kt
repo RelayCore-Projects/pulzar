@@ -1,6 +1,7 @@
 package hu.relaycore.pulzar
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import io.flutter.embedding.android.FlutterActivity
@@ -8,7 +9,8 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Fájl mentése / megnyitása a rendszer fájlválasztójával (Storage Access Framework).
+ * Fájl mentése / megnyitása a rendszer fájlválasztójával (Storage Access Framework),
+ * és egy mentett fájl megnyitása más alkalmazással (pl. PDF-nézegető, v0.5.0).
  * A Dart oldal: lib/platform/file_access.dart (ADR-010).
  */
 class MainActivity : FlutterActivity() {
@@ -19,6 +21,10 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
+                if (call.method == "viewFile") {
+                    result.success(viewFile(call.argument<String>("uri"), call.argument<String>("mimeType")))
+                    return@setMethodCallHandler
+                }
                 if (pendingResult != null) {
                     result.error("busy", "Another file operation is in progress", null)
                     return@setMethodCallHandler
@@ -45,6 +51,23 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    /** A mentett fájl megnyitása: a fogadó alkalmazás csak olvasási jogot kap erre az egy fájlra. */
+    private fun viewFile(uri: String?, mimeType: String?): Boolean {
+        if (uri == null) return false
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(Uri.parse(uri), mimeType ?: "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        return try {
+            startActivity(intent)
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        } catch (e: SecurityException) {
+            false
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

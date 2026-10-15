@@ -1,6 +1,6 @@
 ---
 tipus: changelog
-frissitve: 2026-10-08
+frissitve: 2026-10-15
 ---
 
 # Változásnapló
@@ -9,6 +9,20 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/), verziózás: [[03 Fe
 Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolítva** · **Biztonság**
 
 ## [Unreleased]
+
+## [0.5.0] – PDF-jelentés és beállítások
+
+### Hozzáadva
+- **PDF export** (FR-11): a fejléc PDF ikonjáról, **szabadon választott időszakra** (*From* – *To*, gyorsgombok: *Last 30 days*, *Last 3 months*, *All*); grafikon és / vagy táblázat; A4, nyomtatható: fejléc névvel és időszakkal, összesítő, átlagos értékek grafikonja, minden mérés időrendben, a fejléc minden oldalon, oldalszám
+- A PDF mentése a rendszer fájlválasztójával, utána **Open**: megnyitás a telefon PDF-nézegetőjében, onnan nyomtatás vagy megosztás (FR-14)
+- **Beállítások** (FR-15): név a PDF-en; **referenciaértékek** be/ki és állítható értékek (alap: 135 / 85) – a grafikon vonalai, a táblázat és a PDF kiemelése ezeket követi
+- [[ADR-012 PDF a pdf csomaggal]]; betűtípus: DejaVu Sans Condensed (ékezetes nevek és megjegyzések: ő, ű, č, š…)
+- Új automatikus tesztek: beállítások, PDF-adatok, PDF elkészítése (egy év napi 3 méréssel is), export képernyő, adatbázis-frissítés v2 → v3
+
+### Módosítva
+- Adatbázis-séma 3-as verzió: új `settings` tábla; a mérések nem változnak (NFR-06)
+- CI: a feloldott `pubspec.lock` a Preview kiadásra is felkerül (Ö-011)
+- [[02 Ütemterv]]: a v1.0 hatóköre véglegesítve; a CSV export (Ö-016), a téma választás (Ö-017) és a lefúrás (Ö-015) a v1.0 után
 
 ## [0.4.0] – 2026-10-08 – Mentés, táblázat, grafikon
 

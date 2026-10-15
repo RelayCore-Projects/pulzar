@@ -1,8 +1,8 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.4.0
+dokumentum_verzio: 0.5.0
 statusz: jóváhagyva
-frissitve: 2026-10-08
+frissitve: 2026-10-15
 ---
 
 # Pulzar – Specifikáció
@@ -20,6 +20,7 @@ frissitve: 2026-10-08
 | 0.4.0 | 2026-10-08 | FR-06: **naptári időszakok** (Week · Month · Year · All) lapozással; FR-08: egy pont = **napi átlag** min–max vonallal (Year: heti, All: havi) | Visszajelzés: a gördülő 7 nap helyett teljes hetek kellenek, egymás után lapozva; napi 3 mérésnél a pontok összezsúfolódtak – [[ADR-011 Naptári időszakok és átlagolt grafikon]] |
 | 0.4.0 | 2026-10-08 | FR-05 (Napló) beolvadt az FR-06-ba: a **Table a főképernyő**, + gombbal, koppintással szerkeszthető sorokkal; FR-08: **csak pontok**, a Charts-on nincs „All” | Visszajelzés: a táblázat mellett a Log fölösleges; a hosszú megjegyzés nem fér el; a pontok összekötése mérés nélküli napoknál félrevezető; a havi átlag („All”) nem ad hasznos képet |
 | 0.4.0 | 2026-10-08 | FR-06: érintésre **részletek lap**, **hosszú nyomásra szerkesztés**; FR-08: a **min–max vonal megszűnt**, koppintásra a nap / hét **kiemelése és méréseinek listája**, átugrás (*Show week*, *Show month*) | Visszajelzés: véletlen szerkesztés elkerülése; a min–max vonal zavaró; a hónap / év pontjai mögötti mérések legyenek elérhetők; nagyítás helyett lefúrás |
+| 0.5.0 | 2026-10-15 | FR-11: a PDF időszaka **szabadon választható (dátumtól–dátumig)**, gyorsgombokkal; táblázat és / vagy grafikon; összesítőben a referencia fölötti mérések száma. FR-14: megosztás helyett **mentés + megnyitás** (onnan nyomtatás / megosztás). FR-15: név a PDF-en, referenciaértékek (be/ki, SYS, DIA) – **a téma választás és az FR-12 CSV export a v1.0 után** | Igény: „nyomtatható PDF egy kiválasztott intervallumra, és a referenciaérték állítása” – a v1.0 lezárásához a legfontosabbak; [[ADR-012 PDF a pdf csomaggal]] |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -34,7 +35,7 @@ frissitve: 2026-10-08
 Egyetlen felhasználó a saját vérnyomásértékeit **kézzel** rögzíti a telefonján, és ezeket
 - **számszerűen** (táblázatban) meg tudja mutatni az orvosnak,
 - **grafikusan** – a szisztolé és a diasztolé értékeket ~~külön~~ egy ábrán, jól megkülönböztethető színnel `🔄 v0.4.0` – meg tudja jeleníteni,
-- **exportálni** tudja (PDF, CSV, teljes mentés).
+- **exportálni** tudja (PDF, ~~CSV~~ `⏸ v0.5.0`, teljes mentés).
 
 Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali** alkalmazás, amely ugyanazokat az adatokat tudja kezelni (v2, lásd [[02 Ütemterv]]).
 
@@ -46,8 +47,8 @@ Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali
 - ~~Napló lista~~ → táblázat (főképernyő) `🔄 v0.4.0`
 - Táblázatos nézet időszakszűréssel és összesítéssel
 - Szisztolé és diasztolé grafikon
-- PDF, CSV export; teljes mentés és visszatöltés
-- Beállítások, névjegy
+- PDF export; teljes mentés és visszatöltés — ~~CSV export~~ `⏸ v0.5.0` a v1.0 után (Ö-016)
+- Beállítások (név a PDF-en, referenciaértékek), névjegy
 
 ### Nincs benne (v1.0) – lehetséges későbbi bővítések: [[04 Ötletek]]
 
@@ -148,28 +149,32 @@ Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), 
 - A grafikonon csak **Week · Month · Year** választható; ha a táblázatban „All” volt kiválasztva, a grafikon az aktuális évet mutatja `🆕 v0.4.0`
 - A pontok mérete a nézethez igazodik (Week nagyobb, Year kisebb), hogy ne csússzanak össze `🆕 v0.4.0`
 - **Koppintás** a grafikonon (nem kell pontosan a pontot eltalálni, az adott nap / hét „oszlopa” érzékeny): a szisztolé és diasztolé pontot függőleges vonal köti össze, a grafikon alatt kártya mutatja az átlagot és a nap (évnél a hét) **összes mérését**; egy mérésre koppintva a részletek lap nyílik meg. Újabb koppintás ugyanoda bezárja `🆕 v0.4.0`
-- ~~**Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra~~ `⏸ halasztva` – a v0.4.0 kiadásából kimaradt, a következő verzióba kerül (Ö-015)
+- ~~**Lefúrás:** a kártyán *Show week* (Month és Year nézetben) és *Show month* (Year nézetben) – átvált arra az időszakra~~ `⏸ halasztva` – a v0.4.0 kiadásából kimaradt; `🔄 v0.5.0` a v1.0 után (Ö-015)
 - Az egyes mérések pontos értékei a táblázatban (FR-06) láthatók
 
 **FR-09 – Diasztolé grafikon**
 ~~Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.~~ `❌ v0.4.0` – beolvadt az FR-08-ba (közös ábra).
 
 **FR-10 – Referenciavonal**
+`🔄 v0.5.0` Az értékek a beállításokban (FR-15) módosíthatók és kikapcsolhatók; a táblázat kiemelése (FR-06) és a PDF (FR-11) ugyanezeket használja.
 Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaértéknél, a sor színével `🔄 v0.4.0`. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
 
 ### 4.3 Export
 
 **FR-11 – PDF export**
-- Időszak: mint FR-06
-- Tartalom választható: **táblázat**, **grafikon**, vagy **mindkettő**
-- Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*
-- Összesítő blokk (FR-07)
-- Táblázat: minden mérés dátummal és időponttal
-- Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`
-- Lábléc: oldalszám, „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
+- Indítás: a fejléc PDF ikonja (*Export PDF*) a Table és a Charts nézetben `🆕 v0.5.0`
+- Időszak: ~~mint FR-06~~ **szabadon választható: *From* – *To*** (dátumválasztó, legkésőbb a mai nap); alapból az éppen nézett időszak a mai napig; gyorsgombok: *Last 30 days*, *Last 3 months*, *All*; látszik, hány mérés kerül bele `🔄 v0.5.0`
+- Tartalom választható: **táblázat**, **grafikon**, vagy **mindkettő** (legalább az egyik; alapból mindkettő)
+- Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*; a további oldalakon kis fejléc (cím · név · időszak) `🆕 v0.5.0`
+- Összesítő blokk (FR-07); ha a referencia be van kapcsolva: a referenciaérték és hány mérés éri el vagy haladja meg `🔄 v0.5.0`
+- Táblázat: minden mérés dátummal és időponttal, **időrendben (a legkorábbi elöl)**, napok szerint váltakozó sávozással, a fejléc minden oldalon megismétlődik; a referenciát elérő értékek félkövér pirossal; a teljes megjegyzés `🔄 v0.5.0`
+- Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`; egy pont = átlag: **≤ 2 hónap napi, ≤ 2 év heti, fölötte havi** `🆕 v0.5.0`
+- Lábléc: oldalszám („Page 2 of 5”), „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló
+- Fájlnév: `pulzar-report-2026-07-01_2026-10-15.pdf` `🆕 v0.5.0`
+- Betűtípus: beágyazott DejaVu Sans Condensed, így a név és a megjegyzés ékezetes betűi (ő, ű, č, š…) is helyesen jelennek meg ([[ADR-012 PDF a pdf csomaggal]]) `🆕 v0.5.0`
 
-**FR-12 – CSV export**
+**FR-12 – CSV export** `⏸ v0.5.0` – a v1.0 után ([[04 Ötletek|Ö-016]]); a teljes mentés (FR-13) addig is minden adatot tartalmaz
 - Időszak: mint FR-06
 - Kódolás: UTF-8 BOM-mal, elválasztó: pontosvessző (`;`) – így a magyar Excel helyesen nyitja meg
 - Fejléc: `Date;Time;Systolic (mmHg);Diastolic (mmHg);Pulse (bpm);Note` `🔄 v0.2.0`
@@ -185,13 +190,17 @@ Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaérté
 - Hibás vagy nem Pulzar-fájl esetén hibaüzenet, adat nem változik `🆕 v0.4.0`
 
 **FR-14 – Megosztás**
-Minden export után: *Megosztás* (Android megosztási menü: e-mail, Viber, Drive stb.) vagy *Mentés a Letöltések mappába*.
+~~Minden export után: *Megosztás* (Android megosztási menü: e-mail, Viber, Drive stb.) vagy *Mentés a Letöltések mappába*.~~ `❌ v0.5.0`
 A teljes mentés (FR-13) a rendszer fájlválasztójával menthető bármilyen helyre – Letöltések, Google Drive stb. `🔄 v0.4.0`
+A PDF ugyanígy menthető (*Save PDF…*), utána az értesítő sávban **Open**: a telefon PDF-nézegetője nyitja meg, onnan **nyomtatható** és megosztható (e-mail, Viber…) `🆕 v0.5.0`
 
 ### 4.4 Egyéb
 
 **FR-15 – Beállítások**
-Név a PDF-en (opcionális) · referenciaértékek (SYS, DIA, be/ki) · mentés / visszatöltés · téma (rendszer / világos / sötét).
+Név a PDF-en (opcionális) · referenciaértékek (SYS, DIA, be/ki) · mentés / visszatöltés · ~~téma (rendszer / világos / sötét)~~ `⏸ v0.5.0` – a v1.0 után (Ö-017); addig az app a telefon témáját követi.
+- **Name on PDF** `🆕 v0.5.0`: legfeljebb 60 karakter, a felesleges szóközök nélkül; üresen hagyva nincs név a PDF-en
+- **Reference values** `🆕 v0.5.0`: kapcsoló (*Show reference values*) és a két érték egy párbeszédablakban; SYS 100–200, DIA 60–130 Hgmm, a DIA kisebb a SYS-nél; *Default* gomb: 135 / 85. Kikapcsolva nincs szaggatott vonal, kiemelés a táblázatban és a PDF-ben, és a PDF összesítőjében sincs referencia
+- A beállítások az adatbázisban tárolódnak (séma v3, `settings` tábla); a teljes mentés (FR-13) **nem** tartalmazza őket
 
 **FR-16 – Névjegy**
 Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is not a medical device and does not provide a diagnosis. Interpreting the values is up to your doctor.”* `🔄 v0.2.0`
@@ -228,7 +237,7 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 | `updated_at` | dátum-idő (UTC) | Utolsó módosítás – összefésülésnél ez dönt |
 | `deleted_at` | dátum-idő (UTC), opcionális | Logikai törlés; a felületen nem látszik |
 
-**Settings (beállítások)** – kulcs–érték párok: `patient_name`, `ref_systolic`, `ref_diastolic`, `ref_enabled`, `theme`.
+**Settings (beállítások)** – kulcs–érték párok: ~~`patient_name`, `ref_systolic`, `ref_diastolic`, `ref_enabled`, `theme`~~ → `report_name`, `reference_enabled` (`1`/`0`), `reference_systolic`, `reference_diastolic` – SQLite `settings` tábla, séma v3 `🔄 v0.5.0`. Hiányzó vagy hibás érték esetén az alapérték érvényes.
 
 **Mentésfájl (JSON) szerkezete**
 
@@ -284,7 +293,7 @@ Verziószám, licenc (MIT), link a repóra, és a figyelmeztetés: *„Pulzar is
 └───────────────────────────┘   └──────────────────────────┘
 ```
 
-Navigáció: alsó sáv – ~~**Log**~~, **Table**, **Charts** `🔄 v0.4.0`; jobb fent **Settings** `🔄 v0.2.0`. A *Log* vázlat elavult (v0.4.0): a főképernyő a táblázat, jobb alul + gombbal. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV).
+Navigáció: alsó sáv – ~~**Log**~~, **Table**, **Charts** `🔄 v0.4.0`; jobb fent **Settings** `🔄 v0.2.0`. A *Log* vázlat elavult (v0.4.0): a főképernyő a táblázat, jobb alul + gombbal. Az *Export* gomb a táblázat és a grafikon nézetből is elérhető (PDF / CSV). `🔄 v0.5.0`: jobb fent PDF ikon (*Export PDF*) a Settings mellett; csak PDF.
 
 ## 8. Tervezett technológia
 
@@ -293,11 +302,11 @@ Részletek és indoklás: [[ADR-001 Flutter]], [[ADR-002 Helyi adattárolás]]. 
 | Terület | Tervezett megoldás |
 |---|---|
 | Keretrendszer | Flutter (stabil csatorna), Dart |
-| Adatbázis | SQLite (pl. `drift` vagy `sqflite`) |
-| Grafikon | pl. `fl_chart` |
-| PDF | `pdf` + `printing` |
-| Megosztás | `share_plus` |
-| Fájlválasztás (visszatöltés) | `file_picker` |
+| Adatbázis | SQLite (pl. `drift` vagy `sqflite`) → `sqflite` ([[ADR-007 Adattárolás megvalósítása]]) |
+| Grafikon | pl. `fl_chart` → `🔄 v0.4.0` saját rajz (ADR-010) |
+| PDF | `pdf` + `printing` → `🔄 v0.5.0` csak `pdf` ([[ADR-012 PDF a pdf csomaggal]]) |
+| Megosztás | `share_plus` → `🔄 v0.5.0` mentés + megnyitás a PDF-nézegetőben ([[ADR-010 Fájlkezelés és grafikon külső csomag nélkül]]) |
+| Fájlválasztás (visszatöltés) | `file_picker` → `🔄 v0.4.0` saját csatorna (ADR-010) |
 | Lokalizáció | `flutter_localizations`, `en_GB` (később `intl` / ARB-fájlok, ha több nyelv lesz) `🔄 v0.2.0` |
 | Automatikus fordítás | GitHub Actions → aláírt APK a GitHub Release-ben |
 

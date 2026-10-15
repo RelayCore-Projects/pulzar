@@ -83,6 +83,33 @@ void main() {
     await raw.close();
   });
 
+  test('v2 → v3 migration adds the settings table, measurements unchanged',
+      () async {
+    final path = p.join(dir.path, 'v2.db');
+    // a v0.3.1–v0.4.0 adatbázisa: a mostani mérés-tábla, beállítások nélkül
+    final v2 = await SqliteMeasurementRepository.open(path: path);
+    await v2.insert(measurement('a', DateTime(2026, 10, 8, 7, 30), pulse: null));
+    await v2.close();
+    final raw = await databaseFactoryFfi.openDatabase(path);
+    await raw.execute('DROP TABLE settings');
+    await raw.setVersion(2);
+    await raw.close();
+
+    final repo = await SqliteMeasurementRepository.open(path: path);
+    expect((await repo.loadAll()).single.id, 'a');
+    expect(await repo.loadSettings(), isEmpty);
+    await repo.saveSettings({'report_name': 'Anna', 'reference_enabled': '0'});
+    await repo.close();
+
+    final again = await SqliteMeasurementRepository.open(path: path);
+    expect(await again.loadSettings(),
+        {'report_name': 'Anna', 'reference_enabled': '0'});
+    // a mentés felülír: ami nincs benne, törlődik
+    await again.saveSettings({'reference_enabled': '1'});
+    expect(await again.loadSettings(), {'reference_enabled': '1'});
+    await again.close();
+  });
+
   test('a fresh database works with and without pulse', () async {
     final path = p.join(dir.path, 'fresh.db');
     final repo = await SqliteMeasurementRepository.open(path: path);

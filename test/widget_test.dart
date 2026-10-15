@@ -236,6 +236,9 @@ void main() {
 
     await tester.tap(find.byKey(const Key('settings-button')));
     await tester.pumpAndSettle();
+    // v0.5.0: több beállítás – kis képernyőn görgetni kell
+    await tester.ensureVisible(find.byKey(const Key('about-tile')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('about-tile')));
     await tester.pumpAndSettle();
 

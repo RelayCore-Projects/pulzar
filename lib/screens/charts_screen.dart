@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../app_info.dart';
 import '../domain/chart_data.dart';
 import '../domain/period.dart';
 import '../models/measurement.dart';
 import '../platform/file_access.dart';
+import '../state/settings_scope.dart';
 import '../state/store_scope.dart';
 import '../util/format.dart';
 import '../widgets/bp_chart.dart';
@@ -57,6 +57,7 @@ class _ChartsScreenState extends State<ChartsScreen> {
   @override
   Widget build(BuildContext context) {
     final store = StoreScope.of(context);
+    final settings = SettingsScope.valueOf(context);
     final today = AppServices.of(context).now();
     // Az „All” itt nem választható: ha a Table-ön az volt, az aktuális év látszik
     final effective = widget.selection.kind == PeriodKind.all
@@ -83,7 +84,8 @@ class _ChartsScreenState extends State<ChartsScreen> {
       setState(() => _selected = hit && _selected != start ? start : null);
     }
 
-    Widget legend(Color color, String text, {bool dashed = false}) => Row(
+    Widget legend(Color color, String text, {Key? key, bool dashed = false}) => Row(
+          key: key,
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
@@ -151,7 +153,7 @@ class _ChartsScreenState extends State<ChartsScreen> {
                         ChartSeries(
                           label: 'Systolic',
                           color: sysColor,
-                          reference: AppInfo.defaultRefSystolic,
+                          reference: settings.systolicReference,
                           points: [
                             for (final a in aggregates)
                               ChartPoint(a.center, a.systolic.average),
@@ -160,7 +162,7 @@ class _ChartsScreenState extends State<ChartsScreen> {
                         ChartSeries(
                           label: 'Diastolic',
                           color: diaColor,
-                          reference: AppInfo.defaultRefDiastolic,
+                          reference: settings.diastolicReference,
                           points: [
                             for (final a in aggregates)
                               ChartPoint(a.center, a.diastolic.average),
@@ -177,10 +179,11 @@ class _ChartsScreenState extends State<ChartsScreen> {
                         children: [
                           legend(sysColor, 'Systolic'),
                           legend(diaColor, 'Diastolic'),
-                          legend(theme.colorScheme.onSurfaceVariant,
-                              'Dashed: reference '
-                              '${AppInfo.defaultRefSystolic} / ${AppInfo.defaultRefDiastolic}',
-                              dashed: true),
+                          if (settings.referenceEnabled)
+                            legend(theme.colorScheme.onSurfaceVariant,
+                                'Dashed: reference ${settings.referenceText}',
+                                key: const Key('chart-reference-legend'),
+                                dashed: true),
                         ],
                       ),
                     ),
