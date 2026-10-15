@@ -42,6 +42,14 @@ const _grid = PdfColor.fromInt(0xFFDDDDDD);
 const _muted = PdfColor.fromInt(0xFF666666);
 const _band = PdfColor.fromInt(0xFFF3F3F3);
 
+/// A táblázat dátumoszlopa (pt): „2026.10.15 (Wednesday)” 9 pt-tal ~102 pt + 8 pt belső margó,
+/// némi tartalékkal – hogy ne törjön új sorba (v0.5.1).
+const reportDateColumnWidth = 124.0;
+
+/// A táblázat celláinak betűmérete és vízszintes belső margója (mindkét oldalon).
+const reportCellFontSize = 9.0;
+const reportCellPadding = 4.0;
+
 Future<Uint8List> buildReportPdf(Report r, ReportFonts fonts) {
   final base = pw.Font.ttf(fonts.regular);
   final bold = pw.Font.ttf(fonts.bold);
@@ -368,11 +376,11 @@ pw.Widget _chart(Report r, PdfFont font) {
 /// A referencia fölötti értékek nincsenek kiemelve (v0.5.0).
 /// A fejléc minden oldalon megismétlődik.
 List<pw.Widget> _table(Report r) {
-  const cell = pw.TextStyle(fontSize: 9);
+  const cell = pw.TextStyle(fontSize: reportCellFontSize);
   final head = pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold);
 
   pw.Widget c(String t, {pw.TextStyle? style, bool alignRight = false}) => pw.Padding(
-        padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+        padding: const pw.EdgeInsets.symmetric(horizontal: reportCellPadding, vertical: 3),
         child: alignRight
             ? pw.Align(
                 alignment: pw.Alignment.centerRight,
@@ -431,7 +439,7 @@ List<pw.Widget> _table(Report r) {
     pw.Table(
         columnWidths: const {
           // 2026.10.15 (Wednesday) – a leghosszabb nap neve is kiférjen
-          0: pw.FixedColumnWidth(106),
+          0: pw.FixedColumnWidth(reportDateColumnWidth),
           1: pw.FixedColumnWidth(36),
           2: pw.FixedColumnWidth(34),
           3: pw.FixedColumnWidth(34),
