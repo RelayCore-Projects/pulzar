@@ -39,3 +39,6 @@ A kulcsfájl csak a fordítás idejére jön létre a GitHub gépén, utána tö
 - A Preview és a végleges kiadás ugyanazzal a kulccsal készül → a telefonon egymásra frissíthetők, adatvesztés nélkül.
 - Nyilvános repóban az Actions ingyenes; a titkok fork-ból érkező PR-eknél nem érhetők el (ott csak a tesztek futnak).
 - A Flutter verzió a `ci.yml`-ben rögzített (`FLUTTER_VERSION`); frissítése tudatos lépés, külön commitban.
+
+## Kiegészítés – 2026-10-15 (v1.0.0)
+- `🔄 v1.0.0` Az NDK verziója rögzítve: `29.0.14206865`, ez a GitHub `ubuntu-24.04` fordítógépén előre telepítve van. A Flutter alapértéke (28.2) lekerült a gépről, a letöltése kétszer egymás után sérülten érkezett („Error on ZipFile unknown archive”), és az APK nem fordult le. Ha a GitHub később ezt a verziót is lecseréli, a gép README-jében (actions/runner-images) szereplő NDK-k egyikére kell átállni.
