@@ -6,7 +6,6 @@ import '../domain/period.dart';
 import '../domain/stats.dart';
 import '../models/measurement.dart';
 import '../platform/file_access.dart';
-import '../state/settings_scope.dart';
 import '../state/store_scope.dart';
 import '../util/format.dart';
 import '../widgets/period_selector.dart';
@@ -165,14 +164,8 @@ class _MeasurementRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final settings = SettingsScope.valueOf(context);
     final base = theme.textTheme.bodyLarge
         ?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
-    // FR-06 / FR-10: a referenciaértéket elérő vagy meghaladó érték kiemelve
-    final high = base?.copyWith(
-      fontWeight: FontWeight.bold,
-      color: theme.colorScheme.error,
-    );
     final note = m.note;
 
     Widget number(String text, int i, TextStyle? style) => Expanded(
@@ -195,10 +188,9 @@ class _MeasurementRow extends StatelessWidget {
               flex: flex[0],
               child: Text(formatTime(m.measuredAt), maxLines: 1, style: base),
             ),
-            number('${m.systolic}', 1,
-                settings.isHighSystolic(m.systolic) ? high : base),
-            number('${m.diastolic}', 2,
-                settings.isHighDiastolic(m.diastolic) ? high : base),
+            // v0.5.0: a referencia fölötti értékek nincsenek kiemelve (felhasználói kérés)
+            number('${m.systolic}', 1, base),
+            number('${m.diastolic}', 2, base),
             number(m.pulse?.toString() ?? '–', 3, base),
             Expanded(
               flex: flex[4],

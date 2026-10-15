@@ -66,6 +66,11 @@ TextStyle? _cellStyle(WidgetTester tester, String rowId, String text) => tester
         of: find.byKey(Key('table-row-$rowId')), matching: find.text(text)))
     .style;
 
+BpChartPainter _painter(WidgetTester tester) => tester
+    .widget<CustomPaint>(find.descendant(
+        of: find.byKey(const Key('chart-bp')), matching: find.byType(CustomPaint)))
+    .painter! as BpChartPainter;
+
 Future<void> _openSettings(WidgetTester tester) async {
   await tester.tap(find.byKey(const Key('settings-button')));
   await tester.pumpAndSettle();
@@ -99,12 +104,11 @@ void main() {
     expect(h.settings.value.reportName, isNull);
   });
 
-  testWidgets('FR-10/15: changed reference values change the table highlight',
+  testWidgets('FR-10/15: changed reference values move the dashed lines',
       (tester) async {
     final h = await _pump(tester);
-    // alapból 135/85: a 130 nem kiemelt
-    expect(_cellStyle(tester, 't2', '130')?.fontWeight, isNot(FontWeight.bold));
-    expect(_cellStyle(tester, 't1', '140')?.fontWeight, FontWeight.bold);
+    // v0.5.0: a táblázatban nincs kiemelés, a referencia felett sem
+    expect(_cellStyle(tester, 't1', '140')?.fontWeight, isNot(FontWeight.bold));
 
     await _openSettings(tester);
     await tester.tap(find.byKey(const Key('reference-tile')));
@@ -127,11 +131,14 @@ void main() {
     expect(h.settings.value.refDiastolic, 80);
 
     await _back(tester);
-    expect(_cellStyle(tester, 't2', '130')?.fontWeight, FontWeight.bold);
-    expect(_cellStyle(tester, 't2', '80')?.fontWeight, FontWeight.bold);
+    await tester.tap(find.descendant(
+        of: find.byKey(const Key('main-navigation')), matching: find.text('Charts')));
+    await tester.pumpAndSettle();
+    expect(_painter(tester).series.map((s) => s.reference), [130, 80]);
+    expect(find.text('Dashed: reference 130 / 80'), findsOneWidget);
   });
 
-  testWidgets('FR-10/15: reference off – no highlight, no dashed lines',
+  testWidgets('FR-10/15: reference off – no dashed lines',
       (tester) async {
     final h = await _pump(tester);
     await _openSettings(tester);
@@ -143,16 +150,10 @@ void main() {
         isFalse);
     await _back(tester);
 
-    expect(_cellStyle(tester, 't1', '140')?.fontWeight, isNot(FontWeight.bold));
-
     await tester.tap(find.descendant(
         of: find.byKey(const Key('main-navigation')), matching: find.text('Charts')));
     await tester.pumpAndSettle();
-    final painter = tester
-        .widget<CustomPaint>(find.descendant(
-            of: find.byKey(const Key('chart-bp')), matching: find.byType(CustomPaint)))
-        .painter! as BpChartPainter;
-    expect(painter.series.map((s) => s.reference), [null, null]);
+    expect(_painter(tester).series.map((s) => s.reference), [null, null]);
     expect(find.byKey(const Key('chart-reference-legend')), findsNothing);
   });
 

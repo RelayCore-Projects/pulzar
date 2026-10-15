@@ -28,10 +28,6 @@ class AppSettings {
   int? get systolicReference => referenceEnabled ? refSystolic : null;
   int? get diastolicReference => referenceEnabled ? refDiastolic : null;
 
-  /// FR-06 / FR-10: a referenciát elérő vagy meghaladó érték kiemelendő.
-  bool isHighSystolic(int value) => referenceEnabled && value >= refSystolic;
-  bool isHighDiastolic(int value) => referenceEnabled && value >= refDiastolic;
-
   /// „135 / 85 mmHg”
   String get referenceText => '$refSystolic / $refDiastolic mmHg';
 

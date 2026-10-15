@@ -8,6 +8,7 @@ import 'package:pulzar/domain/report.dart';
 import 'package:pulzar/domain/settings.dart';
 import 'package:pulzar/export/pdf_report.dart';
 import 'package:pulzar/state/settings_store.dart';
+import 'package:pulzar/util/format.dart';
 
 import 'helpers/factory.dart';
 
@@ -26,17 +27,12 @@ void main() {
       expect(s.reportName, isNull);
       expect(s.systolicReference, 135);
       expect(s.diastolicReference, 85);
-      expect(s.isHighSystolic(135), isTrue);
-      expect(s.isHighSystolic(134), isFalse);
-      expect(s.isHighDiastolic(85), isTrue);
     });
 
-    test('reference off: no lines, nothing highlighted', () {
+    test('reference off: no lines', () {
       const s = AppSettings(referenceEnabled: false);
       expect(s.systolicReference, isNull);
       expect(s.diastolicReference, isNull);
-      expect(s.isHighSystolic(200), isFalse);
-      expect(s.isHighDiastolic(120), isFalse);
     });
 
     test('round trip through the key–value map', () {
@@ -116,6 +112,11 @@ void main() {
       expect(r.items.last.measuredAt, DateTime(2026, 10, 3, 19));
       expect(r.fileName, 'pulzar-report-2026-10-01_2026-10-03.pdf');
       expect(r.rangeTitle, '1 – 3 October 2026');
+    });
+
+    test('the table date reads 2026.10.15 (Thursday)', () {
+      expect(formatReportDate(DateTime(2026, 10, 15, 7, 30)), '2026.10.15 (Thursday)');
+      expect(formatReportDate(DateTime(2026, 1, 7)), '2026.01.07 (Wednesday)');
     });
 
     test('swapped dates are corrected', () {

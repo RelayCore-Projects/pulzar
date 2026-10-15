@@ -21,6 +21,7 @@ frissitve: 2026-10-15
 | 0.4.0 | 2026-10-08 | FR-05 (Napló) beolvadt az FR-06-ba: a **Table a főképernyő**, + gombbal, koppintással szerkeszthető sorokkal; FR-08: **csak pontok**, a Charts-on nincs „All” | Visszajelzés: a táblázat mellett a Log fölösleges; a hosszú megjegyzés nem fér el; a pontok összekötése mérés nélküli napoknál félrevezető; a havi átlag („All”) nem ad hasznos képet |
 | 0.4.0 | 2026-10-08 | FR-06: érintésre **részletek lap**, **hosszú nyomásra szerkesztés**; FR-08: a **min–max vonal megszűnt**, koppintásra a nap / hét **kiemelése és méréseinek listája**, átugrás (*Show week*, *Show month*) | Visszajelzés: véletlen szerkesztés elkerülése; a min–max vonal zavaró; a hónap / év pontjai mögötti mérések legyenek elérhetők; nagyítás helyett lefúrás |
 | 0.5.0 | 2026-10-15 | FR-11: a PDF időszaka **szabadon választható (dátumtól–dátumig)**, gyorsgombokkal; táblázat és / vagy grafikon; összesítőben a referencia fölötti mérések száma. FR-14: megosztás helyett **mentés + megnyitás** (onnan nyomtatás / megosztás). FR-15: név a PDF-en, referenciaértékek (be/ki, SYS, DIA) – **a téma választás és az FR-12 CSV export a v1.0 után** | Igény: „nyomtatható PDF egy kiválasztott intervallumra, és a referenciaérték állítása” – a v1.0 lezárásához a legfontosabbak; [[ADR-012 PDF a pdf csomaggal]] |
+| 0.5.0 | 2026-10-15 | FR-06, FR-10, FR-11: a referencia fölötti értékek **kiemelése megszűnt** (app és PDF), a referencia csak szaggatott vonal; FR-11: a PDF táblázatában a dátum `2026.10.15 (Thursday)` | Visszajelzés a 0.5.0 Preview kézi tesztjéből: a kiemelés nem kell; a dátum így jobban olvasható |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -131,7 +132,7 @@ Bármely mérés minden mezője utólag szerkeszthető. A törlés megerősíté
 - A megjegyzés a sorban **egy sorba levágva** jelenik meg, előtte kis ikon jelzi; a teljes szöveg a mérést megnyitva látszik. A 200 karakteres korlát marad `🆕 v0.4.0`
 - Oszlopok: Dátum · Idő · Szisztolé · Diasztolé · Pulzus · Megjegyzés
 - Nagy, jól olvasható betűméret; fekvő tájolásban is használható
-- A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`
+- ~~A referenciaértéket **elérő vagy meghaladó** értékek kiemelve (félkövér, piros), lásd FR-10 `🔄 v0.4.0`~~ `❌ v0.5.0` – nincs kiemelés (felhasználói kérés)
 - Sorrend: időrendben, a legkorábbi felül; az egy naphoz tartozó sorok közös háttérsávban `🆕 v0.4.0`
 - Alapértelmezett időszak: az aktuális hét; a Table és a Charts nézet ugyanazt az időszakot használja `🆕 v0.4.0`
 
@@ -156,7 +157,7 @@ Vonal + pont diagram; vízszintes tengely: idő (a mérés valódi időpontja), 
 ~~Mint FR-08, külön diagramon. A két grafikon egymás alatt, azonos időtengellyel.~~ `❌ v0.4.0` – beolvadt az FR-08-ba (közös ábra).
 
 **FR-10 – Referenciavonal**
-`🔄 v0.5.0` Az értékek a beállításokban (FR-15) módosíthatók és kikapcsolhatók; a táblázat kiemelése (FR-06) és a PDF (FR-11) ugyanezeket használja.
+`🔄 v0.5.0` Az értékek a beállításokban (FR-15) módosíthatók és kikapcsolhatók; a PDF grafikonja (FR-11) ugyanezeket használja. A referencia **csak a szaggatott vonal**, értékeket nem emel ki.
 Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaértéknél, a sor színével `🔄 v0.4.0`. Alapérték: **SYS 135, DIA 85 Hgmm** (az európai irányelv otthoni mérésre vonatkozó küszöbe), alapból bekapcsolva. Beállításokban módosítható vagy kikapcsolható. `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-03]])*
 
 ### 4.3 Export
@@ -166,8 +167,9 @@ Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaérté
 - Időszak: ~~mint FR-06~~ **szabadon választható: *From* – *To*** (dátumválasztó, legkésőbb a mai nap); alapból az éppen nézett időszak a mai napig; gyorsgombok: *Last 30 days*, *Last 3 months*, *All*; látszik, hány mérés kerül bele `🔄 v0.5.0`
 - Tartalom választható: **táblázat**, **grafikon**, vagy **mindkettő** (legalább az egyik; alapból mindkettő)
 - Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*; a további oldalakon kis fejléc (cím · név · időszak) `🆕 v0.5.0`
-- Összesítő blokk (FR-07); ha a referencia be van kapcsolva: a referenciaérték és hány mérés éri el vagy haladja meg `🔄 v0.5.0`
-- Táblázat: minden mérés dátummal és időponttal, **időrendben (a legkorábbi elöl)**, napok szerint váltakozó sávozással, a fejléc minden oldalon megismétlődik; a referenciát elérő értékek félkövér pirossal; a teljes megjegyzés `🔄 v0.5.0`
+- Összesítő blokk (FR-07); ha a referencia be van kapcsolva: a referenciaérték `🔄 v0.5.0` ~~és hány mérés éri el vagy haladja meg~~ `❌ v0.5.0`
+- Táblázat: minden mérés dátummal és időponttal, **időrendben (a legkorábbi elöl)**, napok szerint váltakozó sávozással, a fejléc minden oldalon megismétlődik; ~~a referenciát elérő értékek félkövér pirossal~~ `❌ v0.5.0` nincs kiemelés; a teljes megjegyzés `🔄 v0.5.0`
+- Dátum a táblázatban: **`2026.10.15 (Thursday)`** (a nap első mérésénél) `🆕 v0.5.0`
 - Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`; egy pont = átlag: **≤ 2 hónap napi, ≤ 2 év heti, fölötte havi** `🆕 v0.5.0`
 - Lábléc: oldalszám („Page 2 of 5”), „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló
@@ -199,7 +201,7 @@ A PDF ugyanígy menthető (*Save PDF…*), utána az értesítő sávban **Open*
 **FR-15 – Beállítások**
 Név a PDF-en (opcionális) · referenciaértékek (SYS, DIA, be/ki) · mentés / visszatöltés · ~~téma (rendszer / világos / sötét)~~ `⏸ v0.5.0` – a v1.0 után (Ö-017); addig az app a telefon témáját követi.
 - **Name on PDF** `🆕 v0.5.0`: legfeljebb 60 karakter, a felesleges szóközök nélkül; üresen hagyva nincs név a PDF-en
-- **Reference values** `🆕 v0.5.0`: kapcsoló (*Show reference values*) és a két érték egy párbeszédablakban; SYS 100–200, DIA 60–130 Hgmm, a DIA kisebb a SYS-nél; *Default* gomb: 135 / 85. Kikapcsolva nincs szaggatott vonal, kiemelés a táblázatban és a PDF-ben, és a PDF összesítőjében sincs referencia
+- **Reference values** `🆕 v0.5.0`: kapcsoló (*Show reference values*) és a két érték egy párbeszédablakban; SYS 100–200, DIA 60–130 Hgmm, a DIA kisebb a SYS-nél; *Default* gomb: 135 / 85. Kikapcsolva nincs szaggatott vonal (appban és PDF-ben), és a PDF összesítőjében sincs referencia
 - A beállítások az adatbázisban tárolódnak (séma v3, `settings` tábla); a teljes mentés (FR-13) **nem** tartalmazza őket
 
 **FR-16 – Névjegy**

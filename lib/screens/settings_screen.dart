@@ -79,8 +79,7 @@ class SettingsScreen extends StatelessWidget {
             key: const Key('reference-switch'),
             secondary: const Icon(Icons.horizontal_rule),
             title: const Text('Show reference values'),
-            subtitle: const Text(
-                'Dashed lines on the chart; values at or above them are highlighted'),
+            subtitle: const Text('Dashed lines on the charts and in the PDF'),
             value: settings.referenceEnabled,
             onChanged: (on) => SettingsScope.read(context)
                 .update(settings.copyWith(referenceEnabled: on)),

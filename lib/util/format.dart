@@ -16,6 +16,13 @@ String _two(int n) => n.toString().padLeft(2, '0');
 /// Mon, Tue, …
 String weekdayShort(DateTime d) => _weekdays[d.weekday - 1].substring(0, 3);
 
+/// Monday, Tuesday, …
+String weekdayLong(DateTime d) => _weekdays[d.weekday - 1];
+
+/// 2026.10.15 (Thursday) – a PDF táblázatának dátuma (v0.5.0, a felhasználó kérésére)
+String formatReportDate(DateTime d) =>
+    '${d.year}.${_two(d.month)}.${_two(d.day)} (${weekdayLong(d)})';
+
 /// Jan, Feb, …
 String monthShort(DateTime d) => _months[d.month - 1].substring(0, 3);
 

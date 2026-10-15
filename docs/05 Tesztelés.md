@@ -45,8 +45,8 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-09 | FR-06, FR-07 `🔄 v0.4.0` | Table, Week, majd Month | Csak a hét (hétfő–vasárnap) / a hónap mérései; átlag/min/max helyes |
 | T-10 | FR-06 `🔄 v0.4.0` | ~~Egyéni időszak~~ → **All** | Minden mérés látszik, a legkorábbitól |
 | T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék pontok; a napon egy pont (az átlag) `🔄 v0.4.0` |
-| T-12 | FR-10, FR-15 `🔄 v0.5.0` | *Settings → Reference values*: 130 / 80 → Save; utána a kapcsoló ki | A szaggatott vonal a grafikonon és a félkövér piros kiemelés a táblázatban az új értéket követi; kikapcsolva nincs vonal és kiemelés |
-| T-13 | FR-11 `🔄 v0.5.0` | PDF ikon → *Last 3 months*, Chart + Table → *Save PDF…* → *Open* → nyomtatás (vagy nyomtatási kép) | Fejléc névvel, időszak, összesítés, **egy** grafikon, táblázat időrendben, a fejléc minden oldalon, „Page x of y”; A4-en olvasható |
+| T-12 | FR-10, FR-15 `🔄 v0.5.0` | *Settings → Reference values*: 130 / 80 → Save; utána a kapcsoló ki | A szaggatott vonal a grafikonon az új értéket követi (a táblázatban nincs kiemelés `🔄 v0.5.0`); kikapcsolva nincs vonal |
+| T-13 | FR-11 `🔄 v0.5.0` | PDF ikon → *Last 3 months*, Chart + Table → *Save PDF…* → *Open* → nyomtatás (vagy nyomtatási kép) | Fejléc névvel, időszak, összesítés, **egy** grafikon, táblázat időrendben `2026.10.15 (Thursday)` dátummal, kiemelés nélkül, a fejléc minden oldalon, „Page x of y”; A4-en olvasható |
 | ~~T-14~~ | FR-12 `⏸ v0.5.0` | ~~CSV export, megnyitás Excelben~~ | a v1.0 után (Ö-016) |
 | T-15 | FR-13 | Mentés → app törlése → újratelepítés → visszatöltés | Minden mérés visszajön, duplikáció nincs |
 | T-16 | FR-13 | Ugyanazt a mentést kétszer visszatöltöd | Nem keletkezik duplikáció |
@@ -80,6 +80,14 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-12, T-13, T-17 | ⏳ | |
 | T-30 – T-33 | ⏳ | |
 | Saját ikon | ⏳ | a v0.3.1 óta nyitott: a telepített appon a „C” ikon látszik? |
+
+### v0.5.0 – visszajelzés a Preview kézi tesztjéből (2026-10-15)
+
+| Nézet | Észrevétel | Megoldás |
+|---|---|---|
+| Összesen | Jól működik, az export tetszik | – |
+| PDF | A dátum oszlop legyen `2026.10.15 (Thursday)` formátumú | Átírva |
+| Table, PDF | A kiemelt (félkövér piros) mérési eredmények nem kellenek | A kiemelés megszűnt; a referencia csak szaggatott vonal |
 
 ### v0.4.0 – kiadás (2026-10-08)
 

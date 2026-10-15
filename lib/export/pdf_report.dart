@@ -38,7 +38,6 @@ Future<Uint8List> renderReportPdf(Report report) async =>
 // Színek: ugyanaz a piros és kék, mint az app grafikonján (Material red/blue 700).
 const _sysColor = PdfColor.fromInt(0xFFD32F2F);
 const _diaColor = PdfColor.fromInt(0xFF1976D2);
-const _highColor = PdfColor.fromInt(0xFFC62828);
 const _grid = PdfColor.fromInt(0xFFDDDDDD);
 const _muted = PdfColor.fromInt(0xFF666666);
 const _band = PdfColor.fromInt(0xFFF3F3F3);
@@ -166,10 +165,6 @@ pw.Widget _summary(Report r) {
         ),
       ]);
 
-  final high = r.items
-      .where((m) => s.isHighSystolic(m.systolic) || s.isHighDiastolic(m.diastolic))
-      .length;
-
   return pw.Container(
     padding: const pw.EdgeInsets.all(10),
     decoration: pw.BoxDecoration(
@@ -213,18 +208,9 @@ pw.Widget _summary(Report r) {
                 style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               ),
               pw.SizedBox(height: 4),
-              if (s.referenceEnabled) ...[
+              if (s.referenceEnabled)
                 pw.Text('Reference: ${s.referenceText}',
                     style: const pw.TextStyle(fontSize: 9)),
-                pw.SizedBox(height: 2),
-                pw.Text(
-                  'At or above the reference: $high of ${stats.count}',
-                  style: const pw.TextStyle(fontSize: 9),
-                ),
-                pw.SizedBox(height: 2),
-                pw.Text('Values at or above the reference are shown in bold red.',
-                    style: const pw.TextStyle(fontSize: 8, color: _muted)),
-              ],
             ],
           ),
         ),
@@ -378,14 +364,12 @@ pw.Widget _chart(Report r, PdfFont font) {
   );
 }
 
-/// FR-11: minden mérés dátummal és időponttal, napok szerint sávozva.
+/// FR-11: minden mérés dátummal (2026.10.15 (Thursday)) és időponttal, napok szerint sávozva.
+/// A referencia fölötti értékek nincsenek kiemelve (v0.5.0).
 /// A fejléc minden oldalon megismétlődik.
 List<pw.Widget> _table(Report r) {
-  final s = r.settings;
   const cell = pw.TextStyle(fontSize: 9);
   final head = pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold);
-  final high = pw.TextStyle(
-      fontSize: 9, fontWeight: pw.FontWeight.bold, color: _highColor);
 
   pw.Widget c(String t, {pw.TextStyle? style, bool alignRight = false}) => pw.Padding(
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
@@ -430,12 +414,10 @@ List<pw.Widget> _table(Report r) {
             : null,
       ),
       children: [
-        c(newDay ? '${weekdayShort(m.measuredAt)} ${formatDate(m.measuredAt)}' : ''),
+        c(newDay ? formatReportDate(m.measuredAt) : ''),
         c(formatTime(m.measuredAt)),
-        c('${m.systolic}',
-            style: s.isHighSystolic(m.systolic) ? high : null, alignRight: true),
-        c('${m.diastolic}',
-            style: s.isHighDiastolic(m.diastolic) ? high : null, alignRight: true),
+        c('${m.systolic}', alignRight: true),
+        c('${m.diastolic}', alignRight: true),
         c(m.pulse?.toString() ?? '–', alignRight: true),
         c(m.note ?? ''),
       ],
@@ -448,7 +430,8 @@ List<pw.Widget> _table(Report r) {
     pw.SizedBox(height: 6),
     pw.Table(
         columnWidths: const {
-          0: pw.FixedColumnWidth(78),
+          // 2026.10.15 (Wednesday) – a leghosszabb nap neve is kiférjen
+          0: pw.FixedColumnWidth(106),
           1: pw.FixedColumnWidth(36),
           2: pw.FixedColumnWidth(34),
           3: pw.FixedColumnWidth(34),
