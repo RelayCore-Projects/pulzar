@@ -22,7 +22,10 @@ plugins {
 android {
     namespace = "hu.relaycore.pulzar"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // A GitHub fordítógépén előre telepített NDK (ubuntu-24.04 image, 2026-10).
+    // A Flutter alapértéke (28.2) már nincs a gépen, a letöltése pedig sérülten
+    // érkezett, és a fordítás elakadt. A 29-es visszafelé kompatibilis. Lásd ADR-006.
+    ndkVersion = "29.0.14206865"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

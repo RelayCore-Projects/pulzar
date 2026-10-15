@@ -10,6 +10,24 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [1.0.0] – 2026-10-15 – Első stabil kiadás
+
+A Pulzar első stabil kiadása; az app kódja azonos a 0.5.1-gyel (csak a fordítási beállítás változott).
+
+### Mit tud
+- Mérés rögzítése (dátum, időpont, szisztolé, diasztolé, opcionális pulzus, megjegyzés), szerkesztés, törlés; naponta legfeljebb 3 mérés
+- Táblázat napokra bontva, hét / hónap / év / összes időszak, összesítés (átlag, min, max)
+- Grafikon: a szisztolé és a diasztolé napi (évnél heti) átlaga, állítható referenciavonalakkal
+- PDF-jelentés választott időszakra, nyomtatható, opcionálisan névvel
+- Teljes mentés és visszatöltés (pl. Google Drive-ra)
+- Offline: minden adat csak a telefonon
+
+### Eltávolítva
+- A tervezett CSV export (FR-12) – nem kell; minden adat a teljes mentésben van
+
+### Módosítva
+- Fordítás: az Android NDK verziója rögzítve (a GitHub fordítógépén telepített 29-es), mert a korábbi letöltése hibára futott ([[ADR-006 Fordítás, aláírás és kiadás a GitHub Actionsben]])
+
 ## [0.5.1] – 2026-10-15 – PDF dátumoszlop
 
 ### Javítva
