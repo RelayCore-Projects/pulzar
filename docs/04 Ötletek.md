@@ -28,7 +28,7 @@ Hosszabb ötlethez külön jegyzet: `Ctrl+P` → *Templates: Insert template* �
 | Ö-014 | 2026-10-08 | Két ujjas (csippentős) nagyítás a grafikonon | 💭 | ütközik a húzásos lapozással; most helyette lefúrás (*Show week* / *Show month*) |
 | Ö-011 | 2026-10-08 | Technikai: a `pubspec.lock` frissítése (az új csomagokat most a CI oldja fel) | 🟢 | v0.5.0: a CI a feloldott `pubspec.lock`-ot a Preview kiadásra is feltölti, onnan került vissza a repóba (a fejlesztői gépről a pub.dev nem érhető el); csomagfrissítés után ugyanígy |
 | Ö-010 | 2026-10-08 | Saját alkalmazásikon (most a Flutter alap ikonja van) | 🟢 | v0.3.0 – „C” változat, [[ADR-008 Alkalmazásikon]] |
-| Ö-016 | 2026-10-15 | CSV export (FR-12) Excelhez | 💭 | a v1.0 után; a v0.5.0-ban a PDF volt a fontos, az adatok a teljes mentésben (JSON) addig is megvannak |
+| Ö-016 | 2026-10-15 | CSV export (FR-12) Excelhez | ⛔ | `🔄 2026-10-15` nem kell (Mike); az adatok a teljes mentésben (JSON) megvannak |
 | Ö-017 | 2026-10-15 | Téma választás a beállításokban (rendszer / világos / sötét, FR-15) | 💭 | a v1.0 után; most a telefon témáját követi |
 | Ö-018 | 2026-10-15 | A beállítások (név, referenciaértékek) is kerüljenek bele a teljes mentésbe | 💭 | telefoncserénél most kézzel kell újra beállítani |
 | Ö-019 | 2026-10-15 | Közvetlen *Print* / *Share* gomb a PDF mentése után | 💭 | most: *Open* → a PDF-nézegetőből nyomtatható / megosztható ([[ADR-012 PDF a pdf csomaggal]]) |

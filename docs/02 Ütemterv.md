@@ -14,11 +14,11 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 | 0.3.0 | Adatbázis, mérés rögzítése / szerkesztése / törlése, validáció, napi korlát, napló lista (FR-01…05) | Fejlesztés | 🟢 kész |
 | 0.3.1 | Javítás: a pulzus opcionális, első adatbázis-migráció (#3) | Hibajavítás | 🟢 kész |
 | 0.4.0 `🔄` | **Mentés / visszatöltés** (FR-13) · **táblázat**, időszak-választó, összesítés (FR-06, 07) · **grafikonok**, referenciavonal (FR-08…10) · gyorsabb CI | Fejlesztés | 🟢 kész |
-| 0.5.0 `🔄` | **PDF export szabadon választott időszakra** (FR-11), mentés + megnyitás / nyomtatás (FR-14), **beállítások: név a PDF-en, referenciaértékek** (FR-15); `pubspec.lock` (Ö-011). ~~CSV export, téma, lefúrás~~ → a v1.0 után (Ö-016, Ö-017, Ö-015) | Fejlesztés | 🟢 kész |
+| 0.5.0 `🔄` | **PDF export szabadon választott időszakra** (FR-11), mentés + megnyitás / nyomtatás (FR-14), **beállítások: név a PDF-en, referenciaértékek** (FR-15); `pubspec.lock` (Ö-011). ~~CSV export~~ (elvetve, Ö-016), ~~téma, lefúrás~~ → ötlet (Ö-017, Ö-015) | Fejlesztés | 🟢 kész |
 | ~~0.6.0~~ | ~~PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16)~~ → beolvadt a 0.4.0-ba és a 0.5.0-ba | – | ⛔ |
 | ~~0.9.0~~ | ~~Kiadásra jelölt: teljes kézi tesztkör valódi eszközön~~ → a 0.5.0 után, az 1.0.0 előtt | Tesztelés | ⛔ |
-| 0.5.1 `🔄` | Hibajavítás: a PDF dátumoszlopa (hosszú napnév új sorba tört) | Hibajavítás | 🟡 folyamatban |
-| **1.0.0** `🔄` | Első stabil kiadás: a 0.5.1 **teljes kézi tesztkör** (T-01…T-33) után, kódváltozás nélkül; a projekt lezárása | Kiadás | ⚪ tervezett |
+| 0.5.1 `🔄` | Hibajavítás: a PDF dátumoszlopa (hosszú napnév új sorba tört) | Hibajavítás | 🟢 kész |
+| **1.0.0** `🔄` | Első stabil kiadás: a 0.5.1 kódja változatlanul (csak a verziószám és a dokumentáció); a projekt lezárása | Kiadás | 🟢 kész |
 | 2.x | Windows asztali alkalmazás + adatcsere / szinkron a telefonnal | – | 💭 ötlet |
 
 **Jelmagyarázat:** 💭 ötlet · ⚪ tervezett · 🟡 folyamatban · 🟢 kész · 🔴 elakadt · ⛔ elvetve / beolvasztva
@@ -44,3 +44,5 @@ Ide kerül, mikor zárult le egy verzió (dátum + rövid megjegyzés). A részl
 - 2026-10-08 – 0.4.0: mentés / visszatöltés, táblázat (főképernyő), naptári időszakok, napi átlagos grafikon; négy kézi tesztkör visszajelzése beépítve
 - 2026-10-15 – A 0.4.0 egy hete napi használatban, hiba nélkül; a v1.0 hatóköre véglegesítve (PDF, referenciaértékek, név), a 0.5.0 fejlesztése elindult
 - 2026-10-15 – 0.5.0: PDF-jelentés választott időszakra, név a PDF-en, állítható referenciaértékek; a Preview kézi tesztje alapján a kiemelés megszűnt, a PDF dátuma 2026.10.15 (Thursday)
+- 2026-10-15 – 0.5.1: a PDF dátumoszlopa egy sorban fér el
+- 2026-10-15 – **1.0.0: első stabil kiadás, a projekt lezárva.** A CSV export elvetve

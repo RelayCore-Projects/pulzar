@@ -47,7 +47,7 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék pontok; a napon egy pont (az átlag) `🔄 v0.4.0` |
 | T-12 | FR-10, FR-15 `🔄 v0.5.0` | *Settings → Reference values*: 130 / 80 → Save; utána a kapcsoló ki | A szaggatott vonal a grafikonon az új értéket követi (a táblázatban nincs kiemelés `🔄 v0.5.0`); kikapcsolva nincs vonal |
 | T-13 | FR-11 `🔄 v0.5.0` | PDF ikon → *Last 3 months*, Chart + Table → *Save PDF…* → *Open* → nyomtatás (vagy nyomtatási kép) | Fejléc névvel, időszak, összesítés, **egy** grafikon, táblázat időrendben `2026.10.15 (Thursday)` dátummal, kiemelés nélkül, a fejléc minden oldalon, „Page x of y”; A4-en olvasható |
-| ~~T-14~~ | FR-12 `⏸ v0.5.0` | ~~CSV export, megnyitás Excelben~~ | a v1.0 után (Ö-016) |
+| ~~T-14~~ | FR-12 `❌ v1.0.0` | ~~CSV export, megnyitás Excelben~~ | elvetve (Ö-016) |
 | T-15 | FR-13 | Mentés → app törlése → újratelepítés → visszatöltés | Minden mérés visszajön, duplikáció nincs |
 | T-16 | FR-13 | Ugyanazt a mentést kétszer visszatöltöd | Nem keletkezik duplikáció |
 | T-17 | FR-14 `🔄 v0.5.0` | ~~PDF megosztása e-mailben~~ → mentett PDF: *Open* → a nézegetőben *Megosztás* e-mailben / Viberen | A csatolmány megnyitható |
@@ -72,14 +72,22 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
 
-### v0.5.0 – Preview (kitöltendő)
+### v1.0.0 – kiadás (2026-10-15)
 
 | Ellenőrzés | Eredmény | Megjegyzés |
 |---|---|---|
-| Automatikus tesztek (CI) | ⏳ | új: beállítások, PDF-adatok, PDF elkészítése (üres, egy hét, egy év napi 3 méréssel, több év), export képernyő, adatbázis v2 → v3 |
-| T-12, T-13, T-17 | ⏳ | |
-| T-30 – T-33 | ⏳ | |
-| Saját ikon | ⏳ | a v0.3.1 óta nyitott: a telepített appon a „C” ikon látszik? |
+| Automatikus tesztek (CI) | ✅ | a 0.5.1 kódján; az 1.0.0 kódja azonos (csak verziószám és dokumentáció) |
+| Kézi teszt | ✅ | a 0.5.0 Preview, a 0.5.0 és a 0.5.1 kipróbálása Mike telefonján – három észrevétel, mind javítva (lent); a kiadást Mike jóváhagyta („joffan, mehet a v1.0.0”) |
+| Nyitott 🔴 / 🟠 hiba | ✅ | nincs |
+| Elfogadás 3. pont: mentés → törlés → újratelepítés → visszatöltés | ➖ | külön nem rögzítettük; ajánlott egyszer elvégezni (Drive-ra mentéssel) |
+| Saját ikon, nagy betű / sötét téma, repülő üzemmód | ➖ | külön nem rögzítettük; napi használatban hiba nem jött elő |
+
+### v0.5.0 – Preview
+
+| Ellenőrzés | Eredmény | Megjegyzés |
+|---|---|---|
+| Automatikus tesztek (CI) | ✅ | első körben 4 bukott teszt (kilógó jelmagyarázat a grafikonon) – javítva; új: beállítások, PDF-adatok, PDF elkészítése, export képernyő, adatbázis v2 → v3 |
+| Kézi teszt | ✅ | „alapvetően jól működik, tetszik az export”; két kérés (kiemelés ki, dátumformátum) beépítve |
 
 ### v0.5.0 – kiadás kézi tesztje (2026-10-15)
 

@@ -1,8 +1,8 @@
 ---
 tipus: kezdolap
 projekt: Pulzar
-aktualis_verzio: 0.5.0
-fazis: Fejlesztés
+aktualis_verzio: 1.0.0
+fazis: Kiadás – lezárva
 frissitve: 2026-10-15
 ---
 
@@ -14,9 +14,9 @@ Egyszerű, offline vérnyomásnapló Androidra. **RelayCore-Projects** · repó:
 
 | | |
 |---|---|
-| Aktuális verzió | **0.5.0 – PDF-jelentés és beállítások** |
-| Fázis | Koncepció → *Fejlesztés* → Tesztelés → Hibajavítás → Kiadás |
-| Következő lépés | A v1.0 elfogadási tesztje (mentés → törlés → újratelepítés → visszatöltés, nyomtatott PDF, repülő üzemmód, nagy betű / sötét téma, ikon) → **v1.0.0** kódváltozás nélkül |
+| Aktuális verzió | **1.0.0 – első stabil kiadás** |
+| Fázis | Koncepció → Fejlesztés → Tesztelés → Hibajavítás → *Kiadás* ✅ |
+| Következő lépés | Nincs – a projekt a v1.0.0-val **lezárult** (2026-10-15). Ha újranyílik: [[04 Ötletek]], hibák: [[06 Hibák]] |
 
 ## Dokumentumok
 

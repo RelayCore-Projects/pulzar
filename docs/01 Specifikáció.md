@@ -1,7 +1,7 @@
 ---
 tipus: specifikacio
-dokumentum_verzio: 0.5.0
-statusz: jóváhagyva
+dokumentum_verzio: 1.0.0
+statusz: lezárva (v1.0.0)
 frissitve: 2026-10-15
 ---
 
@@ -23,6 +23,7 @@ frissitve: 2026-10-15
 | 0.5.0 | 2026-10-15 | FR-11: a PDF időszaka **szabadon választható (dátumtól–dátumig)**, gyorsgombokkal; táblázat és / vagy grafikon; összesítőben a referencia fölötti mérések száma. FR-14: megosztás helyett **mentés + megnyitás** (onnan nyomtatás / megosztás). FR-15: név a PDF-en, referenciaértékek (be/ki, SYS, DIA) – **a téma választás és az FR-12 CSV export a v1.0 után** | Igény: „nyomtatható PDF egy kiválasztott intervallumra, és a referenciaérték állítása” – a v1.0 lezárásához a legfontosabbak; [[ADR-012 PDF a pdf csomaggal]] |
 | 0.5.0 | 2026-10-15 | FR-06, FR-10, FR-11: a referencia fölötti értékek **kiemelése megszűnt** (app és PDF), a referencia csak szaggatott vonal; FR-11: a PDF táblázatában a dátum `2026.10.15 (Thursday)` | Visszajelzés a 0.5.0 Preview kézi tesztjéből: a kiemelés nem kell; a dátum így jobban olvasható |
 | 0.5.1 | 2026-10-15 | FR-11: a dátum a táblázatban **egy sorban** fér el (pl. „Wednesday” esetén is) | A kiadott 0.5.0 kézi tesztje: a hosszabb napnév új sorba tört |
+| 1.0.0 | 2026-10-15 | **Első stabil kiadás**, a 0.5.1 kódjával. FR-12 (CSV export) **elvetve**; a téma választás (FR-15) és a lefúrás ötlet maradt | Mike: „mehet a v1.0.0”, a CSV export nem kell |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -37,7 +38,7 @@ frissitve: 2026-10-15
 Egyetlen felhasználó a saját vérnyomásértékeit **kézzel** rögzíti a telefonján, és ezeket
 - **számszerűen** (táblázatban) meg tudja mutatni az orvosnak,
 - **grafikusan** – a szisztolé és a diasztolé értékeket ~~külön~~ egy ábrán, jól megkülönböztethető színnel `🔄 v0.4.0` – meg tudja jeleníteni,
-- **exportálni** tudja (PDF, ~~CSV~~ `⏸ v0.5.0`, teljes mentés).
+- **exportálni** tudja (PDF, ~~CSV~~ `❌ v1.0.0`, teljes mentés).
 
 Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali** alkalmazás, amely ugyanazokat az adatokat tudja kezelni (v2, lásd [[02 Ütemterv]]).
 
@@ -49,7 +50,7 @@ Elsődleges platform: **Android** okostelefon. Későbbi cél: **Windows asztali
 - ~~Napló lista~~ → táblázat (főképernyő) `🔄 v0.4.0`
 - Táblázatos nézet időszakszűréssel és összesítéssel
 - Szisztolé és diasztolé grafikon
-- PDF export; teljes mentés és visszatöltés — ~~CSV export~~ `⏸ v0.5.0` a v1.0 után (Ö-016)
+- PDF export; teljes mentés és visszatöltés — ~~CSV export~~ `❌ v1.0.0` nem kell
 - Beállítások (név a PDF-en, referenciaértékek), névjegy
 
 ### Nincs benne (v1.0) – lehetséges későbbi bővítések: [[04 Ötletek]]
@@ -177,7 +178,7 @@ Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaérté
 - Fájlnév: `pulzar-report-2026-07-01_2026-10-15.pdf` `🆕 v0.5.0`
 - Betűtípus: beágyazott DejaVu Sans Condensed, így a név és a megjegyzés ékezetes betűi (ő, ű, č, š…) is helyesen jelennek meg ([[ADR-012 PDF a pdf csomaggal]]) `🆕 v0.5.0`
 
-**FR-12 – CSV export** `⏸ v0.5.0` – a v1.0 után ([[04 Ötletek|Ö-016]]); a teljes mentés (FR-13) addig is minden adatot tartalmaz
+~~**FR-12 – CSV export**~~ `❌ v1.0.0` – nem kell (Mike döntése, 2026-10-15; [[04 Ötletek|Ö-016]] elvetve). Minden adat a teljes mentésben (FR-13) van; az alábbi leírás csak történeti
 - Időszak: mint FR-06
 - Kódolás: UTF-8 BOM-mal, elválasztó: pontosvessző (`;`) – így a magyar Excel helyesen nyitja meg
 - Fejléc: `Date;Time;Systolic (mmHg);Diastolic (mmHg);Pulse (bpm);Note` `🔄 v0.2.0`
