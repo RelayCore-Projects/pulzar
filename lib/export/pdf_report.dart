@@ -54,8 +54,11 @@ Future<Uint8List> buildReportPdf(Report r, ReportFonts fonts) {
     producer: '${AppInfo.name} ${r.appVersion}',
     theme: pw.ThemeData.withFont(base: base, bold: bold),
   );
-  // a grafikon feliratai közvetlenül a PDF-vásznon (CustomPaint), ehhez saját betű-objektum
-  final chartFont = PdfTtfFont(doc.document, fonts.regular);
+  // a grafikon feliratai közvetlenül a PDF-vásznon (CustomPaint), ehhez saját betű-objektum –
+  // csak ha van grafikon (fel nem használt betűtípus ne kerüljön a fájlba)
+  final chartFont = r.includeChart && r.items.isNotEmpty
+      ? PdfTtfFont(doc.document, fonts.regular)
+      : null;
 
   doc.addPage(
     pw.MultiPage(
@@ -98,7 +101,7 @@ Future<Uint8List> buildReportPdf(Report r, ReportFonts fonts) {
             child: pw.Text('No measurements in this period.'),
           )
         else ...[
-          if (r.includeChart) ...[
+          if (chartFont != null) ...[
             pw.SizedBox(height: 18),
             _chart(r, chartFont),
           ],

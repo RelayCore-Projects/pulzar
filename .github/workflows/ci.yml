@@ -46,7 +46,12 @@ jobs:
           retention-days: 7
       # Hibák és figyelmeztetések megállítják a folyamatot, a stílusjavaslatok (info) csak megjelennek
       - run: flutter analyze --no-fatal-infos
-      - run: flutter test
+      - run: mkdir -p build && flutter test --file-reporter json:build/test-results.json
+      # A bukott tesztek neve és hibaüzenete annotációként (bejelentkezés nélkül is olvasható)
+      - name: Hibás tesztek megjelölése
+        if: failure()
+        run: |
+          if [ -f build/test-results.json ]; then python3 tool/ci_test_annotations.py build/test-results.json; fi
 
   apk:
     name: APK fordítása
