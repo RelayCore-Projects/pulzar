@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pulzar/data/settings_repository.dart';
 import 'package:pulzar/domain/chart_data.dart';
 import 'package:pulzar/domain/report.dart';
@@ -197,6 +198,21 @@ void main() {
         includeChart: false,
       ));
       expect(isPdf(bytes), isTrue);
+    });
+
+    test('the longest date fits in one line of the date column', () {
+      // v0.5.1: a „Wednesday” új sorba tört (kézi teszt)
+      final font = PdfTtfFont(PdfDocument(), _fonts.regular);
+      for (final d in [
+        DateTime(2026, 10, 14), // Wednesday
+        DateTime(2026, 10, 15), // Thursday
+        DateTime(2026, 10, 17), // Saturday
+      ]) {
+        final text = formatReportDate(d);
+        final width = font.stringMetrics(text).width * reportCellFontSize;
+        expect(width + 2 * reportCellPadding, lessThan(reportDateColumnWidth),
+            reason: text);
+      }
     });
 
     test('a year with 3 measurements a day spans many pages', () async {

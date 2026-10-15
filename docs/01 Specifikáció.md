@@ -22,6 +22,7 @@ frissitve: 2026-10-15
 | 0.4.0 | 2026-10-08 | FR-06: érintésre **részletek lap**, **hosszú nyomásra szerkesztés**; FR-08: a **min–max vonal megszűnt**, koppintásra a nap / hét **kiemelése és méréseinek listája**, átugrás (*Show week*, *Show month*) | Visszajelzés: véletlen szerkesztés elkerülése; a min–max vonal zavaró; a hónap / év pontjai mögötti mérések legyenek elérhetők; nagyítás helyett lefúrás |
 | 0.5.0 | 2026-10-15 | FR-11: a PDF időszaka **szabadon választható (dátumtól–dátumig)**, gyorsgombokkal; táblázat és / vagy grafikon; összesítőben a referencia fölötti mérések száma. FR-14: megosztás helyett **mentés + megnyitás** (onnan nyomtatás / megosztás). FR-15: név a PDF-en, referenciaértékek (be/ki, SYS, DIA) – **a téma választás és az FR-12 CSV export a v1.0 után** | Igény: „nyomtatható PDF egy kiválasztott intervallumra, és a referenciaérték állítása” – a v1.0 lezárásához a legfontosabbak; [[ADR-012 PDF a pdf csomaggal]] |
 | 0.5.0 | 2026-10-15 | FR-06, FR-10, FR-11: a referencia fölötti értékek **kiemelése megszűnt** (app és PDF), a referencia csak szaggatott vonal; FR-11: a PDF táblázatában a dátum `2026.10.15 (Thursday)` | Visszajelzés a 0.5.0 Preview kézi tesztjéből: a kiemelés nem kell; a dátum így jobban olvasható |
+| 0.5.1 | 2026-10-15 | FR-11: a dátum a táblázatban **egy sorban** fér el (pl. „Wednesday” esetén is) | A kiadott 0.5.0 kézi tesztje: a hosszabb napnév új sorba tört |
 
 > [!info] Hogyan jelöljük a változásokat ebben a dokumentumban
 > - Minden módosítás új sort kap a fenti táblázatban (verzió, dátum, mi, miért).
@@ -169,7 +170,7 @@ Mindkét adatsorhoz szaggatott vízszintes vonal a beállított referenciaérté
 - Fejléc: „Blood Pressure Log” `🔄 v0.2.0`, név – csak ha a beállításokban meg van adva (FR-15) –, időszak, készítés dátuma `🔄 v0.1.1` *(döntés: [[#9. Nyitott kérdések|K-04]])*; a további oldalakon kis fejléc (cím · név · időszak) `🆕 v0.5.0`
 - Összesítő blokk (FR-07); ha a referencia be van kapcsolva: a referenciaérték `🔄 v0.5.0` ~~és hány mérés éri el vagy haladja meg~~ `❌ v0.5.0`
 - Táblázat: minden mérés dátummal és időponttal, **időrendben (a legkorábbi elöl)**, napok szerint váltakozó sávozással, a fejléc minden oldalon megismétlődik; ~~a referenciát elérő értékek félkövér pirossal~~ `❌ v0.5.0` nincs kiemelés; a teljes megjegyzés `🔄 v0.5.0`
-- Dátum a táblázatban: **`2026.10.15 (Thursday)`** (a nap első mérésénél) `🆕 v0.5.0`
+- Dátum a táblázatban: **`2026.10.15 (Thursday)`** (a nap első mérésénél) `🆕 v0.5.0`; egy sorban, a leghosszabb napnévvel is `🔄 v0.5.1`
 - Grafikon: SYS (piros) és DIA (kék) egy diagramon, referenciavonalakkal `🔄 v0.4.0`; egy pont = átlag: **≤ 2 hónap napi, ≤ 2 év heti, fölötte havi** `🆕 v0.5.0`
 - Lábléc: oldalszám („Page 2 of 5”), „Pulzar vX.Y.Z – not a medical device” `🔄 v0.2.0`
 - Papírméret: A4, álló

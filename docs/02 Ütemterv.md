@@ -17,8 +17,8 @@ Minden verzió egy lezárt, kipróbálható lépés. A verziószámozás szabál
 | 0.5.0 `🔄` | **PDF export szabadon választott időszakra** (FR-11), mentés + megnyitás / nyomtatás (FR-14), **beállítások: név a PDF-en, referenciaértékek** (FR-15); `pubspec.lock` (Ö-011). ~~CSV export, téma, lefúrás~~ → a v1.0 után (Ö-016, Ö-017, Ö-015) | Fejlesztés | 🟢 kész |
 | ~~0.6.0~~ | ~~PDF és CSV export, mentés / visszatöltés, megosztás, beállítások, névjegy (FR-11…16)~~ → beolvadt a 0.4.0-ba és a 0.5.0-ba | – | ⛔ |
 | ~~0.9.0~~ | ~~Kiadásra jelölt: teljes kézi tesztkör valódi eszközön~~ → a 0.5.0 után, az 1.0.0 előtt | Tesztelés | ⛔ |
-| 0.5.x | Hibajavítások a 0.5.0 tesztje alapján (ha kell) | Hibajavítás | ⚪ tervezett |
-| **1.0.0** `🔄` | Első stabil kiadás: a 0.5.0 (0.5.x) **teljes kézi tesztkör** (T-01…T-33) után, kódváltozás nélkül; a projekt lezárása | Kiadás | ⚪ tervezett |
+| 0.5.1 `🔄` | Hibajavítás: a PDF dátumoszlopa (hosszú napnév új sorba tört) | Hibajavítás | 🟡 folyamatban |
+| **1.0.0** `🔄` | Első stabil kiadás: a 0.5.1 **teljes kézi tesztkör** (T-01…T-33) után, kódváltozás nélkül; a projekt lezárása | Kiadás | ⚪ tervezett |
 | 2.x | Windows asztali alkalmazás + adatcsere / szinkron a telefonnal | – | 💭 ötlet |
 
 **Jelmagyarázat:** 💭 ötlet · ⚪ tervezett · 🟡 folyamatban · 🟢 kész · 🔴 elakadt · ⛔ elvetve / beolvasztva

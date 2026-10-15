@@ -81,6 +81,12 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-30 – T-33 | ⏳ | |
 | Saját ikon | ⏳ | a v0.3.1 óta nyitott: a telepített appon a „C” ikon látszik? |
 
+### v0.5.0 – kiadás kézi tesztje (2026-10-15)
+
+| Nézet | Észrevétel | Megoldás |
+|---|---|---|
+| PDF | A „Wednesday” a dátummal együtt nem fér ki, új sorba törik | 0.5.1: szélesebb dátumoszlop + automatikus teszt |
+
 ### v0.5.0 – visszajelzés a Preview kézi tesztjéből (2026-10-15)
 
 | Nézet | Észrevétel | Megoldás |

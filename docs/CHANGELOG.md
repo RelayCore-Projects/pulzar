@@ -10,6 +10,11 @@ Kategóriák: **Hozzáadva** · **Módosítva** · **Javítva** · **Eltávolít
 
 ## [Unreleased]
 
+## [0.5.1] – 2026-10-15 – PDF dátumoszlop
+
+### Javítva
+- PDF: a táblázat dátuma („2026.10.15 (Wednesday)”) a hosszabb napneveknél új sorba tört – a dátumoszlop szélesebb lett; automatikus teszt őrzi, hogy minden nap neve kiférjen
+
 ## [0.5.0] – 2026-10-15 – PDF-jelentés és beállítások
 
 ### Hozzáadva
