@@ -3,19 +3,23 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/measurement.dart';
 import 'measurement_repository.dart';
+import 'settings_repository.dart';
 
-/// SQLite tároló a telefonon (NFR-02, ADR-002, ADR-007).
-class SqliteMeasurementRepository implements MeasurementRepository {
+/// SQLite tároló a telefonon (NFR-02, ADR-002, ADR-007) – a mérések és a beállítások (FR-15).
+class SqliteMeasurementRepository
+    implements MeasurementRepository, SettingsRepository {
   SqliteMeasurementRepository._(this._db);
 
   final Database _db;
 
   static const _table = 'measurements';
+  static const _settingsTable = 'settings';
 
   /// Séma verziója. Változásnál növelni kell, és [_migrate]-ben át kell alakítani (NFR-06).
   ///  1 – v0.3.0: első séma
   ///  2 – v0.3.1: a pulzus opcionális (#3)
-  static const schemaVersion = 2;
+  ///  3 – v0.5.0: beállítások tábla (FR-15)
+  static const schemaVersion = 3;
 
   /// [path] megadása csak teszteknél kell; alapból az app saját adatbázis-mappája.
   static Future<SqliteMeasurementRepository> open({String? path}) async {
@@ -24,7 +28,10 @@ class SqliteMeasurementRepository implements MeasurementRepository {
       dbPath,
       version: schemaVersion,
       // Az onCreate és az onUpgrade tranzakcióban fut: hiba esetén minden visszaáll.
-      onCreate: (db, version) => _createSchema(db),
+      onCreate: (db, version) async {
+        await _createSchema(db);
+        await _createSettings(db);
+      },
       onUpgrade: _migrate,
     );
     return SqliteMeasurementRepository._(db);
@@ -51,6 +58,13 @@ class SqliteMeasurementRepository implements MeasurementRepository {
     );
   }
 
+  static Future<void> _createSettings(DatabaseExecutor db) => db.execute('''
+      CREATE TABLE $_settingsTable (
+        key   TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
+
   static Future<void> _migrate(Database db, int from, int to) async {
     if (from < 2) {
       // v1 → v2: a pulse oszlopról lekerül a NOT NULL. SQLite-ban ez csak
@@ -65,6 +79,28 @@ class SqliteMeasurementRepository implements MeasurementRepository {
       );
       await db.execute('DROP TABLE ${_table}_v1');
     }
+    if (from < 3) {
+      // v2 → v3: új tábla, a mérések nem változnak
+      await _createSettings(db);
+    }
+  }
+
+  @override
+  Future<Map<String, String>> loadSettings() async {
+    final rows = await _db.query(_settingsTable);
+    return {
+      for (final r in rows) r['key'] as String: r['value'] as String,
+    };
+  }
+
+  @override
+  Future<void> saveSettings(Map<String, String> values) async {
+    await _db.transaction((txn) async {
+      await txn.delete(_settingsTable);
+      for (final e in values.entries) {
+        await txn.insert(_settingsTable, {'key': e.key, 'value': e.value});
+      }
+    });
   }
 
   @override

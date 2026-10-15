@@ -2,17 +2,19 @@
 
 Egyszerű, offline vérnyomásnapló Androidra – a **RelayCore-Projects** egyik projektje.
 
-> **Legutóbbi kiadás:** v0.4.0 · [Letöltés (Releases)](https://github.com/RelayCore-Projects/pulzar/releases/latest) · fejlesztői előnézet: [Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
+> **Legutóbbi kiadás:** v0.5.0 · [Letöltés (Releases)](https://github.com/RelayCore-Projects/pulzar/releases/latest) · fejlesztői előnézet: [Preview](https://github.com/RelayCore-Projects/pulzar/releases/tag/preview)
 
 ## Mit tud
 
 - **Rögzítés**: dátum, szabadon megadható időpont, szisztolé, diasztolé, pulzus (opcionális), megjegyzés – naponta legfeljebb 3 mérés
-- **Táblázat** (főképernyő): napokra bontva, hét / hónap / év / összes időszak lapozással, átlag / minimum / maximum, a referenciaértéket (135/85) elérő értékek kiemelve; érintésre részletek, hosszú nyomásra szerkesztés
+- **Táblázat** (főképernyő): napokra bontva, hét / hónap / év / összes időszak lapozással, átlag / minimum / maximum; érintésre részletek, hosszú nyomásra szerkesztés
 - **Grafikon**: a szisztolé (piros) és a diasztolé (kék) napi átlaga pontokkal (évnél heti átlag), referenciavonalakkal; koppintásra a nap mérései
+- **PDF-jelentés az orvosnak** (v0.5.0-tól): szabadon választott időszakra (dátumtól–dátumig), grafikonnal és / vagy táblázattal, A4-en nyomtatható; opcionálisan névvel
+- **Referenciaértékek**: alapból 135 / 85 mmHg, a beállításokban átállítható vagy kikapcsolható
 - **Mentés és visszatöltés**: minden mérés egy fájlba (pl. Google Drive-ra), visszatöltés összefésüléssel
 - Minden adat csak a telefonon tárolódik, internetkapcsolat nélkül
 
-**Tervben (v0.5.0):** PDF és CSV export, beállítások (név a PDF-en, referenciaértékek), lefúrás a grafikonon. Részletek: [Ütemterv](docs/02%20Ütemterv.md)
+**A v1.0 után (ötletek):** CSV export, téma választás, lefúrás a grafikonon. Részletek: [Ütemterv](docs/02%20Ütemterv.md), [Ötletek](docs/04%20Ötletek.md)
 
 Az alkalmazás felülete **angol**, a projekt dokumentációja magyar.
 

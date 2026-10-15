@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../app_info.dart';
 import '../domain/grouping.dart';
 import '../domain/period.dart';
 import '../domain/stats.dart';
@@ -167,11 +166,6 @@ class _MeasurementRow extends StatelessWidget {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyLarge
         ?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
-    // FR-06 / FR-10: a referenciaértéket elérő vagy meghaladó érték kiemelve
-    final high = base?.copyWith(
-      fontWeight: FontWeight.bold,
-      color: theme.colorScheme.error,
-    );
     final note = m.note;
 
     Widget number(String text, int i, TextStyle? style) => Expanded(
@@ -194,10 +188,9 @@ class _MeasurementRow extends StatelessWidget {
               flex: flex[0],
               child: Text(formatTime(m.measuredAt), maxLines: 1, style: base),
             ),
-            number('${m.systolic}', 1,
-                m.systolic >= AppInfo.defaultRefSystolic ? high : base),
-            number('${m.diastolic}', 2,
-                m.diastolic >= AppInfo.defaultRefDiastolic ? high : base),
+            // v0.5.0: a referencia fölötti értékek nincsenek kiemelve (felhasználói kérés)
+            number('${m.systolic}', 1, base),
+            number('${m.diastolic}', 2, base),
             number(m.pulse?.toString() ?? '–', 3, base),
             Expanded(
               flex: flex[4],

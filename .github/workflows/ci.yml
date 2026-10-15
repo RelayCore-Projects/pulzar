@@ -37,9 +37,21 @@ jobs:
       # A tárolási tesztekhez (sqflite_common_ffi) a gépen SQLite kell
       - run: sudo apt-get install -y libsqlite3-dev
       - run: flutter pub get
+      # Ö-011: a feloldott csomagverziók (pubspec.lock) a Preview kiadásra is felkerülnek,
+      # így a repóba visszavezethetők (a fejlesztői gépről a pub.dev nem érhető el)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pubspec-lock
+          path: pubspec.lock
+          retention-days: 7
       # Hibák és figyelmeztetések megállítják a folyamatot, a stílusjavaslatok (info) csak megjelennek
       - run: flutter analyze --no-fatal-infos
-      - run: flutter test
+      - run: mkdir -p build && flutter test --file-reporter json:build/test-results.json
+      # A bukott tesztek neve és hibaüzenete annotációként (bejelentkezés nélkül is olvasható)
+      - name: Hibás tesztek megjelölése
+        if: failure()
+        run: |
+          if [ -f build/test-results.json ]; then python3 tool/ci_test_annotations.py build/test-results.json; fi
 
   apk:
     name: APK fordítása
@@ -138,11 +150,16 @@ jobs:
         with:
           name: apk
 
+      - uses: actions/download-artifact@v4
+        with:
+          name: pubspec-lock
+          path: lock
+
       - name: Preview kiadás frissítése
         if: github.ref_type == 'branch'
         run: |
           gh release delete preview --yes --cleanup-tag 2>/dev/null || true
-          gh release create preview pulzar-*.apk \
+          gh release create preview pulzar-*.apk lock/pubspec.lock \
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "Preview – ${VERSION_DISPLAY}" \

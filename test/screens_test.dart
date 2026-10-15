@@ -12,26 +12,7 @@ import 'package:pulzar/state/measurement_store.dart';
 import 'package:pulzar/widgets/bp_chart.dart';
 
 import 'helpers/factory.dart';
-
-class FakeFileAccess implements FileAccess {
-  String? savedName;
-  Uint8List? saved;
-  Uint8List? toOpen;
-
-  @override
-  Future<String?> saveFile({
-    required String name,
-    required Uint8List bytes,
-    required String mimeType,
-  }) async {
-    savedName = name;
-    saved = bytes;
-    return 'content://fake/$name';
-  }
-
-  @override
-  Future<Uint8List?> openFile() async => toOpen;
-}
+import 'helpers/fake_file_access.dart';
 
 Future<MeasurementStore> _pump(
   WidgetTester tester, {
@@ -99,10 +80,10 @@ void main() {
     expect(find.byKey(const Key('table-row-old')), findsNothing);
     expect(find.byKey(const Key('table-day-2026-10-06')), findsOneWidget);
 
-    // a hiányzó pulzus „–”, a referenciát elérő érték kiemelve
+    // a hiányzó pulzus „–”; v0.5.0: a referencia fölötti érték sincs kiemelve
     final high = tester.widget<Text>(find.descendant(
         of: find.byKey(const Key('table-row-t1')), matching: find.text('140')));
-    expect(high.style?.fontWeight, FontWeight.bold);
+    expect(high.style?.fontWeight, isNot(FontWeight.bold));
     final normal = tester.widget<Text>(find.descendant(
         of: find.byKey(const Key('table-row-t2')), matching: find.text('120')));
     expect(normal.style?.fontWeight, isNot(FontWeight.bold));

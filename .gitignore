@@ -68,3 +68,6 @@ windows/flutter/ephemeral/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# PDF-jelentések (valódi mérési adatok)
+pulzar-report*

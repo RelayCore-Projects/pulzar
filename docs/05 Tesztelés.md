@@ -1,6 +1,6 @@
 ---
 tipus: teszteles
-frissitve: 2026-10-08
+frissitve: 2026-10-15
 ---
 
 # Tesztelés
@@ -45,12 +45,12 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-09 | FR-06, FR-07 `🔄 v0.4.0` | Table, Week, majd Month | Csak a hét (hétfő–vasárnap) / a hónap mérései; átlag/min/max helyes |
 | T-10 | FR-06 `🔄 v0.4.0` | ~~Egyéni időszak~~ → **All** | Minden mérés látszik, a legkorábbitól |
 | T-11 | FR-08 `🔄 v0.4.0` | Charts, Week, egy napon 3 méréssel | Egy ábra, piros / kék pontok; a napon egy pont (az átlag) `🔄 v0.4.0` |
-| T-12 | FR-10 (v0.5.0-tól) | Referenciaérték átállítása 140/90-re | A vonal a grafikonon és a kiemelés a táblázatban követi |
-| T-13 | FR-11 | PDF, „mindkettő”, 30 nap | Fejléc, összesítés, táblázat, két grafikon, oldalszám |
-| T-14 | FR-12 | CSV export, megnyitás Excelben | Ékezetek és oszlopok helyesek |
+| T-12 | FR-10, FR-15 `🔄 v0.5.0` | *Settings → Reference values*: 130 / 80 → Save; utána a kapcsoló ki | A szaggatott vonal a grafikonon az új értéket követi (a táblázatban nincs kiemelés `🔄 v0.5.0`); kikapcsolva nincs vonal |
+| T-13 | FR-11 `🔄 v0.5.0` | PDF ikon → *Last 3 months*, Chart + Table → *Save PDF…* → *Open* → nyomtatás (vagy nyomtatási kép) | Fejléc névvel, időszak, összesítés, **egy** grafikon, táblázat időrendben `2026.10.15 (Thursday)` dátummal, kiemelés nélkül, a fejléc minden oldalon, „Page x of y”; A4-en olvasható |
+| ~~T-14~~ | FR-12 `⏸ v0.5.0` | ~~CSV export, megnyitás Excelben~~ | a v1.0 után (Ö-016) |
 | T-15 | FR-13 | Mentés → app törlése → újratelepítés → visszatöltés | Minden mérés visszajön, duplikáció nincs |
 | T-16 | FR-13 | Ugyanazt a mentést kétszer visszatöltöd | Nem keletkezik duplikáció |
-| T-17 | FR-14 | PDF megosztása e-mailben | A csatolmány megnyitható |
+| T-17 | FR-14 `🔄 v0.5.0` | ~~PDF megosztása e-mailben~~ → mentett PDF: *Open* → a nézegetőben *Megosztás* e-mailben / Viberen | A csatolmány megnyitható |
 | T-18 | NFR-01 | Repülőgép üzemmódban minden funkció | Minden működik |
 | T-19 | NFR-05 | Rendszer betűméret: legnagyobb; sötét téma | Olvasható, semmi nem lóg ki |
 | T-20 | FR-01 `🆕 v0.3.1` | Új mérés pulzus nélkül; meglévő mérésből a pulzus törlése | Menthető; a táblázatban a pulzus helyén „–” `🔄 v0.4.0` |
@@ -63,10 +63,31 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 | T-28 | FR-08 `🆕 v0.4.0` | Charts: koppintás egy napra (Week, Month) és egy hétre (Year) | Kiemelő vonal, kártya az átlaggal és a mérésekkel; újabb koppintás bezárja |
 | ~~T-29~~ | FR-08 `⏸` | ~~Year → koppintás → *Show month* → koppintás → *Show week*~~ | halasztva (Ö-015) |
 | T-24 | FR-13 `🆕 v0.4.0` | Mentés Google Drive-ra, majd visszatöltés onnan | A mentés megjelenik a Drive-on; visszatöltéskor „Already up to date” |
+| T-30 | FR-15 `🆕 v0.5.0` | *Settings → Name on PDF*: ékezetes név (pl. „Kovács Ödön”), PDF készítése; utána a név törlése, újabb PDF | Az első PDF-en a név helyesen, ékezetekkel; a másodikon nincs név |
+| T-31 | FR-11 `🆕 v0.5.0` | Export: *From* későbbre állítva, mint a *To*; jövőbeli nap választása; *All* gomb; egy hét, mérés nélkül | A *To* követi a *From*-ot; jövőbeli nap nem választható; az *All* a legelső méréstől indul; mérés nélkül a *Save PDF…* nem nyomható |
+| T-32 | FR-11 `🆕 v0.5.0` | Ékezetes megjegyzés (ő, ű, č, š) egy mérésen, PDF | A megjegyzés a PDF-ben helyesen jelenik meg |
+| T-33 | NFR-06 `🆕 v0.5.0` | A 0.5.0 telepítése a 0.4.0-ra (meglévő mérésekkel) | Minden mérés megvan; a beállítások alapértéken (135 / 85, nincs név) |
 
 ## Tesztkörök
 
 *Itt gyűjtjük a kitöltött teszteket, verziónként (a legújabb felül).*
+
+### v0.5.0 – Preview (kitöltendő)
+
+| Ellenőrzés | Eredmény | Megjegyzés |
+|---|---|---|
+| Automatikus tesztek (CI) | ⏳ | új: beállítások, PDF-adatok, PDF elkészítése (üres, egy hét, egy év napi 3 méréssel, több év), export képernyő, adatbázis v2 → v3 |
+| T-12, T-13, T-17 | ⏳ | |
+| T-30 – T-33 | ⏳ | |
+| Saját ikon | ⏳ | a v0.3.1 óta nyitott: a telepített appon a „C” ikon látszik? |
+
+### v0.5.0 – visszajelzés a Preview kézi tesztjéből (2026-10-15)
+
+| Nézet | Észrevétel | Megoldás |
+|---|---|---|
+| Összesen | Jól működik, az export tetszik | – |
+| PDF | A dátum oszlop legyen `2026.10.15 (Thursday)` formátumú | Átírva |
+| Table, PDF | A kiemelt (félkövér piros) mérési eredmények nem kellenek | A kiemelés megszűnt; a referencia csak szaggatott vonal |
 
 ### v0.4.0 – kiadás (2026-10-08)
 
@@ -74,8 +95,8 @@ Minden kiadásnál másold le a táblázatot a [[#Tesztkörök]] alá az adott v
 |---|---|---|
 | Automatikus tesztek (CI) | ✅ | 67 teszt |
 | Kézi tesztkörök | ✅ | négy kör a Preview-kon; a visszajelzések lent, mind beépítve |
-| T-27, T-28 | ⏳ | az utolsó módosítások (részletek lap, hosszú nyomás, koppintás a grafikonon) – a kiadott 0.4.0-n ellenőrizendő |
-| T-29 lefúrás | ⏸ | kimaradt, következő verzió (Ö-015) |
+| T-27, T-28 | ✅ | `🔄 2026-10-15` a kiadott 0.4.0 egy hete napi használatban, hiba nem jött elő (felhasználói visszajelzés) |
+| T-29 lefúrás | ⏸ | kimaradt (Ö-015); `🔄 2026-10-15` a v1.0 után |
 
 ### v0.4.0 – visszajelzés a 0.4.0-dev.19 kézi tesztjéből (2026-10-08)
 

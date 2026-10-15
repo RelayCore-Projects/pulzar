@@ -24,3 +24,4 @@ A v0.4.0-hoz fájlmentés / -megnyitás (FR-13) és grafikon (FR-08 – FR-10) k
 ## Következmények
 - A PDF / CSV exportnál (v0.5.0) ugyanez a mentési út használható; a „Megosztás” (FR-14) külön döntést igényel.
 - Ha a grafikonnál később több kell (nagyítás, érintésre érték – Ö-013), újra mérlegelhető egy csomag.
+- `🔄 v0.5.0` A PDF-jelentéshez kivételként a `pdf` csomag került be: [[ADR-012 PDF a pdf csomaggal]]. A PDF mentése ugyanezen a csatornán megy, és egy új `viewFile` hívással megnyitható a telefon PDF-nézegetőjében (FR-14).
